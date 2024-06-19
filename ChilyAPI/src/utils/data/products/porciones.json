@@ -1,0 +1,62 @@
+[
+    {
+        "nombre": "Papa Criolla",
+        "precio": 4.7,
+        "descripcion": "Deliciosas papas criollas fritas, crujientes por fuera y suaves por dentro."
+    },
+    {
+        "nombre": "Papa Francesa",
+        "precio": 4.7,
+        "descripcion": "Clásicas papas a la francesa, doradas y crujientes, perfectas para acompañar cualquier plato."
+    },
+    {
+        "nombre": "Arroz",
+        "precio": 3.5,
+        "descripcion": "Arroz blanco esponjoso, cocido a la perfección con un toque de ajo."
+    },
+    {
+        "nombre": "Chorizo de Cerdo",
+        "precio": 5.6,
+        "descripcion": "Jugoso chorizo de cerdo, sazonado con especias tradicionales."
+    },
+    {
+        "nombre": "Tocineta Ahumada",
+        "precio": 4.8,
+        "descripcion": "Tiras de tocineta ahumada, crujientes y llenas de sabor."
+    },
+    {
+        "nombre": "Carne Desmechada",
+        "precio": 8.5,
+        "descripcion": "Carne de res desmechada, cocida lentamente con un sazón especial."
+    },
+    {
+        "nombre": "Pollo Desmechado",
+        "precio": 8.0,
+        "descripcion": "Pollo desmechado, tierno y jugoso, perfecto para tacos o ensaladas."
+    },
+    {
+        "nombre": "Jamón",
+        "precio": 3.9,
+        "descripcion": "Lonchas de jamón cocido, ideales para sandwiches o como acompañamiento."
+    },
+    {
+        "nombre": "Guacamole",
+        "precio": 3.0,
+        "descripcion": "Guacamole fresco hecho con aguacates maduros, cilantro, cebolla y tomate."
+    },
+    {
+        "nombre": "Ejote",
+        "precio": 2.9,
+        "descripcion": "Ejotes frescos y crujientes, ligeramente salteados con ajo."
+    },
+    {
+        "nombre": "Queso Mozzarella",
+        "precio": 4.0,
+        "descripcion": "Queso mozzarella fresco, suave y fundente, ideal para pizzas y ensaladas."
+    },
+    {
+        "nombre": "Yuca",
+        "precio": 4.7,
+        "descripcion": "Yuca frita, crujiente por fuera y suave por dentro, un acompañamiento perfecto."
+    }
+]
