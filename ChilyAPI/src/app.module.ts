@@ -10,6 +10,7 @@ import {
   UserModule,
   AuthModule,
 } from './modules';
+import { ProductsModule } from './modules/products/products.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import {
     AdminModule,
     SuperAdminModule,
     DeliveryModule,
+    ProductsModule,
     AuthModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
