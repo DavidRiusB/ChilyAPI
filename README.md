@@ -1,8 +1,9 @@
 # ChilyAPI
 
 ## Description:
+
 ChilyAPI is the robust and scalable backend system designed to support the delivery operations of "Donde Chily," a popular restaurant chain.
-This API serves as the core engine driving the restaurant's order processing, management, and delivery services. 
+This API serves as the core engine driving the restaurant's order processing, management, and delivery services.
 Built with NestJS and TypeScript, and leveraging PostgreSQL for database management, ChilyAPI ensures efficient and reliable handling of customer orders from placement to delivery.
 
 ##Key Features:
@@ -51,4 +52,3 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-
