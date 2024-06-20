@@ -11,6 +11,7 @@ import {
   AuthModule,
   OrderModule,
   ProductsModule,
+  CategoriesModule,
 } from "./modules";
 
 @Module({
@@ -34,6 +35,7 @@ import {
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: "1d" },
     }),
+    CategoriesModule,
   ],
   controllers: [],
   providers: [],

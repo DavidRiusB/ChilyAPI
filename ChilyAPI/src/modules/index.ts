@@ -7,3 +7,4 @@ export { DeliveryModule } from "./delivery/delivery.module";
 export { AuthModule } from "./auth/auth.module";
 export { OrderModule } from "./order/order.module";
 export { ProductsModule } from "./products/products.module";
+export { CategoriesModule } from "./categories/categories.module";
