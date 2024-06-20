@@ -11,6 +11,7 @@ import {
   AuthModule,
   OrderModule,
 } from "./modules";
+import { ProductsModule } from "./modules/products/products.module";
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import {
     AdminModule,
     SuperAdminModule,
     DeliveryModule,
+    ProductsModule,
     AuthModule,
     OrderModule,
     JwtModule.register({
