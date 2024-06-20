@@ -10,8 +10,8 @@ import {
   UserModule,
   AuthModule,
   OrderModule,
+  ProductsModule,
 } from "./modules";
-import { ProductsModule } from "./modules/products/products.module";
 
 @Module({
   imports: [
