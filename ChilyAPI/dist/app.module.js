@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const typeorm_1 = require("@nestjs/typeorm");
 const database_1 = require("./config/database");
+const jwt_1 = require("@nestjs/jwt");
 const modules_1 = require("./modules");
 let AppModule = class AppModule {
 };
@@ -21,15 +22,21 @@ exports.AppModule = AppModule = __decorate([
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
                 load: [database_1.default],
-            }), typeorm_1.TypeOrmModule.forRootAsync({
+            }),
+            typeorm_1.TypeOrmModule.forRootAsync({
                 inject: [config_1.ConfigService],
-                useFactory: (config) => config.get('typeorm')
+                useFactory: (config) => config.get("typeorm"),
             }),
             modules_1.UserModule,
             modules_1.AdminModule,
             modules_1.SuperAdminModule,
             modules_1.DeliveryModule,
             modules_1.AuthModule,
+            modules_1.OrderModule,
+            jwt_1.JwtModule.register({
+                secret: process.env.JWT_SECRET,
+                signOptions: { expiresIn: "1d" },
+            }),
         ],
         controllers: [],
         providers: [],

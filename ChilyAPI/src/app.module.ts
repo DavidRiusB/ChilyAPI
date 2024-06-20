@@ -1,34 +1,37 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import typeOrmConfig from './config/database';
-import { JwtModule } from '@nestjs/jwt';
+import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import typeOrmConfig from "./config/database";
+import { JwtModule } from "@nestjs/jwt";
 import {
   AdminModule,
   DeliveryModule,
   SuperAdminModule,
   UserModule,
   AuthModule,
-} from './modules';
+  OrderModule,
+} from "./modules";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       load: [typeOrmConfig],
-    }), TypeOrmModule.forRootAsync({
+    }),
+    TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => config.get('typeorm')
+      useFactory: (config: ConfigService) => config.get("typeorm"),
     }),
     UserModule,
     AdminModule,
     SuperAdminModule,
     DeliveryModule,
     AuthModule,
+    OrderModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1d' }
-    })
+      signOptions: { expiresIn: "1d" },
+    }),
   ],
   controllers: [],
   providers: [],
