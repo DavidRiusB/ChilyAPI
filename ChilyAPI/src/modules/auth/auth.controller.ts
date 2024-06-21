@@ -7,6 +7,7 @@ import { JwtAuthGuard } from './guards/jwt.guard';
 import { UserLoginDTO } from './dto/login.dto';
 import { RegisterUserDTO } from './dto/register.dto';
 import { DocumentationApiTagsModule } from 'src/docs';
+import { DocumentationLogin, DocumentationRegister } from 'src/docs';
 @Controller('auth')
 @DocumentationApiTagsModule.clasification('auth')
 export class AuthController {
@@ -18,11 +19,13 @@ export class AuthController {
   ) {}
 
   @Post('singin')
+  @DocumentationLogin()
   async singIn(@Body() credentials: UserLoginDTO) {
     return this.authService.singIn(credentials);
   }
 
   @Post('register')
+  @DocumentationRegister()
   async register(@Body() userData: RegisterUserDTO) {
     return await this.authService.register(userData);
   }
