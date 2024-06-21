@@ -14,8 +14,8 @@ export class SessionsService {
         } catch {
             throw new Error("Error al crear la sesión");
         }
-    }//
-
+    }
+    
     async getSession(accessToken: string): Promise<Session | Error> {
         try {
             return await this.sessionRepository.findOneBy({accessToken});
