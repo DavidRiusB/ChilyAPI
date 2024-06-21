@@ -1,3 +1,4 @@
+
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { JwtService } from '../jwt/jwt.service';
 import { LocalStrategy } from './local.strategy';
@@ -24,4 +25,5 @@ export class AuthController {//
     test() {
         return 'Ruta protegida'
     }
+
 }

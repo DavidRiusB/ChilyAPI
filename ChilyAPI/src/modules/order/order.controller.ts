@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { OrderService } from "./order.service";
 import { OrderDto } from "./order.dto";
 
@@ -61,5 +61,10 @@ export class OrderController {
    */
   async postNewOrder(@Body() order: OrderDto) {
     return await this.orderService.addOrder(order);
+  }
+
+  @Put(":id")
+  async updateOrderStatus(@Param("id") id: number) {
+    return "update order status";
   }
 }

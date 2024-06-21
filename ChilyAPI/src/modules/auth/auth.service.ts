@@ -1,34 +1,46 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '../jwt/jwt.service';
+
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from "@nestjs/common";
+import { CredentialsDto } from "./auth.dto";
+import { RegisterUserDTO } from "./dto/register.dto";
+import { AuthRepository } from "./auth.repository";
+import { UserService } from "../user/user.service";
+import { DataSource } from "typeorm";
+
 @Injectable()
 export class AuthService {
-    constructor(private jwtService: JwtService) {}
-     validateUser(username: string, pass: string) {//
-        const user = {
-          id: 1,
-          username: 'luka',
-          email: "Lukaelcapo2017@gmail.com",
-          password:"luka123",
-          role: 'admin',
-          name: 'Luka',
-          surname: 'Chili',
-        }
-        if (user.password ===  pass) { // Reemplazar con una comparación de hash seguro
-          return user;
-        }
-        return null;
-      }
+  constructor(
+    private readonly authRepository: AuthRepository,
+    private readonly userService: UserService,
+    private readonly dataSource: DataSource
+  ) {}
 
-      async login(email: string, password: string) {
-        const user = this.validateUser(email, password);
-        console.log(user);
-
-        if (!user) {
-          return null;
-        }
-        return {
-            access_token: this.jwtService.generateToken(user),
-            user: user
-        };
+  async singIn(credentials: CredentialsDto) {
+    try {
+      const credentialId = await this.authRepository.signIn(credentials);
+      if (!credentialId) {
+        throw new BadRequestException(
+          "Correo Electronico o Contraseña incorrectos"
+        );
       }
+      const user = await this.userService.findByCredentialsId(credentialId);
+      return {};
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        "Error al durante el login, intentelo nuevamente por favor."
+      );
+    }
+  }
+
+  register(userData: RegisterUserDTO) {
+    throw new Error("Method not implemented.");
+  }
+
 }
