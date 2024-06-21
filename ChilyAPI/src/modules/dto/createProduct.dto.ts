@@ -29,7 +29,7 @@ export class createProductDto {
     @IsNotEmpty()
     @MaxLength(50)
     @IsString()
-    category: string;
+    category: string[];
     
     /*
     @IsNotEmpty()
