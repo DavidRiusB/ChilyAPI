@@ -10,6 +10,7 @@ import { UserModule } from "../user/user.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Credential } from "./auth.entity";
 import { AuthRepository } from "./auth.repository";
+import { SessionsModule } from "../sessions/sessions.module";
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthRepository } from "./auth.repository";
     JwtModule,
     PassportModule.register({ defaultStrategy: "jwt" }),
     UserModule,
+    SessionsModule
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, AuthRepository],

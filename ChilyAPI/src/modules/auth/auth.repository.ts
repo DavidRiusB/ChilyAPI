@@ -12,15 +12,16 @@ import {
   validateUserPasword,
 } from "src/utils/hashing/bcrypt.utils";
 import { Credential } from "./auth.entity";
+import { User } from "../user/user.entity";
 
 @Injectable()
 export class AuthRepository {
   constructor(
     @InjectRepository(Credential)
     private readonly credentialRepository: Repository<Credential>
-  ) {}
+    ) {}
 
-  async signIn(credentials: CredentialsDto) {
+  async signIn(credentials: CredentialsDto): Promise<number>{
     try {
       const { email, password } = credentials;
 
@@ -35,7 +36,7 @@ export class AuthRepository {
           "Correo Electronico o Contraseña incorrectos"
         );
       }
-
+//
       const isValidPassword = await validateUserPasword(
         password,
         credential.password
