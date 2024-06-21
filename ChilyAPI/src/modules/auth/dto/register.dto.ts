@@ -1,4 +1,4 @@
-import { Type } from "class-transformer";
+import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsString,
@@ -9,8 +9,9 @@ import {
   IsPhoneNumber,
   IsStrongPassword,
   IsEnum,
-} from "class-validator";
-import { Role } from "src/common/enums/roles.enum";
+} from 'class-validator';
+import { Role } from 'src/common/enums/roles.enum';
+import { DocumentationRegisterUserDto } from 'src/docs';
 export class RegisterUserDTO {
   id?: number;
 
@@ -18,12 +19,14 @@ export class RegisterUserDTO {
   @IsString()
   @MaxLength(50)
   @MinLength(5)
+  @DocumentationRegisterUserDto.names()
   name: string;
 
   @IsNotEmpty()
   @IsString()
   @IsEmail()
   @MaxLength(50)
+  @DocumentationRegisterUserDto.email()
   email: string;
 
   @IsNotEmpty()
@@ -37,15 +40,17 @@ export class RegisterUserDTO {
     },
     {
       message:
-        "Password must contain at least one uppercase letter, one lowercase letter, and one symbol",
-    }
+        'Password must contain at least one uppercase letter, one lowercase letter, and one symbol',
+    },
   )
-  @MinLength(8, { message: "Password must be at least 8 characters long" })
-  @MaxLength(15, { message: "Password must be at mouts 15 characters long" })
+  @MinLength(8, { message: 'Password must be at least 8 characters long' })
+  @MaxLength(15, { message: 'Password must be at mouts 15 characters long' })
+  @DocumentationRegisterUserDto.password()
   password: string;
 
   @IsString()
   // add custom validator for confirm password
+  @DocumentationRegisterUserDto.confirmPassword()
   confirmPassword: string;
 
   @IsNotEmpty()
@@ -58,10 +63,12 @@ export class RegisterUserDTO {
 
   @IsNotEmpty()
   @IsString()
+  @DocumentationRegisterUserDto.address()
   address: string;
 
   @IsNotEmpty()
   @IsPhoneNumber()
+  @DocumentationRegisterUserDto.phone()
   phone: string;
 
   @IsOptional()
