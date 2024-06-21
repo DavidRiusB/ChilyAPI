@@ -8,6 +8,7 @@ import { UserLoginDTO } from './dto/login.dto';
 import { RegisterUserDTO } from './dto/register.dto';
 import { DocumentationApiTagsModule } from 'src/docs';
 import { DocumentationLogin, DocumentationRegister } from 'src/docs';
+import { LogoutDTO } from './dto/logout.dto';
 @Controller('auth')
 @DocumentationApiTagsModule.clasification('auth')
 export class AuthController {
@@ -28,5 +29,11 @@ export class AuthController {
   @DocumentationRegister()
   async register(@Body() userData: RegisterUserDTO) {
     return await this.authService.register(userData);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logout(@Body() user: LogoutDTO) {
+    return await this.authService.logout(user);
   }
 }
