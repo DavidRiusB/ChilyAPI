@@ -1,4 +1,4 @@
-
+import { Type } from "class-transformer";
 import {
   IsNotEmpty,
   IsString,
@@ -8,9 +8,10 @@ import {
   MinLength,
   IsPhoneNumber,
   IsStrongPassword,
+  IsEnum,
 } from "class-validator";
+import { Role } from "src/common/enums/roles.enum";
 export class RegisterUserDTO {
-  //
   id?: number;
 
   @IsNotEmpty()
@@ -64,7 +65,6 @@ export class RegisterUserDTO {
   phone: string;
 
   @IsOptional()
-  role?: string;
+  @IsEnum(Role)
+  role?: Role;
 }
-
-

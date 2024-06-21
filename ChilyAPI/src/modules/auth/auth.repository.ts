@@ -1,8 +1,16 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CredentialsDto } from "./auth.dto";
-import { validateUserPasword } from "src/utils/hashing/bcrypt.utils";
+import {
+  hashPassword,
+  validateUserPasword,
+} from "src/utils/hashing/bcrypt.utils";
 import { Credential } from "./auth.entity";
 
 @Injectable()
@@ -45,6 +53,28 @@ export class AuthRepository {
       return credential.id;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async createCredentials(
+    email: string,
+    password: string
+  ): Promise<Credential> {
+    try {
+      const hashedPassword = await hashPassword(password);
+      const newCredential = new Credential();
+      newCredential.email = email;
+      newCredential.password = hashedPassword;
+      await this.credentialRepository.create(newCredential);
+      return newCredential;
+    } catch (error) {
+      if (error.code === "23505") {
+        const detail = error.detail;
+        throw new ConflictException("Datos de registro invalido", detail);
+      }
+      throw new InternalServerErrorException(
+        "Error inesperado al registrar al usuario, por favor intentelo de nuevo"
+      );
     }
   }
 }

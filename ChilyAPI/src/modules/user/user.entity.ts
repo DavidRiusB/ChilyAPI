@@ -29,7 +29,7 @@ export class User {
   @Column({ length: 250 })
   address: string;
 
-  @Column({ nullable: false })
+  @Column({ unique: true, nullable: false })
   phone: string;
 
   @Column({ default: "Colombia" })
@@ -41,9 +41,9 @@ export class User {
   @Column({ nullable: true, default: "1111-1111-1111-1111" })
   creditCardNumber: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: "Mercado Pago" })
   virtualWallet: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: "Mercado Pago" })
   preferredPaymentMethod: string;
 }
