@@ -11,16 +11,21 @@ import { AuthRepository } from "./auth.repository";
 import { UserService } from "../user/user.service";
 import { DataSource } from "typeorm";
 import { User } from "../user/user.entity";
+import { LogoutDTO } from "./dto/logout.dto";
+import { SessionsService } from "../sessions/sessions.service";
+import { JwtService } from "../jwt/jwt.service";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly userService: UserService,
-    private readonly dataSource: DataSource
+    private readonly dataSource: DataSource,
+    private readonly sessionService: SessionsService,
+    private readonly jwtService:  JwtService,
   ) {}
 
-  async singIn(credentials: CredentialsDto): Promise<User> {
+  async singIn(credentials: CredentialsDto): Promise<{access_token: string, user: User}> {
     try {
       const credentialId = await this.authRepository.signIn(credentials);
       if (!credentialId) {
@@ -29,7 +34,12 @@ export class AuthService {
         );
       }
       const user = await this.userService.findByCredentialsId(credentialId);
-      return user;
+      const access_token = this.jwtService.generateToken(user);
+      this.sessionService.createSession(access_token, false); // Creamos la sesión
+      return {
+        access_token: access_token,
+        user: user,
+      };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;
@@ -68,5 +78,8 @@ export class AuthService {
         );
       }
     }
+  }
+  async logout(user: LogoutDTO) {
+    return await this.sessionService.blacklistSession(user.access_token)
   }
 }
