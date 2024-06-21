@@ -1,6 +1,4 @@
 import { Body, Controller, Post, UseGuards } from "@nestjs/common";
-import { JwtService } from "../jwt/jwt.service";
-import { LocalStrategy } from "./local.strategy";
 import { AuthService } from "./auth.service";
 import { UserLoginDTO } from "./dto/login.dto";
 import { RegisterUserDTO } from "./dto/register.dto";
