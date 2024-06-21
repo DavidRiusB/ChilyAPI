@@ -1,3 +1,4 @@
+
 import {
   IsNotEmpty,
   IsString,
@@ -65,3 +66,5 @@ export class RegisterUserDTO {
   @IsOptional()
   role?: string;
 }
+
+

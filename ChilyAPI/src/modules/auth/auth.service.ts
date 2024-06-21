@@ -1,3 +1,4 @@
+
 import {
   BadRequestException,
   Injectable,
@@ -41,4 +42,5 @@ export class AuthService {
   register(userData: RegisterUserDTO) {
     throw new Error("Method not implemented.");
   }
+
 }
