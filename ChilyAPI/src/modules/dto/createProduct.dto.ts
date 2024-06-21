@@ -23,10 +23,6 @@ export class createProductDto {
     image_url: string;
 
     @IsNotEmpty()
-    @IsNumber()
-    stock: number;
-
-    @IsNotEmpty()
     @IsBoolean()
     avalible: boolean;
 
@@ -34,4 +30,10 @@ export class createProductDto {
     @MaxLength(50)
     @IsString()
     category: string;
+    
+    /*
+    @IsNotEmpty()
+    @IsNumber()
+    sucursal: number;
+    */ 
 }

@@ -12,7 +12,7 @@ export class ProductsRepository {
         @InjectRepository(Category) private categoryRepository: Repository<Category>,
     ){}
     async getProducts(page: number, limit: number): Promise<Product[]> {
-        let products = await this.productsRepository.find();//Colocar relations : ["Category"]
+        let products = await this.productsRepository.find({relations : ["Category"]});
         if(!products)throw new NotFoundException("Error al obtener los productos");
         const startIndex = (page - 1) * limit;
         const endIndex = page + limit;
@@ -21,7 +21,7 @@ export class ProductsRepository {
     }
 
     async getProductById(id: number): Promise<Product> {
-        const product = await this.productsRepository.findOne({where:{id:id}});//Colocar relations : ["Category"]
+        const product = await this.productsRepository.findOne({where:{id:id},relations : ["Category"]});
         if(!product) throw new NotFoundException("Error al obtener el producto");
         return product;
     }
@@ -31,7 +31,6 @@ export class ProductsRepository {
         createdProduct.name = createProduct.name;
         createdProduct.description = createProduct.description;
         createdProduct.price=createProduct.price;
-        createdProduct.stock=createProduct.stock;
         createdProduct.avalible=createProduct.avalible;
         createdProduct.image_url=createProduct.image_url;
         createdProduct.category= await this.categoryRepository.findOne({where:{name:createProduct.name}})
@@ -45,7 +44,6 @@ export class ProductsRepository {
         updatedProduct.name = updateProduct.name;
         updatedProduct.description = updateProduct.description;
         updatedProduct.price=updateProduct.price;
-        updatedProduct.stock=updateProduct.stock;
         updatedProduct.avalible=updateProduct.avalible;
         updatedProduct.image_url=updateProduct.image_url;
         updatedProduct.category= await this.categoryRepository.findOne({where:{name:updateProduct.name}})

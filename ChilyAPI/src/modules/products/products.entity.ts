@@ -34,17 +34,13 @@ export class Product {
     image_url: string;
 
     @Column({
-        type:"int",
-        default:0,
-        nullable:false
-    })
-    stock: number;
-
-    @Column({
         type:"boolean",
     })
     avalible: boolean;
 
     @ManyToOne(() => Category, (category) => category.products)
     category: Category;
+
+    //@ManyToOne(() => Sucursal, (sucursal) => sucursal.products) //Agregar
+    //sucursal:Sucursal;
 }
