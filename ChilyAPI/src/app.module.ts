@@ -11,7 +11,7 @@ import {
   AuthModule,
   OrderModule,
   ProductsModule,
-  CategoriesModule,
+  CategoryModule,
 } from "./modules";
 
 @Module({
@@ -31,11 +31,11 @@ import {
     ProductsModule,
     AuthModule,
     OrderModule,
+    CategoryModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: "1d" },
     }),
-    CategoriesModule,
   ],
   controllers: [],
   providers: [],

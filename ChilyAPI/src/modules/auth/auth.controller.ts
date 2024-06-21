@@ -11,9 +11,9 @@ import { RegisterUserDTO } from './dto/register.dto';
 export class AuthController {//
     constructor(private jwtService: JwtService, private localStrategy: LocalStrategy, private authService: AuthService) {}
 
-    @Post('login')
-    async login(@Body() user: UserLoginDTO) {
-        return this.authService.login(user.email, user.password); // asdasd
+    @Post('singin')
+    async singIn(@Body() credentials: UserLoginDTO) {
+        return this.authService.singIn(credentials); 
     }
 
     @Post('register') 
