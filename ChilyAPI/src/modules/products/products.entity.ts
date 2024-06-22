@@ -2,44 +2,43 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Category } from "../category/category.entity";
 
 @Entity({
-  name: 'products',
+  name: "products",
 })
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({
-    type: 'varchar',
     length: 50,
     nullable: false,
+    unique: true,
   })
   name: string;
 
-    @Column({
-        type:"varchar",
-    })
-    description: string;
-    
-    @Column({
-        type:"decimal",
-        precision:10,
-        scale:2
-    })
-    price: number;
-    
-    @Column({
-        type:"varchar"
-    })
-    image_url: string;
+  @Column({
+    type: "text",
+  })
+  description: string;
 
   @Column({
-    type: 'boolean',
+    type: "int",
   })
-  avalible: boolean;
+  price: number;
 
-    @ManyToOne(() => Category, (category) => category.products)
-    category: Category;
+  @Column({
+    type: "text",
+  })
+  image_url: string;
 
-    //@ManyToOne(() => Sucursal, (sucursal) => sucursal.products) //Agregar
-    //sucursal:Sucursal;
+  @Column({
+    type: "boolean",
+    default: true,
+  })
+  available: boolean;
+
+  @ManyToOne(() => Category, (category) => category.products)
+  category: Category;
+
+  //@ManyToOne(() => Sucursal, (sucursal) => sucursal.products) //Agregar
+  //sucursal:Sucursal;
 }
