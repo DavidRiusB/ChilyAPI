@@ -19,6 +19,5 @@ const config = {
   dropSchema: true,
 };
 
-export const connectSource = new DataSource(config as DataSourceOptions);
-
+export default registerAs("typeorm", () => config);
 export const connectSource = new DataSource(config as DataSourceOptions);

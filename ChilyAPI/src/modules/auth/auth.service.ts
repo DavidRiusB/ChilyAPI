@@ -9,11 +9,14 @@ import { CredentialsDto } from "./auth.dto";
 import { RegisterUserDTO } from "./dto/register.dto";
 import { AuthRepository } from "./auth.repository";
 import { UserService } from "../user/user.service";
-import { DataSource } from "typeorm";
+import { DataSource, EntityManager } from "typeorm";
 import { User } from "../user/user.entity";
 import { LogoutDTO } from "./dto/logout.dto";
 import { SessionsService } from "../sessions/sessions.service";
 import { JwtService } from "../jwt/jwt.service";
+import { usersSeed } from "./users-seed";
+import { hashPassword } from "src/utils/hashing/bcrypt.utils";
+import { Credential } from "./auth.entity";
 
 @Injectable()
 export class AuthService {
@@ -24,6 +27,42 @@ export class AuthService {
     private readonly sessionService: SessionsService,
     private readonly jwtService: JwtService
   ) {}
+
+  async onModuleInit() {
+    await this.seedUsers(usersSeed);
+  }
+
+  async seedUsers(usersSeed: any[]) {
+    const users = await this.userService.findAll({ page: 1, limit: 10 });
+    if (users.total !== 0) {
+      return "DB has users";
+    }
+
+    return this.dataSource.transaction(async (manager: EntityManager) => {
+      for (const userData of usersSeed) {
+        const hashedPassword = await hashPassword(userData.password);
+
+        const newCredential = new Credential();
+        newCredential.email = userData.email;
+        newCredential.password = hashedPassword;
+        newCredential.NIN = userData.NIN;
+        newCredential.phone = userData.phone;
+        await manager.save(Credential, newCredential);
+
+        const newUser = new User();
+        newUser.name = userData.name;
+        newUser.email = userData.email;
+        newUser.NIN = userData.NIN;
+        newUser.phone = userData.phone;
+        newUser.address = userData.address;
+        newUser.country = userData.country;
+        newUser.city = userData.city;
+        newUser.role = userData.role;
+        newUser.credential = newCredential;
+        await manager.save(User, newUser);
+      }
+    });
+  }
 
   async singIn(
     credentials: CredentialsDto
