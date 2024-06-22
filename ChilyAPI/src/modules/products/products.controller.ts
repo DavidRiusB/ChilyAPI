@@ -9,10 +9,13 @@ import {
   Post,
   Put,
   Query,
+  Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { createProductDto } from '../dto/createProduct.dto';
 import { DocumentationApiTagsModule } from 'src/docs';
 import { DocumentationAddProduct, DocumentationGetProducts } from 'src/docs';
+import { QueryInterceptor } from 'src/common/interceptors/query.interceptor';
 
 @Controller('products')
 @DocumentationApiTagsModule.clasification('products')
@@ -21,14 +24,9 @@ export class ProductsController {
 
   @Get()
   @DocumentationGetProducts()
-  getProducts(
-    @Query('page') page: string = '1',
-    @Query('limit') limit: string = '10',
-  ): Promise<Product[]> {
-    const products = this.productsService.getProducts(
-      Number(page),
-      Number(limit),
-    );
+  @UseInterceptors(QueryInterceptor)
+  getProducts(@Req() request: any): Promise<Product[]> {
+    const products = this.productsService.getProducts(request.page, request.limit);
     return products;
   }
 
