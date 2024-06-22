@@ -1,30 +1,29 @@
 import { Injectable } from "@nestjs/common";
 import { ProductsRepository } from "./products.repository";
 import { Product } from "./products.entity";
-import { createProductDto } from "../dto/createProduct.dto";
+import { createProductDto } from "./createProduct.dto";
 
 @Injectable()
 export class ProductsService {
-    constructor(private productsRepository: ProductsRepository){}
+  constructor(private productsRepository: ProductsRepository) {}
 
-    getProducts(page: number, limit: number): Promise<Product[]> {
-        return this.productsRepository.getProducts(page, limit);
-    }
+  getProducts(page: number, limit: number): Promise<Product[]> {
+    return this.productsRepository.getProducts(page, limit);
+  }
 
-    getProductById(id: number): Promise<Product> {
-        return this.productsRepository.getProductById(id);
-    }
+  getProductById(id: number): Promise<Product> {
+    return this.productsRepository.getProductById(id);
+  }
 
-    createProduct(createProduct: createProductDto): Promise<Product> {
-        return this.productsRepository.createProduct(createProduct);
-    }
+  createProduct(createProduct: createProductDto): Promise<Product> {
+    return this.productsRepository.createProduct(createProduct);
+  }
 
-    updateProduct(id: number, updateProduct: createProductDto): Promise<Product> {
-        return this.productsRepository.updateProduct(id, updateProduct);
-    }
+  updateProduct(id: number, updateProduct: createProductDto): Promise<Product> {
+    return this.productsRepository.updateProduct(id, updateProduct);
+  }
 
-    deleteProduct(id: number): Promise<string> {
-        return this.productsRepository.deleteProduct(id);
-    }
-
+  deleteProduct(id: number): Promise<string> {
+    return this.productsRepository.deleteProduct(id);
+  }
 }
