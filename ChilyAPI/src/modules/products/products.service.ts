@@ -15,6 +15,10 @@ export class ProductsService {
     return this.productsRepository.getProductById(id);
   }
 
+  async findProductsByIds(ids: number[]): Promise<Partial<Product>[]> {
+    return await this.productsRepository.findByIds(ids);
+  }
+
   createProduct(createProduct: createProductDto): Promise<Product> {
     return this.productsRepository.createProduct(createProduct);
   }

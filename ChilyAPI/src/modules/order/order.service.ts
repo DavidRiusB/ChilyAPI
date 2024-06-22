@@ -6,11 +6,13 @@ import {
 import { OrderRepository } from "./order.repository";
 import { OrderDto } from "./order.dto";
 import { DataSource } from "typeorm";
+import { ProductsService } from "../products/products.service";
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
+    private readonly productService: ProductsService,
     private dataSource: DataSource
   ) {}
 
@@ -79,14 +81,16 @@ export class OrderService {
    * @throws {NotFoundException} - If the order with the given ID is not found.
    * @throws {InternalServerErrorException} - If any other error occurs during the process.
    */
-  async addOrder(order: OrderDto) {
+  async addOrder(orderData: OrderDto) {
     try {
+      const { branchId, productsIds } = orderData;
       return await this.dataSource.transaction(async (manager) => {
-        const { branchId } = order;
+        // check products abilibility
+        const products = productsIds;
+
         // calculate shipping cost
         //check user id
         // calculate discounts
-        // check products abilibility
         //chect total price
         // aply discount
         // add delivery id

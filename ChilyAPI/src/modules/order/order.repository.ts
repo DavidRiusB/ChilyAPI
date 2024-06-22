@@ -67,7 +67,7 @@ export class OrderRepository {
    * @param {OrderDto} order - The order to create.
    * @returns {Promise<Object>} - The created order.
    */
-  async create(order: OrderDto) {
+  async create(order) {
     const { branchId } = order;
     const newOrder = { id: this.mockId, branchId };
     this.mockId++;
