@@ -39,16 +39,8 @@ export class createProductDto {
   avalible: boolean;
 
   @IsNotEmpty()
-  @MaxLength(50)
-  @IsString()
   @DocumentationCreateProductDto.category()
   category: string;
-
-<<<<<<< Updated upstream
-    @IsNotEmpty()
-    @MaxLength(50)
-    @IsString()
-    category: string[];
     
     /*
 =======
