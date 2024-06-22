@@ -10,7 +10,7 @@ import {
 import { CategoryService } from './category.service';
 import { Category } from './category.entity';
 import { createCategoryDto } from '../dto/createCategory.dto';
-import { DocumentationApiTagsModule } from 'src/docs';
+import { DocumentationAddCategory, DocumentationApiTagsModule } from 'src/docs';
 
 @Controller('category')
 @DocumentationApiTagsModule.clasification('category')
@@ -27,6 +27,7 @@ export class CategoryController {
   }
 
   @Post('create')
+  @DocumentationAddCategory()
   createCategory(@Body() createCategoryDto: createCategoryDto) {
     return this.categoryService.createCategory(createCategoryDto);
   }

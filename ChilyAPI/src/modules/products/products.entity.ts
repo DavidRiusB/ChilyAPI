@@ -2,19 +2,18 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Category } from "../category/category.entity";
 
 @Entity({
-    name: "products"
+  name: 'products',
 })
-
 export class Product {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({
-        type:"varchar",
-        length:50,
-        nullable:false
-    })
-    name: string;
+  @Column({
+    type: 'varchar',
+    length: 50,
+    nullable: false,
+  })
+  name: string;
 
     @Column({
         type:"varchar",
@@ -33,10 +32,10 @@ export class Product {
     })
     image_url: string;
 
-    @Column({
-        type:"boolean",
-    })
-    avalible: boolean;
+  @Column({
+    type: 'boolean',
+  })
+  avalible: boolean;
 
     @ManyToOne(() => Category, (category) => category.products)
     category: Category;
