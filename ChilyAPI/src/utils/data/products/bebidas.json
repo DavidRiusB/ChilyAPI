@@ -1,0 +1,67 @@
+[
+    {
+        "nombre": "Jugos Naturales",
+        "precio": 7.0,
+        "descripcion": "Jugos frescos hechos con frutas naturales, sin conservantes ni colorantes."
+    },
+    {
+        "nombre": "Gaseosa 350 ml",
+        "precio": 4.0,
+        "descripcion": "Gaseosa refrescante de 350 ml, perfecta para calmar la sed."
+    },
+    {
+        "nombre": "Gaseosa No Retornable",
+        "precio": 4.3,
+        "descripcion": "Gaseosa en envase no retornable, ideal para llevar."
+    },
+    {
+        "nombre": "Botella de Agua",
+        "precio": 3.5,
+        "descripcion": "Agua mineral pura en botella, esencial para mantenerse hidratado."
+    },
+    {
+        "nombre": "Té",
+        "precio": 4.0,
+        "descripcion": "Té helado refrescante, disponible en varios sabores."
+    },
+    {
+        "nombre": "Cerveza Nacional",
+        "precio": 5.4,
+        "descripcion": "Cerveza nacional bien fría, perfecta para acompañar tus comidas."
+    },
+    {
+        "nombre": "Cerveza Importada",
+        "precio": 8.5,
+        "descripcion": "Cerveza importada de alta calidad, ideal para los conocedores."
+    },
+    {
+        "nombre": "Cola y Pola",
+        "precio": 5.4,
+        "descripcion": "Mezcla de refresco de cola y cerveza, un clásico refrescante."
+    },
+    {
+        "nombre": "Limonada Natural",
+        "precio": 5.2,
+        "descripcion": "Limonada hecha con limones frescos, perfecta para refrescarte."
+    },
+    {
+        "nombre": "Limonada Hierbabuena",
+        "precio": 5.9,
+        "descripcion": "Limonada con un toque de hierbabuena, refrescante y aromática."
+    },
+    {
+        "nombre": "Limonada Cerezada",
+        "precio": 6.2,
+        "descripcion": "Limonada con un toque de cereza, dulce y refrescante."
+    },
+    {
+        "nombre": "Limonada Coco",
+        "precio": 7.5,
+        "descripcion": "Limonada con un toque de coco, exótica y refrescante."
+    },
+    {
+        "nombre": "Limonada Mango Biche",
+        "precio": 7.2,
+        "descripcion": "Limonada con un toque de mango biche, ácida y deliciosa."
+    }
+]
