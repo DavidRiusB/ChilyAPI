@@ -3,10 +3,12 @@ import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Credential } from "../auth/auth.entity";
+import { Order } from "../order/order.entity";
 
 @Entity({ name: "users" })
 export class User {
@@ -37,6 +39,9 @@ export class User {
 
   @Column({ default: "Fusagasuga" })
   city: string;
+
+  @OneToMany(() => Order, (order) => order.user, {})
+  orders: Order[];
 
   @Column({ nullable: true, default: "1111-1111-1111-1111" })
   creditCardNumber: string;

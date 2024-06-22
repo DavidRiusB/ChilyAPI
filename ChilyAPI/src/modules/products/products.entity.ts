@@ -1,5 +1,12 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Category } from "../category/category.entity";
+import { OrderDetail } from "../order-details/order-details.entity";
 
 @Entity({
   name: "products",
@@ -28,7 +35,7 @@ export class Product {
   @Column({
     type: "text",
   })
-  image_url: string;
+  img: string;
 
   @Column({
     type: "boolean",
@@ -38,6 +45,9 @@ export class Product {
 
   @ManyToOne(() => Category, (category) => category.products)
   category: Category;
+
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.product)
+  orderDetail: OrderDetail[];
 
   //@ManyToOne(() => Sucursal, (sucursal) => sucursal.products) //Agregar
   //sucursal:Sucursal;

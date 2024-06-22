@@ -50,7 +50,7 @@ export class ProductsRepository {
 
       createdProduct.available = createProduct.available;
 
-      createdProduct.image_url = createProduct.image_url;
+      createdProduct.img = createProduct.img;
 
       createdProduct.category = categories;
 
@@ -104,5 +104,21 @@ export class ProductsRepository {
       id +
       " ha sido eliminado exitosamente"
     );
+  }
+
+  async findByIds(ids: number[]) {
+    const products = await this.productsRepository
+      .createQueryBuilder("product")
+      .select([
+        "product.id",
+        "product.name",
+        "product.price",
+        "product.image_url",
+      ])
+      .where("product.id IN (:...ids)", { ids })
+      .andWhere("product.available === true")
+      .getMany();
+
+    return products;
   }
 }

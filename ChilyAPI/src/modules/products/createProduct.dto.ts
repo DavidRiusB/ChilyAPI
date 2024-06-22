@@ -31,7 +31,7 @@ export class createProductDto {
   @IsString()
   @IsUrl()
   @DocumentationCreateProductDto.image_url()
-  image_url: string;
+  img: string;
 
   @IsNotEmpty()
   @IsBoolean()
