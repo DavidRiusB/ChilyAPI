@@ -22,10 +22,12 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly dataSource: DataSource,
     private readonly sessionService: SessionsService,
-    private readonly jwtService:  JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
-  async singIn(credentials: CredentialsDto): Promise<{access_token: string, user: User}> {
+  async singIn(
+    credentials: CredentialsDto
+  ): Promise<{ access_token: string; user: User }> {
     try {
       const credentialId = await this.authRepository.signIn(credentials);
       if (!credentialId) {
@@ -54,11 +56,13 @@ export class AuthService {
   async register(newUserData: RegisterUserDTO): Promise<User> {
     try {
       return await this.dataSource.transaction(async (manager) => {
-        const { email, password } = newUserData;
+        const { email, password, NIN, phone } = newUserData;
 
         const credential = await this.authRepository.createCredentials(
           email,
-          password
+          password,
+          NIN,
+          phone
         );
         await manager.save(credential);
 
@@ -68,8 +72,11 @@ export class AuthService {
         return user;
       });
     } catch (error) {
-      if (error instanceof ConflictException) {
-        throw error;
+      if (error.code === "23505") {
+        throw new BadRequestException(
+          "Datos de registro invalido",
+          error.detail
+        );
       } else if (error instanceof InternalServerErrorException) {
         throw error;
       } else {
@@ -80,6 +87,6 @@ export class AuthService {
     }
   }
   async logout(user: LogoutDTO) {
-    return await this.sessionService.blacklistSession(user.access_token)
+    return await this.sessionService.blacklistSession(user.access_token);
   }
 }

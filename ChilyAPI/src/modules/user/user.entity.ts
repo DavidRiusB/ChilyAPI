@@ -1,6 +1,7 @@
 import { Role } from "src/common/enums/roles.enum";
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
@@ -19,10 +20,14 @@ export class User {
   @Column({ length: 50 })
   name: string;
 
+  @Column({ unique: true, length: 20 })
+  //national identification number
+  NIN: string;
+
   @Column({ unique: true })
   email: string;
 
-  @OneToOne(() => Credential, { cascade: ["soft-remove"] })
+  @OneToOne(() => Credential)
   @JoinColumn()
   credential: Credential;
 
@@ -46,4 +51,7 @@ export class User {
 
   @Column({ nullable: true, default: "Mercado Pago" })
   preferredPaymentMethod: string;
+
+  @DeleteDateColumn({ type: "timestamp", nullable: true })
+  deletedAt?: Date;
 }
