@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { Category } from './category.entity';
-import { createCategoryDto } from './dto/createCategory.dto';
+import { createCategoryDto } from '../dto/createCategory.dto';
 import { DocumentationAddCategory, DocumentationApiTagsModule } from 'src/docs';
 
 @Controller('category')

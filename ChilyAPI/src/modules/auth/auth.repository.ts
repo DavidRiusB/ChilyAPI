@@ -6,12 +6,12 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { CredentialsDto } from "./auth.dto";
 import {
   hashPassword,
   validateUserPasword,
 } from "src/utils/hashing/bcrypt.utils";
 import { Credential } from "./auth.entity";
-import { UserLoginDTO } from "./dto/login.dto";
 
 @Injectable()
 export class AuthRepository {
@@ -20,7 +20,7 @@ export class AuthRepository {
     private readonly credentialRepository: Repository<Credential>
   ) {}
 
-  async signIn(credentials: UserLoginDTO) {
+  async signIn(credentials: CredentialsDto) {
     try {
       const { email, password } = credentials;
 
@@ -58,17 +58,23 @@ export class AuthRepository {
 
   async createCredentials(
     email: string,
-    password: string,
-    NIN: string,
-    phone: string
+    password: string
   ): Promise<Credential> {
-    const hashedPassword = await hashPassword(password);
-    const newCredential = new Credential();
-    newCredential.email = email;
-    newCredential.password = hashedPassword;
-    newCredential.NIN = NIN;
-    newCredential.phone = phone;
-    await this.credentialRepository.create(newCredential);
-    return newCredential;
+    try {
+      const hashedPassword = await hashPassword(password);
+      const newCredential = new Credential();
+      newCredential.email = email;
+      newCredential.password = hashedPassword;
+      await this.credentialRepository.create(newCredential);
+      return newCredential;
+    } catch (error) {
+      if (error.code === "23505") {
+        const detail = error.detail;
+        throw new ConflictException("Datos de registro invalido", detail);
+      }
+      throw new InternalServerErrorException(
+        "Error inesperado al registrar al usuario, por favor intentelo de nuevo"
+      );
+    }
   }
 }

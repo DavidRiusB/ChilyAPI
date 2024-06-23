@@ -1,15 +1,12 @@
 import { Role } from "src/common/enums/roles.enum";
 import {
   Column,
-  DeleteDateColumn,
   Entity,
   JoinColumn,
-  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Credential } from "../../auth/auth.entity";
-import { Order } from "../../order/entity/order.entity";
+import { Credential } from "../auth/auth.entity";
 
 @Entity({ name: "users" })
 export class User {
@@ -22,14 +19,10 @@ export class User {
   @Column({ length: 50 })
   name: string;
 
-  @Column({ unique: true, length: 20 })
-  //national identification number
-  NIN: string;
-
   @Column({ unique: true })
   email: string;
 
-  @OneToOne(() => Credential)
+  @OneToOne(() => Credential, { cascade: ["soft-remove"] })
   @JoinColumn()
   credential: Credential;
 
@@ -45,9 +38,6 @@ export class User {
   @Column({ default: "Fusagasuga" })
   city: string;
 
-  @OneToMany(() => Order, (order) => order.user, {})
-  orders: Order[];
-
   @Column({ nullable: true, default: "1111-1111-1111-1111" })
   creditCardNumber: string;
 
@@ -56,7 +46,4 @@ export class User {
 
   @Column({ nullable: true, default: "Mercado Pago" })
   preferredPaymentMethod: string;
-
-  @DeleteDateColumn({ type: "timestamp", nullable: true })
-  deletedAt?: Date;
 }

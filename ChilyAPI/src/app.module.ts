@@ -13,7 +13,6 @@ import {
   ProductsModule,
   CategoryModule,
 } from "./modules";
-import { SeedersModule } from "./modules/seeders/seeders.module";
 
 @Module({
   imports: [
@@ -37,7 +36,6 @@ import { SeedersModule } from "./modules/seeders/seeders.module";
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: "1d" },
     }),
-    SeedersModule,
   ],
   controllers: [],
   providers: [],
