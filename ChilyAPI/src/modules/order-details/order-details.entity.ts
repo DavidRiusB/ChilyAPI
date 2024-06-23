@@ -29,7 +29,7 @@ export class OrderDetail {
   @Column({ type: "int" })
   price: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: 0 })
   discount: number;
 
   @Column({

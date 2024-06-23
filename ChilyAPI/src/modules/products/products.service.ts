@@ -15,7 +15,7 @@ export class ProductsService {
     return this.productsRepository.getProductById(id);
   }
 
-  async findProductsByIds(ids: number[]): Promise<Partial<Product>[]> {
+  async findProductsByIds(ids: number[]): Promise<Product[]> {
     return await this.productsRepository.findByIds(ids);
   }
 
