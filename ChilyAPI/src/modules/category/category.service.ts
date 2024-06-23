@@ -1,29 +1,89 @@
-import { Injectable } from '@nestjs/common';
-import { CategoryRepository } from './category.repository';
-import { Category } from './category.entity';
-import { createCategoryDto } from '../dto/createCategory.dto';
+import { Injectable } from "@nestjs/common";
+import { CategoryRepository } from "./category.repository";
+import { Category } from "./category.entity";
+import { createCategoryDto } from "../dto/createCategory.dto";
+import { productsSeed } from "./product-seed";
+import { ProductsService } from "../products/products.service";
+import { DataSource } from "typeorm";
+import { Product } from "../products/products.entity";
 
 @Injectable()
 export class CategoryService {
-    constructor(private readonly categoryRepository: CategoryRepository) {}
+  constructor(
+    private readonly categoryRepository: CategoryRepository,
+    private readonly productService: ProductsService,
+    private readonly dataSource: DataSource
+  ) {}
 
-    getCategories(): Promise<Category[]>{
-        return this.categoryRepository.getCategories();
-    }
+  async onModuleInit() {
+    await this.seedProducts(productsSeed);
+  }
 
-    getCategoryById(id:number): Promise<Category>{
-        return this.categoryRepository.getCategoryById(id);
+  async seedProducts(productsSeed) {
+    const products = await this.productService.getProducts(1, 10);
+    if (products.length !== 0) {
+      console.log("DB alredy seeded");
+      return;
     }
+    return this.dataSource.transaction(async (manager) => {
+      const categoryNameSet = [
+        ...new Set(productsSeed.map((item) => item.category)),
+      ];
+      const categoryEntity = [];
 
-    createCategory(createCategory : createCategoryDto): Promise<Category>{
-        return this.categoryRepository.createCategory(createCategory);
-    }
+      console.log(categoryNameSet);
 
-    updateCategory(id : number,updateCategory : createCategoryDto): Promise<Category>{
-        return this.categoryRepository.updateCategory(id,updateCategory);
-    }
+      for (const name of categoryNameSet) {
+        const newCategory = new Category();
+        newCategory.name = String(name);
+        newCategory.description = `Las ${name} mas deliciosas!!`;
+        const savedCategory = await manager.save(newCategory);
+        categoryEntity.push(savedCategory);
+      }
 
-    deleteCategory(id:number): Promise<string>{
-        return this.categoryRepository.deleteCategory(id);
-    }
+      // Create and save products
+      for (const productData of productsSeed) {
+        const category = categoryEntity.find(
+          (category) => category.name === productData.category
+        );
+
+        const newProduct = new Product();
+        newProduct.name = productData.name;
+        newProduct.description = productData.description;
+        newProduct.price = productData.price;
+        newProduct.img = productData.img;
+        newProduct.available = productData.available;
+        newProduct.category = category;
+        await manager.save(newProduct);
+      }
+      console.log("Products seeded Succesfully.");
+    });
+  }
+
+  getCategoriesByName(name: string) {
+    throw new Error("Method not implemented.");
+  }
+
+  getCategories(): Promise<Category[]> {
+    return this.categoryRepository.getCategories();
+  }
+
+  getCategoryById(id: number): Promise<Category> {
+    return this.categoryRepository.getCategoryById(id);
+  }
+
+  createCategory(createCategory: createCategoryDto): Promise<Category> {
+    return this.categoryRepository.createCategory(createCategory);
+  }
+
+  updateCategory(
+    id: number,
+    updateCategory: createCategoryDto
+  ): Promise<Category> {
+    return this.categoryRepository.updateCategory(id, updateCategory);
+  }
+
+  deleteCategory(id: number): Promise<string> {
+    return this.categoryRepository.deleteCategory(id);
+  }
 }

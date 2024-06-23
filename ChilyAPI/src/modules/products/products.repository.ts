@@ -13,7 +13,7 @@ export class ProductsRepository {
   ) {}
   async getProducts(page: number, limit: number): Promise<Product[]> {
     let products = await this.productsRepository.find({
-      relations: ["Category"],
+      relations: ["category"],
     });
     if (!products)
       throw new NotFoundException("Error al obtener los productos");
@@ -26,7 +26,7 @@ export class ProductsRepository {
   async getProductById(id: number): Promise<Product> {
     const product = await this.productsRepository.findOne({
       where: { id: id },
-      relations: ["Category"],
+      relations: ["category"],
     });
     if (!product) throw new NotFoundException("Error al obtener el producto");
     return product;
