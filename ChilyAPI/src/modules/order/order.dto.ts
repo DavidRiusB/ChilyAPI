@@ -1,9 +1,13 @@
-import { IsArray, IsNumber } from "class-validator";
+import { IsArray, IsNumber, IsOptional } from "class-validator";
 
 export class OrderDto {
   @IsNumber()
   branchId: number;
   @IsArray()
   @IsNumber({}, { each: true })
-  productsIds: number[];
+  productIds: number[];
+
+  @IsNumber()
+  @IsOptional()
+  generalDiscount?: number;
 }

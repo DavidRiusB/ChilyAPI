@@ -1,6 +1,8 @@
 import {
   Column,
   Entity,
+  JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -44,9 +46,10 @@ export class Product {
   available: boolean;
 
   @ManyToOne(() => Category, (category) => category.products)
+  @JoinColumn()
   category: Category;
 
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.product)
+  @ManyToMany(() => OrderDetail, (orderDetail) => orderDetail.product)
   orderDetail: OrderDetail[];
 
   //@ManyToOne(() => Sucursal, (sucursal) => sucursal.products) //Agregar

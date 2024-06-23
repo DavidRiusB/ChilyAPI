@@ -68,11 +68,9 @@ export class OrderRepository {
    * @returns {Promise<Object>} - The created order.
    */
   async create(order) {
-    const { branchId } = order;
-    const newOrder = { id: this.mockId, branchId };
-    this.mockId++;
-    this.orders.push(newOrder);
-    return await newOrder;
+    const { branchId, finalPrice, discount } = order;
+
+    return order;
   }
 }
 

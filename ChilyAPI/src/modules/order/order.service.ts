@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -7,12 +8,15 @@ import { OrderRepository } from "./order.repository";
 import { OrderDto } from "./order.dto";
 import { DataSource } from "typeorm";
 import { ProductsService } from "../products/products.service";
+import { UserService } from "../user/user.service";
+import { discountCalculator } from "src/common/middlewares/discountCalculator";
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly productService: ProductsService,
+    private readonly userService: UserService,
     private dataSource: DataSource
   ) {}
 
@@ -73,34 +77,48 @@ export class OrderService {
     }
   }
 
-  /**
-   * Add a new order
-   *
-   * @param {OrderDto} order - Order .
-   * @returns {Promise<Order>} - A promise that resolves to the order if found.
-   * @throws {NotFoundException} - If the order with the given ID is not found.
-   * @throws {InternalServerErrorException} - If any other error occurs during the process.
-   */
-  async addOrder(orderData: OrderDto) {
+  async addOrder(orderData: OrderDto, userId: number) {
     try {
-      const { branchId, productsIds } = orderData;
       return await this.dataSource.transaction(async (manager) => {
-        // check products abilibility
-        const products = productsIds;
+        const { branchId, productIds, generalDiscount } = orderData;
+        const discount = generalDiscount !== undefined ? generalDiscount : 0;
+
+        // Fetch User
+        const user = await this.userService.findUserById(userId);
+
+        // Fetch products
+        const products =
+          await this.productService.findProductsByIds(productIds);
+        if (productIds.length !== products.length) {
+          throw new BadRequestException("Uno o mas productos no disponibles.");
+          // add util fucntion to show not avalible items
+        }
+        // Calculate total price
+        const totalPrice = products.reduce(
+          (sum, products) => sum + products.price,
+          0
+        );
 
         // calculate shipping cost
-        //check user id
-        // calculate discounts
-        //chect total price
-        // aply discount
-        // add delivery id
+
+        // Calculate final price after discount
+        const finalPrice = discountCalculator(discount, totalPrice);
+
         // check payment ?
-        //
-        const orderData = { branchId };
-        const newOrder = await this.orderRepository.create(orderData);
+        const order = {
+          branchId,
+          finalPrice,
+          discount,
+        };
+
+        const newOrder = await this.orderRepository.create(order);
         /* await manager.save(Order, newOrder) */
         return await newOrder;
       });
-    } catch (error) {}
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+    }
   }
 }
