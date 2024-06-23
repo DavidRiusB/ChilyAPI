@@ -106,17 +106,11 @@ export class ProductsRepository {
     );
   }
 
-  async findByIds(ids: number[]) {
+  async findByIds(ids: number[]): Promise<Product[]> {
     const products = await this.productsRepository
       .createQueryBuilder("product")
-      .select([
-        "product.id",
-        "product.name",
-        "product.price",
-        "product.image_url",
-      ])
       .where("product.id IN (:...ids)", { ids })
-      .andWhere("product.available === true")
+      .andWhere("product.available = true")
       .getMany();
 
     return products;

@@ -10,6 +10,9 @@ import { DataSource } from "typeorm";
 import { ProductsService } from "../products/products.service";
 import { UserService } from "../user/user.service";
 import { discountCalculator } from "src/common/middlewares/discountCalculator";
+import { Order } from "./order.entity";
+import { OrderDetailsService } from "../order-details/order-details.service";
+import { OrderDetail } from "../order-details/order-details.entity";
 
 @Injectable()
 export class OrderService {
@@ -17,6 +20,7 @@ export class OrderService {
     private readonly orderRepository: OrderRepository,
     private readonly productService: ProductsService,
     private readonly userService: UserService,
+    private readonly orderDetailService: OrderDetailsService,
     private dataSource: DataSource
   ) {}
 
@@ -80,16 +84,22 @@ export class OrderService {
   async addOrder(orderData: OrderDto, userId: number) {
     try {
       return await this.dataSource.transaction(async (manager) => {
-        const { branchId, productIds, generalDiscount } = orderData;
+        const { branchId, productsInOrder, generalDiscount } = orderData;
+
         const discount = generalDiscount !== undefined ? generalDiscount : 0;
 
         // Fetch User
         const user = await this.userService.findUserById(userId);
 
+        //Get ids from dto
+        const productIds = productsInOrder.map((product) => product.productId);
+
         // Fetch products
         const products =
           await this.productService.findProductsByIds(productIds);
-        if (productIds.length !== products.length) {
+        console.log(products);
+
+        if (productsInOrder.length !== products.length) {
           throw new BadRequestException("Uno o mas productos no disponibles.");
           // add util fucntion to show not avalible items
         }
@@ -100,20 +110,33 @@ export class OrderService {
         );
 
         // calculate shipping cost
+        //For now hardcoded
+        const shipping = 10000;
 
         // Calculate final price after discount
-        const finalPrice = discountCalculator(discount, totalPrice);
+        const finalPrice = discountCalculator(discount, totalPrice) + shipping;
 
         // check payment ?
         const order = {
           branchId,
           finalPrice,
           discount,
+          user,
+          shipping,
         };
 
         const newOrder = await this.orderRepository.create(order);
-        /* await manager.save(Order, newOrder) */
-        return await newOrder;
+        await manager.save(Order, newOrder);
+
+        // Save OrderDetail entities in bulk
+        const orderDetails = await this.orderDetailService.createOrderDetail(
+          products,
+          newOrder,
+          productsInOrder
+        );
+        await manager.save(OrderDetail, orderDetails);
+
+        return { newOrder, orderDetails };
       });
     } catch (error) {
       if (error instanceof NotFoundException) {
