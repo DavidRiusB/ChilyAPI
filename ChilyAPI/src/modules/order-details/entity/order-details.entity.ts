@@ -5,8 +5,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Order } from "../order/order.entity";
-import { Product } from "../products/products.entity";
+import { Order } from "../../order/entity/order.entity";
+import { Product } from "../../products/products.entity";
 import { OrderDetailStatus } from "src/common/enums";
 
 @Entity({ name: "order_details" })

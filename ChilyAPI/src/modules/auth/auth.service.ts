@@ -5,18 +5,18 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from "@nestjs/common";
-import { CredentialsDto } from "./auth.dto";
 import { RegisterUserDTO } from "./dto/register.dto";
 import { AuthRepository } from "./auth.repository";
 import { UserService } from "../user/user.service";
 import { DataSource, EntityManager } from "typeorm";
-import { User } from "../user/user.entity";
+import { User } from "../user/entity/user.entity";
 import { LogoutDTO } from "./dto/logout.dto";
 import { SessionsService } from "../sessions/sessions.service";
 import { JwtService } from "../jwt/jwt.service";
 import { usersSeed } from "./users-seed";
 import { hashPassword } from "src/utils/hashing/bcrypt.utils";
 import { Credential } from "./auth.entity";
+import { UserLoginDTO } from "./dto/login.dto";
 
 @Injectable()
 export class AuthService {
@@ -65,7 +65,7 @@ export class AuthService {
   }
 
   async singIn(
-    credentials: CredentialsDto
+    credentials: UserLoginDTO
   ): Promise<{ access_token: string; user: User }> {
     try {
       const credentialId = await this.authRepository.signIn(credentials);

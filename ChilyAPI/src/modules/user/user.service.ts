@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { UserRepository } from "./user.repositiry";
-import { User } from "./user.entity";
+import { User } from "./entity/user.entity";
 import { RegisterUserDTO } from "../auth/dto/register.dto";
 import { Credential } from "../auth/auth.entity";
 import { UserUpdateDto } from "./user-update.dto";

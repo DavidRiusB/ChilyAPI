@@ -8,8 +8,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Credential } from "../auth/auth.entity";
-import { Order } from "../order/order.entity";
+import { Credential } from "../../auth/auth.entity";
+import { Order } from "../../order/entity/order.entity";
 
 @Entity({ name: "users" })
 export class User {

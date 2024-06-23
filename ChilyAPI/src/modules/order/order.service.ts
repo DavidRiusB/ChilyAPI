@@ -5,14 +5,14 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { OrderRepository } from "./order.repository";
-import { OrderDto } from "./order.dto";
+import { OrderDto } from "./dto/order.dto";
 import { DataSource } from "typeorm";
 import { ProductsService } from "../products/products.service";
 import { UserService } from "../user/user.service";
 import { discountCalculator } from "src/common/middlewares/discountCalculator";
-import { Order } from "./order.entity";
+import { Order } from "./entity/order.entity";
 import { OrderDetailsService } from "../order-details/order-details.service";
-import { OrderDetail } from "../order-details/order-details.entity";
+import { OrderDetail } from "../order-details/entity/order-details.entity";
 
 @Injectable()
 export class OrderService {

@@ -5,8 +5,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { User } from "../user/user.entity";
-import { OrderDetail } from "../order-details/order-details.entity";
+import { User } from "../../user/entity/user.entity";
+import { OrderDetail } from "../../order-details/entity/order-details.entity";
 
 @Entity({ name: "orders" })
 export class Order {

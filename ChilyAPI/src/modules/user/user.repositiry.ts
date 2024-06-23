@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "./user.entity";
+import { User } from "./entity/user.entity";
 import { Repository } from "typeorm";
 import { RegisterUserDTO } from "../auth/dto/register.dto";
 import { Role } from "src/common/enums/roles.enum";

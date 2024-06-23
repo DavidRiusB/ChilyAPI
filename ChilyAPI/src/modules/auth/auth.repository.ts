@@ -6,12 +6,12 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { CredentialsDto } from "./auth.dto";
 import {
   hashPassword,
   validateUserPasword,
 } from "src/utils/hashing/bcrypt.utils";
 import { Credential } from "./auth.entity";
+import { UserLoginDTO } from "./dto/login.dto";
 
 @Injectable()
 export class AuthRepository {
@@ -20,7 +20,7 @@ export class AuthRepository {
     private readonly credentialRepository: Repository<Credential>
   ) {}
 
-  async signIn(credentials: CredentialsDto) {
+  async signIn(credentials: UserLoginDTO) {
     try {
       const { email, password } = credentials;
 

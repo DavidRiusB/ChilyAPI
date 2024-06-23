@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { CategoryRepository } from "./category.repository";
 import { Category } from "./category.entity";
-import { createCategoryDto } from "../dto/createCategory.dto";
-import { productsSeed } from "./product-seed";
+import { createCategoryDto } from "./dto/createCategory.dto";
 import { ProductsService } from "../products/products.service";
 import { DataSource } from "typeorm";
 import { Product } from "../products/products.entity";
@@ -14,12 +13,7 @@ export class CategoryService {
     private readonly productService: ProductsService,
     private readonly dataSource: DataSource
   ) {}
-
-  async onModuleInit() {
-    await this.seedProducts(productsSeed);
-  }
-
-  async seedProducts(productsSeed) {
+  /*async seedProducts(productsSeed) {
     const products = await this.productService.getProducts(1, 10);
     if (products.length !== 0) {
       console.log("DB alredy seeded");
@@ -58,7 +52,7 @@ export class CategoryService {
       }
       console.log("Products seeded Succesfully.");
     });
-  }
+  }*/
 
   getCategoriesByName(name: string) {
     throw new Error("Method not implemented.");
