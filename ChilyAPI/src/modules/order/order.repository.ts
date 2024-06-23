@@ -74,10 +74,10 @@ export class OrderRepository {
    * @returns {Promise<Object>} - The created order.
    */
   async create(order) {
-    const { branchId, finalPrice, discount, user, shipping } = order;
+    const { branchId, discount, user, shipping } = order;
 
     const newOrder = new Order();
-    newOrder.total = finalPrice;
+
     newOrder.generalDiscount = discount;
     newOrder.shipping = shipping;
     newOrder.user = user;

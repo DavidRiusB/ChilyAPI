@@ -14,7 +14,7 @@ const config = {
   password: process.env.DB_PASSWORD,
   entities: ["dist/**/*.entity{.ts,.js}"],
   migrations: ["dist/migrations/*{.ts,.js}"],
-  logging: false,
+  logging: true,
   synchronize: true,
   //dropSchema: true,
 };

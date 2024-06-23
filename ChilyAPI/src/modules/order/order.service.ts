@@ -85,63 +85,79 @@ export class OrderService {
     try {
       return await this.dataSource.transaction(async (manager) => {
         const { branchId, productsInOrder, generalDiscount } = orderData;
-
         const discount = generalDiscount !== undefined ? generalDiscount : 0;
 
         // Fetch User
         const user = await this.userService.findUserById(userId);
+        console.log("User fetched successfully:", user);
 
-        //Get ids from dto
+        // Get ids from dto
         const productIds = productsInOrder.map((product) => product.productId);
 
         // Fetch products
         const products =
           await this.productService.findProductsByIds(productIds);
-        console.log(products);
+        console.log("Products fetched successfully:", products);
 
         if (productsInOrder.length !== products.length) {
-          throw new BadRequestException("Uno o mas productos no disponibles.");
-          // add util fucntion to show not avalible items
+          throw new BadRequestException("Uno o más productos no disponibles.");
         }
-        // Calculate total price
-        const totalPrice = products.reduce(
-          (sum, products) => sum + products.price,
-          0
-        );
 
-        // calculate shipping cost
-        //For now hardcoded
+        // Calculate shipping cost (hardcoded for now)
         const shipping = 10000;
 
-        // Calculate final price after discount
-        const finalPrice = discountCalculator(discount, totalPrice) + shipping;
-
-        // check payment ?
         const order = {
           branchId,
-          finalPrice,
           discount,
           user,
           shipping,
         };
 
+        // Create Order
         const newOrder = await this.orderRepository.create(order);
-        await manager.save(Order, newOrder);
+        console.log("Order created successfully:", newOrder);
 
-        // Save OrderDetail entities in bulk
+        await manager.save(newOrder);
+
+        // Create OrderDetail entities in bulk
         const orderDetails = await this.orderDetailService.createOrderDetail(
           products,
           newOrder,
           productsInOrder
         );
+        console.log("Order details created successfully:", orderDetails);
+
+        // Calculate total price of order details
+        const totalPrice = orderDetails.reduce(
+          (sum, detail) => sum + detail.total,
+          0
+        );
+
+        // Calculate final price with general discount and shipping
+        const finalPrice = discountCalculator(discount, totalPrice) + shipping;
+        console.log("Total price:", totalPrice);
+        console.log("Final price:", finalPrice);
+
+        // Update the order with calculated prices
+        newOrder.price = totalPrice;
+        newOrder.total = finalPrice;
+
+        console.log("New order before save:", newOrder);
+
+        // Save order details and order
         await manager.save(OrderDetail, orderDetails);
+        console.log("Order details saved successfully");
+        await manager.save(Order, newOrder);
+        console.log("Order saved successfully");
 
         return { newOrder, orderDetails };
       });
     } catch (error) {
+      console.error("Error in transaction:", error);
       if (error instanceof NotFoundException) {
         throw error;
       }
+      throw new InternalServerErrorException("Unexpected error occurred");
     }
   }
 }
