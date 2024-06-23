@@ -5,8 +5,8 @@ import {
   IsString,
   IsUrl,
   MaxLength,
-} from 'class-validator';
-import { DocumentationCreateProductDto } from 'src/docs';
+} from "class-validator";
+import { DocumentationCreateProductDto } from "src/docs";
 
 export class createProductDto {
   @IsNotEmpty()
@@ -31,18 +31,18 @@ export class createProductDto {
   @IsString()
   @IsUrl()
   @DocumentationCreateProductDto.image_url()
-  image_url: string;
+  img: string;
 
   @IsNotEmpty()
   @IsBoolean()
   @DocumentationCreateProductDto.available()
-  avalible: boolean;
+  available: boolean;
 
   @IsNotEmpty()
   @DocumentationCreateProductDto.category()
   category: string;
-    
-    /*
+
+  /*
 =======
   /*
 >>>>>>> Stashed changes
