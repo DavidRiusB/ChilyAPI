@@ -29,7 +29,7 @@ export class AuthRepository {
         .addSelect("credential.password")
         .where("credential.email = :email", { email })
         .getOne();
-
+      console.log("auth.repo credential", credential);
       if (!credential) {
         throw new UnauthorizedException(
           "Correo Electronico o Contraseña incorrectos"
@@ -50,6 +50,7 @@ export class AuthRepository {
           "Correo Electronico o Contraseña incorrectos"
         );
       }
+      console.log("isvalidpass:", isValidPassword);
       return credential.id;
     } catch (error) {
       throw error;
