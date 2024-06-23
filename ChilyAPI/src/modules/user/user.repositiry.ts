@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -46,16 +45,8 @@ export class UserRepository {
 
   async create(newUserData: RegisterUserDTO, credential: Credential) {
     try {
-      const {
-        email,
-        name,
-        address,
-        phone,
-        role = Role.User,
-        NIN,
-      } = newUserData;
+      const { email, name, address, phone, role = Role.User } = newUserData;
       const newUser = new User();
-      newUser.NIN = NIN;
       newUser.email = email;
       newUser.name = name;
       newUser.address = address;
@@ -75,41 +66,5 @@ export class UserRepository {
         "Error inesperado al registrar al usuario, por favor intentelo de nuevo"
       );
     }
-  }
-
-  async findAll(pagination: { page: number; limit: number }) {
-    const { page, limit } = pagination;
-    const offset = (page - 1) * limit;
-
-    const [data, total] = await this.userRepository.findAndCount({
-      skip: offset,
-      take: limit,
-    });
-    return { data, total };
-  }
-
-  async findById(id: number) {
-    const user = await this.userRepository.findOne({ where: { id } });
-    // missing relations
-    return user;
-  }
-
-  async update(user: User): Promise<User> {
-    try {
-      const updatedUser = await this.userRepository.save(user);
-      return updatedUser;
-    } catch (error) {
-      if (error.code === "23505") {
-        throw new BadRequestException("Numero de telefono ya registrado");
-      }
-      throw new InternalServerErrorException(
-        "Error inesperado del servidor al modificar datos del usuario"
-      );
-    }
-  }
-
-  async delete(id: number) {
-    const result = await this.userRepository.softDelete(id);
-    return result;
   }
 }

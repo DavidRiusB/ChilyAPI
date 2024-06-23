@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -7,20 +6,11 @@ import {
 import { OrderRepository } from "./order.repository";
 import { OrderDto } from "./order.dto";
 import { DataSource } from "typeorm";
-import { ProductsService } from "../products/products.service";
-import { UserService } from "../user/user.service";
-import { discountCalculator } from "src/common/middlewares/discountCalculator";
-import { Order } from "./order.entity";
-import { OrderDetailsService } from "../order-details/order-details.service";
-import { OrderDetail } from "../order-details/order-details.entity";
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
-    private readonly productService: ProductsService,
-    private readonly userService: UserService,
-    private readonly orderDetailService: OrderDetailsService,
     private dataSource: DataSource
   ) {}
 
@@ -81,67 +71,32 @@ export class OrderService {
     }
   }
 
-  async addOrder(orderData: OrderDto, userId: number) {
+  /**
+   * Add a new order
+   *
+   * @param {OrderDto} order - Order .
+   * @returns {Promise<Order>} - A promise that resolves to the order if found.
+   * @throws {NotFoundException} - If the order with the given ID is not found.
+   * @throws {InternalServerErrorException} - If any other error occurs during the process.
+   */
+  async addOrder(order: OrderDto) {
     try {
       return await this.dataSource.transaction(async (manager) => {
-        const { branchId, productsInOrder, generalDiscount } = orderData;
-
-        const discount = generalDiscount !== undefined ? generalDiscount : 0;
-
-        // Fetch User
-        const user = await this.userService.findUserById(userId);
-
-        //Get ids from dto
-        const productIds = productsInOrder.map((product) => product.productId);
-
-        // Fetch products
-        const products =
-          await this.productService.findProductsByIds(productIds);
-        console.log(products);
-
-        if (productsInOrder.length !== products.length) {
-          throw new BadRequestException("Uno o mas productos no disponibles.");
-          // add util fucntion to show not avalible items
-        }
-        // Calculate total price
-        const totalPrice = products.reduce(
-          (sum, products) => sum + products.price,
-          0
-        );
-
+        const { branchId } = order;
         // calculate shipping cost
-        //For now hardcoded
-        const shipping = 10000;
-
-        // Calculate final price after discount
-        const finalPrice = discountCalculator(discount, totalPrice) + shipping;
-
+        //check user id
+        // calculate discounts
+        // check products abilibility
+        //chect total price
+        // aply discount
+        // add delivery id
         // check payment ?
-        const order = {
-          branchId,
-          finalPrice,
-          discount,
-          user,
-          shipping,
-        };
-
-        const newOrder = await this.orderRepository.create(order);
-        await manager.save(Order, newOrder);
-
-        // Save OrderDetail entities in bulk
-        const orderDetails = await this.orderDetailService.createOrderDetail(
-          products,
-          newOrder,
-          productsInOrder
-        );
-        await manager.save(OrderDetail, orderDetails);
-
-        return { newOrder, orderDetails };
+        //
+        const orderData = { branchId };
+        const newOrder = await this.orderRepository.create(orderData);
+        /* await manager.save(Order, newOrder) */
+        return await newOrder;
       });
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-    }
+    } catch (error) {}
   }
 }

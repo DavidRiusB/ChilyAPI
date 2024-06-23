@@ -58,17 +58,23 @@ export class AuthRepository {
 
   async createCredentials(
     email: string,
-    password: string,
-    NIN: string,
-    phone: string
+    password: string
   ): Promise<Credential> {
-    const hashedPassword = await hashPassword(password);
-    const newCredential = new Credential();
-    newCredential.email = email;
-    newCredential.password = hashedPassword;
-    newCredential.NIN = NIN;
-    newCredential.phone = phone;
-    await this.credentialRepository.create(newCredential);
-    return newCredential;
+    try {
+      const hashedPassword = await hashPassword(password);
+      const newCredential = new Credential();
+      newCredential.email = email;
+      newCredential.password = hashedPassword;
+      await this.credentialRepository.create(newCredential);
+      return newCredential;
+    } catch (error) {
+      if (error.code === "23505") {
+        const detail = error.detail;
+        throw new ConflictException("Datos de registro invalido", detail);
+      }
+      throw new InternalServerErrorException(
+        "Error inesperado al registrar al usuario, por favor intentelo de nuevo"
+      );
+    }
   }
 }

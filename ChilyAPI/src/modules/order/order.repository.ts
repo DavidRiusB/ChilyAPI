@@ -1,15 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { OrderDto } from "./order.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Order } from "./order.entity";
 
 @Injectable()
 export class OrderRepository {
-  constructor(
-    @InjectRepository(Order)
-    private readonly orderRepository: Repository<Order>
-  ) {}
+  constructor() {}
   // Mock data (replace with actual database or service calls)
   private orders = [
     { id: 1, branchId: 1 /* other properties */ },
@@ -28,7 +22,7 @@ export class OrderRepository {
    * @param {number} pagination.limit - Number of items per page.
    * @returns {Promise<Order[]>} - A promise that resolves to an array of orders.
    */
-  async findAll(pagination: { page: number; limit: number }) {
+  async findAll(pagination: { page: number; limit: number }): Promise<Order[]> {
     const { page, limit } = pagination;
     const offset = (page - 1) * limit;
     return await this.orders.slice(offset, offset + limit);
@@ -46,7 +40,7 @@ export class OrderRepository {
   async findAllOrderByBranchId(
     id: number,
     pagination: { page: number; limit: number }
-  ) {
+  ): Promise<Order[]> {
     const { page, limit } = pagination;
     const offset = (page - 1) * limit;
 
@@ -73,15 +67,17 @@ export class OrderRepository {
    * @param {OrderDto} order - The order to create.
    * @returns {Promise<Object>} - The created order.
    */
-  async create(order) {
-    const { branchId, finalPrice, discount, user, shipping } = order;
-
-    const newOrder = new Order();
-    newOrder.total = finalPrice;
-    newOrder.generalDiscount = discount;
-    newOrder.shipping = shipping;
-    newOrder.user = user;
-    newOrder.date = new Date();
-    return await this.orderRepository.create(newOrder);
+  async create(order: OrderDto) {
+    const { branchId } = order;
+    const newOrder = { id: this.mockId, branchId };
+    this.mockId++;
+    this.orders.push(newOrder);
+    return await newOrder;
   }
+}
+
+interface Order {
+  id: number;
+  branchId: number;
+  // Define other properties as needed
 }
