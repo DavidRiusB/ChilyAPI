@@ -85,7 +85,7 @@ export class AuthService {
       if (error instanceof UnauthorizedException) {
         throw error;
       }
-      throw new InternalServerErrorException(
+      throw new InternalServerErrorException(//
         "Error al durante el login, intentelo nuevamente por favor.",
         error
       );

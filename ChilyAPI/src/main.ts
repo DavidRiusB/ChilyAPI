@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentationConfig } from './docs/';
 import { ValidationPipe } from '@nestjs/common';
-import { config as dotenvConfig } from 'dotenv';
+import { config as dotenvConfig } from 'dotenv';//
 dotenvConfig({
   path: ".env.development",
 })

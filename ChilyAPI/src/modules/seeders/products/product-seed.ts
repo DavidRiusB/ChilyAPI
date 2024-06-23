@@ -12,7 +12,7 @@ export const productsSeed = [
     description: "El pan más delicioso de Demacia",
     price: 12000,
     img: "https://example.com/demacian_bread.jpg",
-    available: true,
+    available: true,//
     category: "Bakery",
   },
   {

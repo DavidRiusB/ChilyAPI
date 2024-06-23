@@ -6,7 +6,7 @@ import {
   IsUrl,
   MaxLength,
 } from "class-validator";
-import { DocumentationCreateProductDto } from "src/docs";
+import { DocumentationCreateProductDto } from "src/docs";//
 
 export class createProductDto {
   @IsNotEmpty()

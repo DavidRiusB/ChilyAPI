@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { CategoryRepository } from "./category.repository";
-import { Category } from "./category.entity";
+import { Category } from "./category.entity";//
 import { createCategoryDto } from "./dto/createCategory.dto";
 import { ProductsService } from "../products/products.service";
 import { DataSource } from "typeorm";
-import { Product } from "../products/products.entity";
+import { Product } from "../products/products.entity";//
 
 @Injectable()
 export class CategoryService {

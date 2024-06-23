@@ -111,5 +111,5 @@ export class UserRepository {
   async delete(id: number) {
     const result = await this.userRepository.softDelete(id);
     return result;
-  }
+  }//
 }

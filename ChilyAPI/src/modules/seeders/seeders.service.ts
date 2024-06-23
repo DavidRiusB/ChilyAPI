@@ -5,7 +5,7 @@ dotenvConfig({
 })
 import { productsSeed } from './products/product-seed';
 import { DataSource } from 'typeorm';
-import { Category } from '../category/category.entity';
+import { Category } from '../category/category.entity';//
 import { Product } from '../products/products.entity';
 import { ProductsService } from '../products/products.service';
 @Injectable()

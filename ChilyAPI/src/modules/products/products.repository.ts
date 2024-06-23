@@ -27,7 +27,7 @@ export class ProductsRepository {
     const product = await this.productsRepository.findOne({
       where: { id: id },
       relations: ["category"],
-    });
+    });//
     if (!product) throw new NotFoundException("Error al obtener el producto");
     return product;
   }

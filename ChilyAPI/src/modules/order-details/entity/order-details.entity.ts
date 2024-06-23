@@ -4,7 +4,7 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-} from "typeorm";
+} from "typeorm";//
 import { Order } from "../../order/entity/order.entity";
 import { Product } from "../../products/products.entity";
 import { OrderDetailStatus } from "src/common/enums";

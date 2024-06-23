@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { OrderService } from "./order.service";
 import { OrderDto } from "./dto/order.dto";
-import { DocumentationApiTagsModule } from "src/docs";
+import { DocumentationApiTagsModule } from "src/docs";//
 
 @Controller("orders")
 @DocumentationApiTagsModule.clasification("orders")

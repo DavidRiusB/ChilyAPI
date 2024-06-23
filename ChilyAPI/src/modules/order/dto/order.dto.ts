@@ -5,7 +5,7 @@ export class ProductsInOrder {
   @IsNumber()
   productId: number;
 
-  @IsNumber()
+  @IsNumber()//
   quantity: number;
 
   @IsNumber()

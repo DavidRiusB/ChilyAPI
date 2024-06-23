@@ -15,7 +15,7 @@ import {
 import { createProductDto } from "./createProduct.dto";
 import { DocumentationApiTagsModule } from "src/docs";
 import { DocumentationAddProduct, DocumentationGetProducts } from "src/docs";
-import { QueryInterceptor } from "src/common/interceptors/query.interceptor";
+import { QueryInterceptor } from "src/common/interceptors/query.interceptor";//
 
 @Controller("products")
 @DocumentationApiTagsModule.clasification("products")

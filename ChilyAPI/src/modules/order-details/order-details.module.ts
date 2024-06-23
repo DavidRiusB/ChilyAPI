@@ -2,7 +2,7 @@ import { Module } from "@nestjs/common";
 import { OrderDetailsService } from "./order-details.service";
 import { OrderDetailsController } from "./order-details.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { OrderDetail } from "./entity/order-details.entity";
+import { OrderDetail } from "./entity/order-details.entity";//
 import { OrderDetailRepository } from "./order-detail.repository";
 
 @Module({
