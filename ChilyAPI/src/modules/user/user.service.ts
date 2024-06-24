@@ -7,8 +7,10 @@ import {
 import { UserRepository } from "./user.repositiry";
 import { User } from "./entity/user.entity";
 import { RegisterUserDTO } from "../auth/dto/register.dto";
-import { Credential } from "../auth/auth.entity";
+import { Credential } from "../auth/entities/auth.entity";
 import { UserUpdateDto } from "./user-update.dto";
+import { UserDataGoogle } from "../auth/types";
+import { UserLoginGoogleDto } from "../auth/dto/loginGoogle.dto";
 
 @Injectable()
 export class UserService {
@@ -29,8 +31,9 @@ export class UserService {
     }
   }
 
-  async createUser(newUserData: RegisterUserDTO, credential: Credential) {
+  async createUser(newUserData: RegisterUserDTO, credential?: Credential) {
     try {
+      
       return await this.userRepository.create(newUserData, credential);
     } catch (error) {
       if (error instanceof ConflictException) {
@@ -41,6 +44,11 @@ export class UserService {
         error.detail
       );
     }
+  }
+  async createUserGoogle(newUserData: UserLoginGoogleDto): Promise<User>{
+    const user = await this.userRepository.findByEmail(newUserData.email);
+    if(user) return user
+    return await this.userRepository.createGoogle(newUserData);
   }
 
   async findAll(pagination: { page: number; limit: number }) {
@@ -109,6 +117,23 @@ export class UserService {
       throw new InternalServerErrorException(
         `Error inesperado del servidor al intentar borrar usuario ${id}`,
         error.message
+      );
+    }
+  }
+  async findByEmail(email: string): Promise<User> {
+    try {
+      const user = await this.userRepository.findByEmail(email);
+      console.log(user)
+      if (!user) {
+        throw new NotFoundException(`Usuario con email ${email}, no encontrado`);
+      }
+      return user;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        "Error inesperado del servidor al buscar usuario"
       );
     }
   }

@@ -23,25 +23,20 @@ export class CategoryRepository{
     }
 
     async createCategory(createCategory: createCategoryDto): Promise<Category>{
-        const category = new Category();
-        category.name = createCategory.name.toUpperCase();
-        category.description = createCategory.description;
-        const savedCategory = await this.categoryRepository.save(category);
-        if(!savedCategory) throw new Error("Error al crear la categoria");
-        return savedCategory;
+        const category = await this.categoryRepository.save(createCategory);
+        if(!category) throw new Error("Error al crear la categoria");
+        return category;
     }
 
     async updateCategory(id: number, updateCategory: createCategoryDto): Promise<Category>{
-        const category = new Category();
-        category.name = updateCategory.name.toUpperCase();
-        category.description = updateCategory.description;
-        const updatedCategory = await this.categoryRepository.update(id, category);
+        const updatedCategory = await this.categoryRepository.update(id, updateCategory);
         if(!updatedCategory) throw new Error("Error al actualizar la categoria con ID: "+id);
         return this.categoryRepository.findOne({where:{id:id}});
     }
 
     async deleteCategory(id: number): Promise<string>{
-        const category = await this.categoryRepository.softDelete(id);
-        return category.affected > 0? "Categoría eliminada" : "Categoría no encontrada"
+        const category = await this.getCategoryById(id);
+        await this.categoryRepository.delete({id:id});
+        return "Categoría: "+category.name+" con ID: "+id+" ha sido eliminada correctamente";
     }
 }

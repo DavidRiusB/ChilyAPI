@@ -10,15 +10,13 @@ import {
 import { JwtService } from '../jwt/jwt.service';
 import { LocalStrategy } from './local.strategy';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './guards/local-auth.guards';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { UserLoginDTO } from './dto/login.dto';
 import { RegisterUserDTO } from './dto/register.dto';
 import { DocumentationApiTagsModule } from 'src/docs';
 import { DocumentationLogin, DocumentationRegister } from 'src/docs';
 import { LogoutDTO } from './dto/logout.dto';
-import { GoogleAuthGuard } from './guards/google.guard';
-import { Request, Response } from 'express';
+import { UserLoginGoogleDto } from './dto/loginGoogle.dto';
 @Controller('auth')
 @DocumentationApiTagsModule.clasification('auth')
 export class AuthController {
@@ -47,37 +45,9 @@ export class AuthController {
     return await this.authService.logout(user);
   }
 
-  // OAuth with google
-  @Get('google/login')
-  @UseGuards(GoogleAuthGuard)
-  loginGoogle() {
-    return { msg: 'Autentifiación de Google' };
-  }
-
-  @Get('google/redirect')
-  @UseGuards(GoogleAuthGuard)
-  redirectGoogle() {
-    return { msg: 'Sesión activa' };
-  }
-
-  @Get('session/status')
-  user(@Req() request: Request) {
-    console.log(request.user);
-    if (request.user) {
-      return { msg: 'Logeado' };
-    }
-    return { msg: 'Sesión no iniciada' };
-  }
-
-  @Get('google/logout')
-  googleLogout(@Req() request: Request, @Res() response: Response) {
-    request.logout((err: any) => {
-      if (err) {
-        return response
-          .status(500)
-          .json({ msg: 'Error al cerrar sesión', error: err });
-      }
-      response.json({ msg: 'Sesión cerrada' });
-    });
+  @Post('google/login')
+  loginGoogle(@Body() data: UserLoginGoogleDto) {
+    console.log(data)
+    return this.authService.googleLogin(data)
   }
 }

@@ -15,9 +15,10 @@ import { SessionsService } from '../sessions/sessions.service';
 import { JwtService } from '../jwt/jwt.service';
 import { usersSeed } from './users-seed';
 import { hashPassword } from 'src/utils/hashing/bcrypt.utils';
-import { Credential } from './auth.entity';
+import { Credential } from './entities/auth.entity';
 import { UserLoginDTO } from './dto/login.dto';
 import { UserDataGoogle } from './types';
+import { UserLoginGoogleDto } from './dto/loginGoogle.dto';
 
 @Injectable()
 export class AuthService {
@@ -77,9 +78,13 @@ export class AuthService {
       }
       const user = await this.userService.findByCredentialsId(credentialId);
       console.log("auth.serv fetch user:", user);
-      const access_token = this.jwtService.generateToken(user);
-      this.sessionService.createSession(access_token, false); // Creamos la sesión
-      /* console.log("token", access_token); */
+      const access_token = this.jwtService.generateToken({
+        id: user.id,
+        email: user.email
+      });
+      const date = new Date();
+      const expiresAt = new Date(date.getTime() + 1 * 60 * 1000); // Le consedemos que expire dentro de una hora y se borre
+      this.sessionService.createSession(access_token, expiresAt, false); // Creamos la sesión
       return {
         access_token: access_token,
         user: user,
@@ -132,8 +137,20 @@ export class AuthService {
     return await this.sessionService.blacklistSession(user.access_token);
   }
 
-  // OAuth with google
-  async validateUser(details: UserDataGoogle) {
-   return await this.authRepository.validateUser(details)
+
+  async googleLogin(data: UserLoginGoogleDto) {
+    try {
+      const user = await this.userService.createUserGoogle(data);
+        const access_token = this.jwtService.generateToken({
+        id: user.id,
+        email: user.email
+        })
+     return {
+      access_token: access_token,
+      user: user
+     };
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }

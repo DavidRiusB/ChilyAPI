@@ -10,7 +10,7 @@ export class ProductsRepository {
   constructor(
     @InjectRepository(Product) private productsRepository: Repository<Product>,
     @InjectRepository(Category) private categoryRepository: Repository<Category>
-  ) { }
+  ) {}
   async getProducts(page: number, limit: number): Promise<Product[]> {
     let products = await this.productsRepository.find({
       relations: ["category"],
@@ -34,9 +34,7 @@ export class ProductsRepository {
 
   async createProduct(createProduct: createProductDto): Promise<Product> {
     try {
-      createProduct.category = createProduct.category.toUpperCase();
-
-      const product = new Product();
+      const createdProduct = new Product();
 
       const categories = await this.categoryRepository.findOne({
         where: { name: createProduct.category },
@@ -44,21 +42,21 @@ export class ProductsRepository {
 
       if (!categories) throw new NotFoundException("La categoria no existe");
 
-      product.name = createProduct.name;
+      createdProduct.name = createProduct.name;
 
-      product.description = createProduct.description;
+      createdProduct.description = createProduct.description;
 
-      product.price = createProduct.price;
+      createdProduct.price = createProduct.price;
 
-      product.available = createProduct.available;
+      createdProduct.available = createProduct.available;
 
-      product.img = createProduct.img;
+      createdProduct.img = createProduct.img;
 
-      product.category = categories;
+      createdProduct.category = categories;
 
-      const createdProduct = this.productsRepository.save(product);
+      const product = this.productsRepository.save(createdProduct);
 
-      return createdProduct;
+      return product;
     } catch (error) {
       throw error;
     }
@@ -69,27 +67,26 @@ export class ProductsRepository {
     updateProduct: createProductDto
   ): Promise<Product> {
     try {
-      const product = new Product();
-      updateProduct.category = updateProduct.category.toUpperCase();
-      const category = await this.categoryRepository.findOne({
+      const updatedProduct = new Product();
+
+      const categories = await this.categoryRepository.findOne({
         where: { name: updateProduct.category },
       });
 
-      if (!category) throw new NotFoundException("La categoria no existe");
+      if (!categories) throw new NotFoundException("La categoria no existe");
 
-      product.name = updateProduct.name;
+      updatedProduct.name = updateProduct.name;
 
-      product.description = updateProduct.description;
+      updatedProduct.description = updateProduct.description;
 
-      product.price = updateProduct.price;
+      updatedProduct.price = updateProduct.price;
 
-      product.available = updateProduct.available;
+      updatedProduct.available = updateProduct.available;
 
-      product.img = updateProduct.img;
+      updatedProduct.category = categories;
 
-      product.category = category;
+      await this.productsRepository.update(id, updatedProduct);
 
-      const updatedProduct = await this.productsRepository.update(id,product)
       return await this.getProductById(id);
     } catch (error) {
       throw error;
@@ -97,8 +94,16 @@ export class ProductsRepository {
   }
 
   async deleteProduct(id: number): Promise<string> {
-    const product = await this.productsRepository.softDelete(id);
-    return product.affected > 0? "Producto eliminado" : "Producto no encontrado";
+    /* IMPLEMENTAR METODO SOFTDELETE */
+    const product = await this.getProductById(id);
+    await this.productsRepository.delete(id);
+    return (
+      "Producto: " +
+      product.name +
+      " con id: " +
+      id +
+      " ha sido eliminado exitosamente"
+    );
   }
 
   async findByIds(ids: number[]): Promise<Product[]> {
@@ -109,45 +114,5 @@ export class ProductsRepository {
       .getMany();
 
     return products;
-  }
-
-  async getProductsByCategory(category: string): Promise<Product[]> {
-
-    category = category.toUpperCase();
-
-    const categoryExists = await this.categoryRepository.findOne({
-      where: { name: category },
-    });
-
-    if (!categoryExists) throw new NotFoundException("La categoria no existe");
-
-    const products = await this.productsRepository.find({
-      where: { category: categoryExists },
-      relations: ["category"],
-    });
-
-    if (!products) throw new NotFoundException("Error al obtener los productos por categoria");
-
-    return products;
-  }
-
-  async disableProduct(id: number): Promise<Product> {
-
-    const product = await this.getProductById(id);
-    product.available = false;
-    await this.productsRepository.update(id,product);
-
-    return await this.getProductById(id);
-
-  }
-
-  async enableProduct(id: number): Promise<Product> {
-
-    const product = await this.getProductById(id);
-    product.available = true;
-    await this.productsRepository.update(id,product);
-
-    return await this.getProductById(id);
-
   }
 }

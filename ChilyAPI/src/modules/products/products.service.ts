@@ -30,16 +30,4 @@ export class ProductsService {
   deleteProduct(id: number): Promise<string> {
     return this.productsRepository.deleteProduct(id);
   }
-
-  getProductsByCategory(category: string): Promise<Product[]> {
-    return this.productsRepository.getProductsByCategory(category);
-  }
-
-  disableProduct(id: number): Promise<Product> {
-    return this.productsRepository.disableProduct(id);
-  }
-
-  enableProduct(id: number): Promise<Product> {
-    return this.productsRepository.enableProduct(id);
-  }
 }
