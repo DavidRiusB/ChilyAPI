@@ -1,12 +1,12 @@
-import { config as dotenvConfig } from 'dotenv';
-import { registerAs } from '@nestjs/config';
-import { DataSource, DataSourceOptions } from 'typeorm';
+import { config as dotenvConfig } from "dotenv";
+import { registerAs } from "@nestjs/config";
+import { DataSource, DataSourceOptions } from "typeorm";
 
-dotenvConfig({ path: '.env.development' });
+dotenvConfig({ path: ".env.development" });
 
 const config = {
   // comentario random
-  type: 'postgres',
+  type: "postgres",
   database: process.env.DB_NAME,
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -20,5 +20,5 @@ const config = {
   dropSchema: true,
 };
 
-export default registerAs('typeorm', () => config);
+export default registerAs("typeorm", () => config);
 export const connectSource = new DataSource(config as DataSourceOptions);
