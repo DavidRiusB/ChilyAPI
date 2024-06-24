@@ -17,6 +17,7 @@ export class UserService {
   async findByCredentialsId(id: number): Promise<User> {
     try {
       const user = await this.userRepository.findByCredentialsId(id);
+      console.log();
       if (!user) {
         throw new InternalServerErrorException(
           "Error inesperado al iniciar sesion."

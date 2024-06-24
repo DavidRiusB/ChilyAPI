@@ -76,8 +76,10 @@ export class AuthService {
         );
       }
       const user = await this.userService.findByCredentialsId(credentialId);
+      console.log("auth.serv fetch user:", user);
       const access_token = this.jwtService.generateToken(user);
       this.sessionService.createSession(access_token, false); // Creamos la sesión
+      /* console.log("token", access_token); */
       return {
         access_token: access_token,
         user: user,

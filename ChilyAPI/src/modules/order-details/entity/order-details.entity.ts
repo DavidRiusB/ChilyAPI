@@ -32,6 +32,9 @@ export class OrderDetail {
   @Column({ nullable: true, default: 0 })
   discount: number;
 
+  @Column({ type: "int" })
+  total: number;
+
   @Column({
     type: "enum",
     enum: OrderDetailStatus,
