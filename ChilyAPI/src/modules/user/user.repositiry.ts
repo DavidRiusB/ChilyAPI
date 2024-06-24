@@ -10,10 +10,13 @@ import { User } from "./entity/user.entity";
 import { Repository } from "typeorm";
 import { RegisterUserDTO } from "../auth/dto/register.dto";
 import { Role } from "src/common/enums/roles.enum";
-import { Credential } from "../auth/auth.entity";
+import { Credential } from "../auth/entities/auth.entity";
+import { UserDataGoogle } from "../auth/types";
+import { UserLoginGoogleDto } from "../auth/dto/loginGoogle.dto";
 
 @Injectable()
 export class UserRepository {
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>
@@ -111,5 +114,22 @@ export class UserRepository {
   async delete(id: number) {
     const result = await this.userRepository.softDelete(id);
     return result;
+  }
+
+ async createGoogle(newUserData: UserLoginGoogleDto): Promise<User>{
+    try {
+        const newUser = new User();
+        newUser.email = newUserData.email;
+        newUser.name = newUserData.name;
+        newUser.role = Role.User;
+        newUser.googleAuth = true;
+        return await this.userRepository.save(newUser);
+    } catch {
+      throw new InternalServerErrorException('Error inesperado al registrar al usuario');
+    }
+  }
+  async findByEmail(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } });
+    return user;
   }
 }

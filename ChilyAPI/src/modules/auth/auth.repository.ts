@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,10 +11,9 @@ import {
   hashPassword,
   validateUserPasword,
 } from 'src/utils/hashing/bcrypt.utils';
-import { Credential } from './auth.entity';
+import { Credential } from './entities/auth.entity';
 import { UserLoginDTO } from './dto/login.dto';
-import { UserGoogle } from './auth-google.entity';
-import { UserDataGoogle } from './types';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthRepository {
@@ -21,8 +21,7 @@ export class AuthRepository {
     @InjectRepository(Credential)
     private readonly credentialRepository: Repository<Credential>,
 
-    @InjectRepository(UserGoogle)
-    private readonly userDataGoogle: Repository<UserGoogle>,
+    private readonly usersService: UserService
   ) {}
 
   async signIn(credentials: UserLoginDTO) {
@@ -74,26 +73,15 @@ export class AuthRepository {
     newCredential.password = hashedPassword;
     newCredential.NIN = NIN;
     newCredential.phone = phone;
-    await this.credentialRepository.create(newCredential);
+    this.credentialRepository.create(newCredential);
     return newCredential;
   }
 
-  // OAuth with google
-  async validateUser(details: UserDataGoogle) {
-    console.log('AuthService');
-    console.log(details);
-    const user = await this.userDataGoogle.findOneBy({ email: details.email });
-
-    if (user) return user;
-
-    const newUser = this.userDataGoogle.create(details);
-    return this.userDataGoogle.save(newUser);
-  }
-
-  async findUser(id: number) {
-    const user = await this.userDataGoogle.findOneBy({
-      id,
-    });
+  async findUser(email: string) {
+    const user = await this.usersService.findByEmail(email)
+    if(!user) throw new NotFoundException(`Usuario con email ${email}, no encontrado`);
     return user;
   }
+
+
 }

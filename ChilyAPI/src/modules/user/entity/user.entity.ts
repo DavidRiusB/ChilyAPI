@@ -8,7 +8,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Credential } from "../../auth/auth.entity";
+import { Credential } from "../../auth/entities/auth.entity";
 import { Order } from "../../order/entity/order.entity";
 
 @Entity({ name: "users" })
@@ -22,28 +22,30 @@ export class User {
   @Column({ length: 50 })
   name: string;
 
-  @Column({ unique: true, length: 20 })
+  @Column({ unique: true, length: 20, default: "google_account"})
   //national identification number
-  NIN: string;
+  NIN?: string;
 
   @Column({ unique: true })
   email: string;
 
+  @Column({ name: "google_account", nullable: true, default: false })
+  googleAuth: boolean;
   @OneToOne(() => Credential)
   @JoinColumn()
   credential: Credential;
 
-  @Column({ length: 250 })
-  address: string;
+  @Column({ length: 250, default: "google_account"})
+  address?: string;
 
-  @Column({ unique: true, nullable: false })
-  phone: string;
+  @Column({ unique: true, nullable: false, default: "google_account"})
+  phone?: string;
 
-  @Column({ default: "Colombia" })
-  country: string;
+  @Column({ default: "Colombia"})
+  country?: string;
 
   @Column({ default: "Fusagasuga" })
-  city: string;
+  city?: string;
 
   @OneToMany(() => Order, (order) => order.user, {})
   orders: Order[];
