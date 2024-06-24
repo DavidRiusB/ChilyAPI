@@ -33,6 +33,12 @@ export class ProductsController {
     return products;
   }
 
+  @Get("category/:category")
+  getProductsByCategory(@Param("category") category: string): Promise<Product[]> {
+    const products = this.productsService.getProductsByCategory(category);
+    return products;
+  }
+
   @Get(":id")
   getProductById(@Param("id") id: number): Promise<Product> {
     const product = this.productsService.getProductById(id);
@@ -56,6 +62,18 @@ export class ProductsController {
       updateProduct
     );
     return updatedProduct;
+  }
+
+  @Put("disable/:id")
+  disableProduct(@Param("id") id: number): Promise<Product> {
+    const disabledProduct = this.productsService.disableProduct(id);
+    return disabledProduct;
+  }
+
+  @Put("enable/:id")
+  enableProduct(@Param("id") id: number): Promise<Product> {
+    const enabledProduct = this.productsService.enableProduct(id);
+    return enabledProduct;
   }
 
   @Delete("delete/:id")
