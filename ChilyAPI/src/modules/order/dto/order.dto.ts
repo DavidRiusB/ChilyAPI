@@ -11,6 +11,9 @@ export class ProductsInOrder {
   @IsNumber()
   @IsOptional()
   individualDiscount?: number;
+
+  @IsNumber()
+  individualPrice: number;
 }
 
 export class OrderDto {

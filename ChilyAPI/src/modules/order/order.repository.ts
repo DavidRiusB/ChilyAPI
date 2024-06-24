@@ -3,6 +3,7 @@ import { OrderDto } from "./dto/order.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Order } from "./entity/order.entity";
+import { OrderStatus } from "src/common/enums";
 
 @Injectable()
 export class OrderRepository {
@@ -31,7 +32,13 @@ export class OrderRepository {
   async findAll(pagination: { page: number; limit: number }) {
     const { page, limit } = pagination;
     const offset = (page - 1) * limit;
-    return await this.orders.slice(offset, offset + limit);
+    return await this.orderRepository
+      .createQueryBuilder("order")
+      .leftJoinAndSelect("order.details", "orderDetail")
+      .leftJoinAndSelect("orderDetail.product", "product")
+      .skip(offset)
+      .take(limit)
+      .getMany();
   }
 
   /**
@@ -62,9 +69,11 @@ export class OrderRepository {
    * @param {number} id - The ID of the order to retrieve.
    * @returns {Promise<Object|null>} - The order if found, or null if not found.
    */
-  async findById(id: number): Promise<Object | null> {
-    const order = this.orders.find((order) => order.id === id);
-    return await Promise.resolve(order || null);
+  async findById(id: number): Promise<Order | null> {
+    return await this.orderRepository.findOne({
+      where: { id },
+      relations: ["user", "details"],
+    });
   }
 
   /**
@@ -74,14 +83,22 @@ export class OrderRepository {
    * @returns {Promise<Object>} - The created order.
    */
   async create(order) {
-    const { branchId, finalPrice, discount, user, shipping } = order;
+    const { branchId, discount, user, shipping } = order;
 
     const newOrder = new Order();
-    newOrder.total = finalPrice;
+
     newOrder.generalDiscount = discount;
     newOrder.shipping = shipping;
     newOrder.user = user;
     newOrder.date = new Date();
     return await this.orderRepository.create(newOrder);
+  }
+
+  async updateStatus(order: Order, newStatus: OrderStatus) {
+    order.status = newStatus;
+    const updatedOrder = await this.orderRepository.update(order.id, {
+      status: newStatus,
+    });
+    return updatedOrder;
   }
 }

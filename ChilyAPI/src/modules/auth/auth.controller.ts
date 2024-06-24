@@ -1,14 +1,22 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtService } from '../jwt/jwt.service';
 import { LocalStrategy } from './local.strategy';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './guards/local-auth.guards';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { UserLoginDTO } from './dto/login.dto';
 import { RegisterUserDTO } from './dto/register.dto';
 import { DocumentationApiTagsModule } from 'src/docs';
 import { DocumentationLogin, DocumentationRegister } from 'src/docs';
 import { LogoutDTO } from './dto/logout.dto';
+import { UserLoginGoogleDto } from './dto/loginGoogle.dto';
 @Controller('auth')
 @DocumentationApiTagsModule.clasification('auth')
 export class AuthController {
@@ -35,5 +43,11 @@ export class AuthController {
   @Post('logout')
   async logout(@Body() user: LogoutDTO) {
     return await this.authService.logout(user);
+  }
+
+  @Post('google/login')
+  loginGoogle(@Body() data: UserLoginGoogleDto) {
+    console.log(data)
+    return this.authService.googleLogin(data)
   }
 }

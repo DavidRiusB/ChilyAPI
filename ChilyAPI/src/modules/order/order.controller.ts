@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { OrderService } from "./order.service";
 import { OrderDto } from "./dto/order.dto";
 import { DocumentationApiTagsModule } from "src/docs";
+import { UpdateOrderDto } from "./dto/update-order.dto";
 
 @Controller("orders")
 @DocumentationApiTagsModule.clasification("orders")
@@ -66,7 +67,10 @@ export class OrderController {
   }
 
   @Put(":id")
-  async updateOrderStatus(@Param("id") id: number) {
-    return "update order status";
+  async updateOrderStatus(
+    @Param("id") id: number,
+    @Body() update: UpdateOrderDto
+  ) {
+    return await this.orderService.updateStatus(id, update);
   }
 }
