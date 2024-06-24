@@ -13,6 +13,7 @@ import { discountCalculator } from "src/common/middlewares/discountCalculator";
 import { Order } from "./entity/order.entity";
 import { OrderDetailsService } from "../order-details/order-details.service";
 import { OrderDetail } from "../order-details/entity/order-details.entity";
+import { UpdateOrderDto } from "./dto/update-order.dto";
 
 @Injectable()
 export class OrderService {
@@ -59,24 +60,21 @@ export class OrderService {
    * @throws {NotFoundException} - If the order with the given ID is not found.
    * @throws {InternalServerErrorException} - If any other error occurs during the process.
    */
-  async findOrderById(id: number) {
+  async findOrderById(id: number): Promise<Order> {
     try {
-      // Placeholder logic for fetching order by ID
-      id = 1; // Replace with actual logic to fetch the correct order ID
       const order = await this.orderRepository.findById(id);
-
       if (!order) {
-        throw new NotFoundException(`No se encontró orden con ID: ${id}`);
+        throw new NotFoundException(
+          `No se encontraron registros con el numero de Orden: ${id}`
+        );
       }
-
       return order;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
       }
       throw new InternalServerErrorException(
-        `Error al buscar orden ${id}, por favor inténtelo de nuevo`,
-        error
+        "Error interno del servidor al buscar Orden"
       );
     }
   }
@@ -158,6 +156,25 @@ export class OrderService {
         throw error;
       }
       throw new InternalServerErrorException("Unexpected error occurred");
+    }
+  }
+
+  async updateStatus(id: number, update: UpdateOrderDto) {
+    const { status } = update;
+    try {
+      const order = await this.findOrderById(id);
+      const result = await this.orderRepository.updateStatus(order, status);
+      if (result.affected !== 1) {
+        throw new InternalServerErrorException(
+          "Error interno del servidor al actualizar el estado de la Order"
+        );
+      }
+      order.status = status;
+      return order;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
     }
   }
 }

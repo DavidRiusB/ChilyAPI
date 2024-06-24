@@ -9,6 +9,7 @@ import {
 } from "typeorm";
 import { User } from "../../user/entity/user.entity";
 import { OrderDetail } from "../../order-details/entity/order-details.entity";
+import { OrderStatus } from "src/common/enums";
 
 @Entity({ name: "orders" })
 export class Order {
@@ -37,6 +38,9 @@ export class Order {
 
   @Column({ type: "int", default: 0 })
   total: number;
+
+  @Column({ type: "enum", enum: OrderStatus, default: OrderStatus.Pending })
+  status: OrderStatus;
 
   @DeleteDateColumn({ type: "timestamp", nullable: true })
   deletedAt: Date;
