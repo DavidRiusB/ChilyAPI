@@ -1,22 +1,47 @@
+// Vendors
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { DocumentationConfig } from './docs/';
 import { ValidationPipe } from '@nestjs/common';
 import { config as dotenvConfig } from 'dotenv';
+import * as session from 'express-session';
+import * as passport from 'passport';
+
+// Modules
+import { AppModule } from './app.module';
+
+// Documentation
+import { DocumentationConfig } from './docs/';
+
 dotenvConfig({
-  path: ".env.development",
-})
+  path: '.env.development',
+});
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   DocumentationConfig(app);
 
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
+
+  app.use(
+    session({
+      secret: 'adfsersdfeasfewasdaCEDSFAASDF',
+      saveUninitialized: false,
+      resave: false,
+      cookie: {
+        maxAge: 60000,
+      },
+    }),
+  );
+
+  app.use(passport.initialize());
+  app.use(passport.session());
+
   const PORT = process.env.PORT || 3000;
 
   await app.listen(PORT);

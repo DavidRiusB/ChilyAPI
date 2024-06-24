@@ -1,8 +1,8 @@
-import { Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import typeOrmConfig from "./config/database";
-import { JwtModule } from "@nestjs/jwt";
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import typeOrmConfig from './config/database';
+import { JwtModule } from '@nestjs/jwt';
 import {
   AdminModule,
   DeliveryModule,
@@ -12,8 +12,9 @@ import {
   OrderModule,
   ProductsModule,
   CategoryModule,
-} from "./modules";
-import { SeedersModule } from "./modules/seeders/seeders.module";
+} from './modules';
+import { SeedersModule } from './modules/seeders/seeders.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -23,7 +24,7 @@ import { SeedersModule } from "./modules/seeders/seeders.module";
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => config.get("typeorm"),
+      useFactory: (config: ConfigService) => config.get('typeorm'),
     }),
     UserModule,
     AdminModule,
@@ -35,9 +36,10 @@ import { SeedersModule } from "./modules/seeders/seeders.module";
     CategoryModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: "1d" },
+      signOptions: { expiresIn: '1d' },
     }),
     SeedersModule,
+    PassportModule.register({ session: true }),
   ],
   controllers: [],
   providers: [],
