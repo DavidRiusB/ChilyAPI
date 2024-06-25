@@ -41,6 +41,12 @@ export class Product {
 
   @Column({
     type: "boolean",
+    default: false,
+  })
+  isPopular: boolean;
+
+  @Column({
+    type: "boolean",
     default: true,
   })
   available: boolean;

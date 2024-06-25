@@ -6,11 +6,15 @@ import {
   Param,
   Post,
   Put,
+  Query,
+  Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { Category } from './category.entity';
 import { createCategoryDto } from './dto/createCategory.dto';
 import { DocumentationAddCategory, DocumentationApiTagsModule } from 'src/docs';
+import { QueryInterceptor } from 'src/common/interceptors/query.interceptor';
 
 @Controller('category')
 @DocumentationApiTagsModule.clasification('category')
@@ -21,9 +25,16 @@ export class CategoryController {
     return this.categoryService.getCategories();
   }
 
+  @Get('name/:name')
+  @UseInterceptors(QueryInterceptor)
+  getCategoryByName(@Req() request: any,@Param('name') name: string) {
+    return this.categoryService.getCategoryByName(name,request.page,request.limit);
+  }
+
   @Get(':id')
-  getCategoryById(@Param('id') id: number) {
-    return this.categoryService.getCategoryById(id);
+  @UseInterceptors(QueryInterceptor)
+  getCategoryById(@Req() request: any,@Param('id') id: number) {
+    return this.categoryService.getCategoryById(id,request.page,request.limit);
   }
 
   @Post('create')

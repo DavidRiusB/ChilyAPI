@@ -34,13 +34,9 @@ export class createProductDto {
   img: string;
 
   @IsNotEmpty()
-  @IsBoolean()
-  @DocumentationCreateProductDto.available()
-  available: boolean;
-
-  @IsNotEmpty()
+  @IsNumber()
   @DocumentationCreateProductDto.category()
-  category: string;
+  category: number;
 
   /*
 =======

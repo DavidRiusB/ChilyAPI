@@ -58,6 +58,18 @@ export class ProductsController {
     return updatedProduct;
   }
 
+  @Put("available")
+  availableOrUnavaliableProduct(@Query("id") id: number, @Query("status") status:string): Promise<Product> {
+    const disabledProduct = this.productsService.availableOrUnavaliableProduct(id, status);
+    return disabledProduct;
+  }
+
+  @Put("popular")
+  productIsPopular(@Query("id") id: number, @Query("status") status: string): Promise<Product> {
+    const updatedProduct = this.productsService.productIsPopular(id, status);
+    return updatedProduct;
+  }
+
   @Delete("delete/:id")
   deleteProduct(@Param("id") id: number): Promise<string> {
     const deletedProduct = this.productsService.deleteProduct(id);

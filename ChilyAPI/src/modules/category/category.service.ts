@@ -12,7 +12,7 @@ export class CategoryService {
     private readonly categoryRepository: CategoryRepository,
     private readonly productService: ProductsService,
     private readonly dataSource: DataSource
-  ) {}
+  ) { }
   /*async seedProducts(productsSeed) {
     const products = await this.productService.getProducts(1, 10);
     if (products.length !== 0) {
@@ -54,16 +54,17 @@ export class CategoryService {
     });
   }*/
 
-  getCategoriesByName(name: string) {
-    throw new Error("Method not implemented.");
+
+  getCategoryByName(name: string, page:number, limit:number): Promise<Category> {
+    return this.categoryRepository.getCategoryByName(name, page, limit);
   }
 
   getCategories(): Promise<Category[]> {
     return this.categoryRepository.getCategories();
   }
 
-  getCategoryById(id: number): Promise<Category> {
-    return this.categoryRepository.getCategoryById(id);
+  getCategoryById(id: number, page:number,limit:number): Promise<Category> {
+    return this.categoryRepository.getCategoryById(id, page, limit);
   }
 
   createCategory(createCategory: createCategoryDto): Promise<Category> {

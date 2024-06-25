@@ -11,7 +11,6 @@ import { Repository } from "typeorm";
 import { RegisterUserDTO } from "../auth/dto/register.dto";
 import { Role } from "src/common/enums/roles.enum";
 import { Credential } from "../auth/entities/auth.entity";
-import { UserDataGoogle } from "../auth/types";
 import { UserLoginGoogleDto } from "../auth/dto/loginGoogle.dto";
 
 @Injectable()
@@ -52,7 +51,6 @@ export class UserRepository {
       const {
         email,
         name,
-        address,
         phone,
         role = Role.User,
         NIN,
@@ -61,7 +59,7 @@ export class UserRepository {
       newUser.NIN = NIN;
       newUser.email = email;
       newUser.name = name;
-      newUser.address = address;
+     // newUser.address = address;
       newUser.credential = credential;
       newUser.phone = phone;
       newUser.role = role;

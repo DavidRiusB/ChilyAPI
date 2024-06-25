@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Product } from "../products/products.entity";
 
 @Entity({
@@ -15,9 +15,12 @@ export class Category {
   })
   name: string;
 
-  @Column({ type: "text", default: "Extremadamente Sabroso " })
-  description: string;
+  @Column({
+    nullable: false,
+    type: "varchar",
+  })
+  icon: string;
 
-  @ManyToMany(() => Product, (product) => product.category)
+  @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 }
