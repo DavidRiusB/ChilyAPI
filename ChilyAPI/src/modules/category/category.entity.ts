@@ -15,6 +15,12 @@ export class Category {
   })
   name: string;
 
+  @Column({
+    nullable: false,
+    type: "varchar",
+  })
+  icon: string;
+
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 }
