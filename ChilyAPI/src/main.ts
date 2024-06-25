@@ -20,6 +20,12 @@ async function bootstrap() {
 
   DocumentationConfig(app);
 
+  app.enableCors({
+    origin: '*', // Modify when the front is deployed https://example1.com
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: '*', // Modify when the front is deployed 'Content-Type, Accept'
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
