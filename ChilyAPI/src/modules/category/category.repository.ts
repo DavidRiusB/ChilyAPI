@@ -48,6 +48,8 @@ export class CategoryRepository {
 
             category.name = createCategory.name.toUpperCase();
 
+            category.icon = createCategory.icon;
+
             const savedCategory = await this.categoryRepository.save(category);
 
             return savedCategory;
@@ -65,6 +67,8 @@ export class CategoryRepository {
             if (!existeCategory) throw new NotFoundException("No existe categoria con ID: " + id);
 
             category.name = updateCategory.name.toUpperCase();
+
+            category.icon = updateCategory.icon;
 
             const updatedCategory = await this.categoryRepository.update(id, category);
 
