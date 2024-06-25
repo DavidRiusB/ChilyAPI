@@ -12,13 +12,13 @@ import { DataSource, EntityManager } from 'typeorm';
 import { User } from '../user/entity/user.entity';
 import { LogoutDTO } from './dto/logout.dto';
 import { SessionsService } from '../sessions/sessions.service';
-import { JwtService } from '../jwt/jwt.service';
 import { usersSeed } from './users-seed';
 import { hashPassword } from 'src/utils/hashing/bcrypt.utils';
 import { Credential } from './entities/auth.entity';
 import { UserLoginDTO } from './dto/login.dto';
 import { UserDataGoogle } from './types';
 import { UserLoginGoogleDto } from './dto/loginGoogle.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +27,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly dataSource: DataSource,
     private readonly sessionService: SessionsService,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
   async onModuleInit() {
@@ -56,9 +56,6 @@ export class AuthService {
         newUser.email = userData.email;
         newUser.NIN = userData.NIN;
         newUser.phone = userData.phone;
-        newUser.address = userData.address;
-        newUser.country = userData.country;
-        newUser.city = userData.city;
         newUser.role = userData.role;
         newUser.credential = newCredential;
         await manager.save(User, newUser);
@@ -78,7 +75,7 @@ export class AuthService {
       }
       const user = await this.userService.findByCredentialsId(credentialId);
       console.log("auth.serv fetch user:", user);
-      const access_token = this.jwtService.generateToken({
+      const access_token = this.jwtService.sign({
         id: user.id,
         email: user.email
       });
@@ -141,7 +138,7 @@ export class AuthService {
   async googleLogin(data: UserLoginGoogleDto) {
     try {
       const user = await this.userService.createUserGoogle(data);
-        const access_token = this.jwtService.generateToken({
+        const access_token = this.jwtService.sign({
         id: user.id,
         email: user.email
         })

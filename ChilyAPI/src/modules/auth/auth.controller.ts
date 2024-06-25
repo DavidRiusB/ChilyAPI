@@ -7,7 +7,6 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { JwtService } from '../jwt/jwt.service';
 import { LocalStrategy } from './local.strategy';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.guard';
@@ -22,7 +21,6 @@ import { UserLoginGoogleDto } from './dto/loginGoogle.dto';
 export class AuthController {
   //
   constructor(
-    private jwtService: JwtService,
     private localStrategy: LocalStrategy,
     private authService: AuthService,
   ) {}

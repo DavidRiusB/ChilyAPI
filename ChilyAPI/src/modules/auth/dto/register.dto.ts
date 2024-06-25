@@ -10,6 +10,7 @@ import {
   IsStrongPassword,
   IsEnum,
 } from "class-validator";
+import { Match } from "src/common/decorators/match.decorator";
 import { Role } from "src/common/enums/roles.enum";
 import { DocumentationRegisterUserDto } from "src/docs";
 export class RegisterUserDTO {
@@ -35,46 +36,19 @@ export class RegisterUserDTO {
   @DocumentationRegisterUserDto.email()
   email: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @IsStrongPassword(
-    {
-      minLowercase: 1,
-      minUppercase: 1,
-      minNumbers: 1,
-      minSymbols: 1,
-    },
-    {
-      message:
-        "Password must contain at least one uppercase letter, one lowercase letter, and one symbol",
-    }
-  )
-
   @IsOptional()
   googleAuth: boolean;
   
-  @MinLength(8, { message: "Password must be at least 8 characters long" })
-  @MaxLength(15, { message: "Password must be at mouts 15 characters long" })
+  @MinLength(8, { message: "La contrasena debe tener al menos 8 caracteres" })
+  @MaxLength(40, { message: "La contraseña debe tener como maximo 40 caracteres" })
   @DocumentationRegisterUserDto.password()
   password: string;
 
+  @IsNotEmpty()
   @IsString()
-  // add custom validator for confirm password
+  @Match('password', { message: 'Passwords do not match' })
   @DocumentationRegisterUserDto.confirmPassword()
   confirmPassword: string;
-
-  @IsNotEmpty()
-  @IsString()
-  country?: string;
-
-  @IsNotEmpty()
-  @IsString()
-  city?: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @DocumentationRegisterUserDto.address()
-  address: string;
 
   @IsNotEmpty()
   @IsPhoneNumber()
