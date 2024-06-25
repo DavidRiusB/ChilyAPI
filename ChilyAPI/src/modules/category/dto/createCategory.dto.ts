@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsString, IsUrl, MaxLength } from 'class-validator';
 import { DocumentationCreateCategoryDto } from 'src/docs/';
 
 export class createCategoryDto {
@@ -11,5 +11,6 @@ export class createCategoryDto {
 
   @IsNotEmpty()
   @IsString()
+  @IsUrl()
   icon: string;
 }
