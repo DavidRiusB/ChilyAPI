@@ -12,7 +12,7 @@ export class CategoryService {
     private readonly categoryRepository: CategoryRepository,
     private readonly productService: ProductsService,
     private readonly dataSource: DataSource
-  ) {}
+  ) { }
   /*async seedProducts(productsSeed) {
     const products = await this.productService.getProducts(1, 10);
     if (products.length !== 0) {
@@ -54,8 +54,9 @@ export class CategoryService {
     });
   }*/
 
-  getCategoriesByName(name: string) {
-    throw new Error("Method not implemented.");
+
+  getCategoryByName(name: string): Promise<Category> {
+    return this.categoryRepository.getCategoryByName(name);
   }
 
   getCategories(): Promise<Category[]> {

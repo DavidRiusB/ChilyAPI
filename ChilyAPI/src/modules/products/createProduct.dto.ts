@@ -33,7 +33,9 @@ export class createProductDto {
   @DocumentationCreateProductDto.image_url()
   img: string;
 
-  @IsNotEmpty()
+  @IsBoolean()
+  isPopular: boolean;
+  
   @IsBoolean()
   @DocumentationCreateProductDto.available()
   available: boolean;

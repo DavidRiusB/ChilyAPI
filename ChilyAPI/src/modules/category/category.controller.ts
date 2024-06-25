@@ -21,6 +21,11 @@ export class CategoryController {
     return this.categoryService.getCategories();
   }
 
+  @Get('name/:name')
+  getCategoryByName(@Param('name') name: string) {
+    return this.categoryService.getCategoryByName(name);
+  }
+
   @Get(':id')
   getCategoryById(@Param('id') id: number) {
     return this.categoryService.getCategoryById(id);
