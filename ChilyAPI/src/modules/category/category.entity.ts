@@ -16,7 +16,6 @@ export class Category {
   name: string;
 
   @Column({
-    nullable: false,
     type: "varchar",
   })
   icon: string;
