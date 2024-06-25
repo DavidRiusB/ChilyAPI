@@ -33,16 +33,10 @@ export class createProductDto {
   @DocumentationCreateProductDto.image_url()
   img: string;
 
-  @IsBoolean()
-  isPopular: boolean;
-  
-  @IsBoolean()
-  @DocumentationCreateProductDto.available()
-  available: boolean;
-
   @IsNotEmpty()
+  @IsNumber()
   @DocumentationCreateProductDto.category()
-  category: string;
+  category: number;
 
   /*
 =======

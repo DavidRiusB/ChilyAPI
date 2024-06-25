@@ -37,7 +37,6 @@ export class SeedersService implements OnModuleInit{
             for (const name of categoryNameSet) {
               const newCategory = new Category();
               newCategory.name = String(name);
-              newCategory.description = `Las ${name} mas deliciosas!!`;
               const savedCategory = await manager.save(newCategory);
               categoryEntity.push(savedCategory);
             }
