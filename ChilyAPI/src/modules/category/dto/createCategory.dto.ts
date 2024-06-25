@@ -7,4 +7,9 @@ export class createCategoryDto {
   @MaxLength(50)
   @DocumentationCreateCategoryDto.names()
   name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(255)
+  description: string;
 }

@@ -30,4 +30,12 @@ export class ProductsService {
   deleteProduct(id: number): Promise<string> {
     return this.productsRepository.deleteProduct(id);
   }
+
+  availableOrUnavaliableProduct(id: number, status:string): Promise<Product> {
+    return this.productsRepository.availableOrUnavaliableProduct(id, status);
+  }
+
+  productIsPopular(id: number, status: string): Promise<Product> {
+    return this.productsRepository.productIsPopular(id, status);
+  }
 }
