@@ -10,6 +10,7 @@ import {
 } from "typeorm";
 import { Credential } from "../../auth/entities/auth.entity";
 import { Order } from "../../order/entity/order.entity";
+import { Address } from "src/modules/addresses/entities/addresses.entity";
 
 @Entity({ name: "users" })
 export class User {
@@ -34,18 +35,11 @@ export class User {
   @OneToOne(() => Credential)
   @JoinColumn()
   credential: Credential;
-
-  @Column({ length: 250, default: "google_account"})
-  address?: string;
-
+  
+  @OneToMany(() => Address, (address) => address.user, {})
+  addresses: Address[];
   @Column({ unique: true, nullable: false, default: "google_account"})
   phone?: string;
-
-  @Column({ default: "Colombia"})
-  country?: string;
-
-  @Column({ default: "Fusagasuga" })
-  city?: string;
 
   @OneToMany(() => Order, (order) => order.user, {})
   orders: Order[];

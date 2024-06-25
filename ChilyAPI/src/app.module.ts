@@ -15,6 +15,7 @@ import {
 } from './modules';
 import { SeedersModule } from './modules/seeders/seeders.module';
 import { PassportModule } from '@nestjs/passport';
+import { AddressesModule } from './modules/addresses/addresses.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { PassportModule } from '@nestjs/passport';
     }),
     SeedersModule,
     PassportModule.register({ session: true }),
+    AddressesModule,
   ],
   controllers: [],
   providers: [],
