@@ -15,9 +15,6 @@ export class Category {
   })
   name: string;
 
-  @Column({ type: "text", default: "Extremadamente Sabroso " })
-  description: string;
-
   @OneToMany(() => Product, (product) => product.category)
   products: Product[];
 }

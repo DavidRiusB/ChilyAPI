@@ -19,21 +19,23 @@ export class CategoryRepository {
         }
     }
 
-    //metodo para buscar categorias por id y traer sus productos
-    async getCategoryById(id: number): Promise<Category> {
+    //method with pagination to get categories by id
+    async getCategoryById(id: number, page:number, limit:number): Promise<Category> {
         try {
             const category = await this.categoryRepository.findOne({ where: { id: id }, relations: ["products"] });
+            category.products = category.products.slice((page - 1) * limit, page * limit);
             return category;
         } catch (error) {
             throw new NotFoundException("Error al obtener la categoria");
         }
     }
 
-    //metodo para buscar categorias por nombre y traer sus productos
-    async getCategoryByName(name: string): Promise<Category> {
+    //method with pagination to get categories by name
+    async getCategoryByName(name: string, page:number, limit:number): Promise<Category> {
         try {
             name = name.toUpperCase();
             const category = await this.categoryRepository.findOne({ where: { name: name }, relations: ["products"] });
+            category.products = category.products.slice((page - 1) * limit, page * limit);
             return category;
         } catch (error) {
             throw new NotFoundException("Error al obtener la categoria o la categoria no existe");
@@ -43,9 +45,11 @@ export class CategoryRepository {
     async createCategory(createCategory: createCategoryDto): Promise<Category> {
         try {
             const category = new Category();
+
             category.name = createCategory.name.toUpperCase();
-            category.description = createCategory.description;
+
             const savedCategory = await this.categoryRepository.save(category);
+
             return savedCategory;
         } catch (error) {
             throw new BadRequestException("Error al crear la categoria posible llave duplicada");
@@ -61,8 +65,6 @@ export class CategoryRepository {
             if (!existeCategory) throw new NotFoundException("No existe categoria con ID: " + id);
 
             category.name = updateCategory.name.toUpperCase();
-
-            category.description = updateCategory.description;
 
             const updatedCategory = await this.categoryRepository.update(id, category);
 

@@ -55,16 +55,16 @@ export class CategoryService {
   }*/
 
 
-  getCategoryByName(name: string): Promise<Category> {
-    return this.categoryRepository.getCategoryByName(name);
+  getCategoryByName(name: string, page:number, limit:number): Promise<Category> {
+    return this.categoryRepository.getCategoryByName(name, page, limit);
   }
 
   getCategories(): Promise<Category[]> {
     return this.categoryRepository.getCategories();
   }
 
-  getCategoryById(id: number): Promise<Category> {
-    return this.categoryRepository.getCategoryById(id);
+  getCategoryById(id: number, page:number,limit:number): Promise<Category> {
+    return this.categoryRepository.getCategoryById(id, page, limit);
   }
 
   createCategory(createCategory: createCategoryDto): Promise<Category> {

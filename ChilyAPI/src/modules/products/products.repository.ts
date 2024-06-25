@@ -17,7 +17,7 @@ export class ProductsRepository {
         relations: ["category"],
       });
       const startIndex = (page - 1) * limit;
-      const endIndex = page + limit;
+      const endIndex = page * limit;
 
       return products.slice(startIndex, endIndex);
     } catch (error) {
@@ -39,14 +39,11 @@ export class ProductsRepository {
 
   async createProduct(createProduct: createProductDto): Promise<Product> {
     try {
-      createProduct.category = createProduct.category.toUpperCase();
 
       const product = new Product();
 
-      createProduct.category = createProduct.category.toUpperCase();
-
       const categories = await this.categoryRepository.findOne({
-        where: { name: createProduct.category },
+        where: { id: createProduct.category },
       });
 
       if (!categories) throw new NotFoundException("La categoria no existe");
@@ -56,10 +53,6 @@ export class ProductsRepository {
       product.description = createProduct.description;
 
       product.price = createProduct.price;
-
-      product.isPopular = createProduct.isPopular;
-
-      product.available = createProduct.available;
 
       product.img = createProduct.img;
 
@@ -85,10 +78,8 @@ export class ProductsRepository {
 
       if (!existingProduct) throw new NotFoundException("El producto no existe");
 
-      updateProduct.category = updateProduct.category.toUpperCase();
-
       const categories = await this.categoryRepository.findOne({
-        where: { name: updateProduct.category },
+        where: { id: updateProduct.category },
       });
 
       if (!categories) throw new NotFoundException("La categoria no existe");
@@ -98,10 +89,6 @@ export class ProductsRepository {
       product.description = updateProduct.description;
 
       product.price = updateProduct.price;
-
-      product.isPopular = updateProduct.isPopular;
-
-      product.available = updateProduct.available;
 
       product.category = categories;
 
