@@ -1,3 +1,5 @@
+import { createProductDto } from "src/modules/products/createProduct.dto";
+
 export const productsSeed = [
   {
     name: "Yordle Snack",
@@ -5,7 +7,7 @@ export const productsSeed = [
     price: 13500,
     img: "https://example.com/yordle_snack.jpg",
     available: true,
-    category: "SNACKS",
+    category: ["SNACKS"],
   },
   {
     name: "Demacian Bread",
@@ -13,7 +15,7 @@ export const productsSeed = [
     price: 12000,
     img: "https://example.com/demacian_bread.jpg",
     available: true,
-    category: "BAKERY",
+    category: ["BAKERY"],
   },
   {
     name: "Piltover Pie",
@@ -21,7 +23,7 @@ export const productsSeed = [
     price: 15000,
     img: "https://example.com/piltover_pie.jpg",
     available: true,
-    category: "BAKERY",
+    category: ["BAKERY"],
   },
   {
     name: "Noxian Stew",
@@ -29,7 +31,7 @@ export const productsSeed = [
     price: 20000,
     img: "https://example.com/noxian_stew.jpg",
     available: true,
-    category: "MEALS",
+    category: ["MEALS"],
   },
   {
     name: "Ionia Tea",
@@ -37,6 +39,6 @@ export const productsSeed = [
     price: 10000,
     img: "https://example.com/ionia_tea.jpg",
     available: true,
-    category: "BEVERAGES",
+    category: ["BEVERAGES"],
   },
 ];

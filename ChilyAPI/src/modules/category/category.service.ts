@@ -67,11 +67,6 @@ export class CategoryService {
     return this.categoryRepository.getCategoryById(id, page, limit);
   }
 
-  getCategoryByFilter(filter: string, page: number, limit: number): Promise<Product[]>{
-    const filterNumber = filter.split(",").map((id) => Number(id)).filter(id => !isNaN(id));
-    return this.categoryRepository.getCategoryByFilter(filterNumber,page,limit);
-  }
-
   createCategory(createCategory: createCategoryDto): Promise<Category> {
     return this.categoryRepository.createCategory(createCategory);
   }

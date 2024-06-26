@@ -39,6 +39,12 @@ export class ProductsController {
     );
     return products;
   }
+  
+  @Get('filter')
+  @UseInterceptors(QueryInterceptor)
+  getCategoryByFilter(@Req() request: any,@Query('filter') filter: string) {
+    return this.productsService.getCategoryByFilter(filter,request.page,request.limit);
+  }
 
   @Get(':id')
   @DocumentationGetProductById()

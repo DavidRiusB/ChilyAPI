@@ -43,32 +43,6 @@ export class CategoryRepository {
         }
     }
 
-    async getCategoryByFilter(filter, page: number, limit: number): Promise<Product[]> {
-        try {
-            const categories = await this.categoryRepository.find({
-                where: { id: In(filter) },
-                relations: ['products'],
-            });
-
-            let products: Product[] = [];
-            categories.forEach(category => {
-                products = [...products, ...category.products];
-            });
-
-            products = Array.from(new Set(products.map(p => p.id))).map(id => {
-                return products.find(p => p.id === id);
-            });
-
-            const startIndex = (page - 1) * limit;
-            const endIndex = page * limit;
-            const paginatedProducts = products.slice(startIndex, endIndex);
-
-            return paginatedProducts;
-        } catch (error) {
-            throw new NotFoundException("Error al obtener las categorias");
-        }
-    }
-
     async createCategory(createCategory: createCategoryDto): Promise<Category> {
         try {
             const category = new Category();
@@ -81,7 +55,7 @@ export class CategoryRepository {
 
             return savedCategory;
         } catch (error) {
-            throw new BadRequestException("Error al crear la categoria posible llave duplicada");
+            throw new BadRequestException("Error al crear la categoria o posible nombre duplicado");
         }
     }
 
