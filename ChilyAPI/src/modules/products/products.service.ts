@@ -15,6 +15,11 @@ export class ProductsService {
     return this.productsRepository.getProductById(id);
   }
 
+  getCategoryByFilter(filter: string, page: number, limit: number): Promise<Product[]>{
+    const filterNumber = filter.split(",").map((id) => Number(id)).filter(id => !isNaN(id));
+    return this.productsRepository.getCategoryByFilter(filterNumber,page,limit);
+  }
+
   async findProductsByIds(ids: number[]): Promise<Product[]> {
     return await this.productsRepository.findByIds(ids);
   }

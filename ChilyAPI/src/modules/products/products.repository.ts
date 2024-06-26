@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { Product } from "./products.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { createProductDto } from "./createProduct.dto";
@@ -13,7 +13,8 @@ export class ProductsRepository {
   ) { }
   async getProducts(page: number, limit: number): Promise<Product[]> {
     try {
-      let products = await this.productsRepository.find({where:{isDeleted: false},
+      let products = await this.productsRepository.find({
+        where: { isDeleted: false },
         relations: ["category"],
       });
       const startIndex = (page - 1) * limit;
@@ -37,12 +38,37 @@ export class ProductsRepository {
     }
   }
 
+  async getCategoryByFilter(filter: number[], page: number, limit: number): Promise<Product[]> {
+    try {
+      const categories = await this.categoryRepository.find({
+        where: { id: In(filter), isDeleted: false },
+        relations: ['products'],
+      });
+
+      let products: Product[] = [];
+      categories.forEach(category => {
+        products = [...products, ...category.products];
+      });
+
+      products = Array.from(new Set(products.map(p => p.id))).map(id => {
+        return products.find(p => p.id === id && p.isDeleted === false);
+      });
+
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+      const paginatedProducts = products.slice(startIndex, endIndex);
+
+      return paginatedProducts;
+    } catch (error) {
+      throw new NotFoundException("Error al obtener las categorias");
+    }
+  }
   async createProduct(createProduct: createProductDto): Promise<Product> {
     try {
 
       const product = new Product();
 
-      const categories:Category[] = await Promise.all(createProduct.category.map(async (categoryId) => {
+      const categories: Category[] = await Promise.all(createProduct.category.map(async (categoryId) => {
         return await this.categoryRepository.findOneBy({ id: categoryId, isDeleted: false });
       }))
 
@@ -65,10 +91,7 @@ export class ProductsRepository {
     }
   }
 
-  async updateProduct(
-    id: number,
-    updateProduct: createProductDto
-  ): Promise<Product> {
+  async updateProduct(id: number, updateProduct: createProductDto): Promise<Product> {
     try {
 
       const product = await this.productsRepository.findOne({
@@ -88,7 +111,7 @@ export class ProductsRepository {
       product.price = updateProduct.price;
 
       if (updateProduct.category && updateProduct.category.length > 0) {
-        const categories = await this.categoryRepository.findByIds(updateProduct.category);
+        const categories = await this.categoryRepository.find({ where: { id: In(updateProduct.category), isDeleted: false } })
         product.category = categories;
       }
 
@@ -105,7 +128,7 @@ export class ProductsRepository {
     try {
       const product = await this.productsRepository.findOne({ where: { id: id } });
       product.isDeleted = true;
-      const updatedProduct = await this.productsRepository.update(id,product);
+      const updatedProduct = await this.productsRepository.update(id, product);
       return updatedProduct.affected > 0 ? "Producto dado de baja" : "Producto no encontrado";
     } catch (error) {
       throw new BadRequestException("Error al dar de baja el producto con ID: " + id);
@@ -125,7 +148,7 @@ export class ProductsRepository {
   async availableOrUnavaliableProduct(id: number, status: string): Promise<Product> {
 
     try {
-      const product = await this.productsRepository.findOne({ where: { id: id, isDeleted: false },relations: ["category"] });
+      const product = await this.productsRepository.findOne({ where: { id: id, isDeleted: false }, relations: ["category"] });
 
       if (!product) throw new NotFoundException("Error al obtener el producto");
 
@@ -147,7 +170,7 @@ export class ProductsRepository {
 
   async productIsPopular(id: number, status: string): Promise<Product> {
     try {
-      const product = await this.productsRepository.findOne({ where: { id: id, isDeleted: false },relations: ["category"] });
+      const product = await this.productsRepository.findOne({ where: { id: id, isDeleted: false }, relations: ["category"] });
 
       if (!product) throw new NotFoundException("Error al obtener el producto");
 
@@ -161,7 +184,7 @@ export class ProductsRepository {
 
       await this.productsRepository.save(product);
       return product;
-      
+
     } catch (error) {
       throw new NotFoundException("Error al actualizar el producto con ID: " + id);
     }
