@@ -24,14 +24,12 @@ import { Request, Response } from 'express';
 @DocumentationApiTagsModule.clasification('Rutas para: Autentificación')
 export class AuthController {
   //
-  constructor(
-    private authService: AuthService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @Post('singin')
   @DocumentationLogin()
   async singIn(@Body() credentials: UserLoginDTO) {
-    console.log(process.env.JWT_SECRET)
+    console.log(process.env.JWT_SECRET);
     return this.authService.singIn(credentials);
   }
 
@@ -41,21 +39,23 @@ export class AuthController {
     return await this.authService.register(userData);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('logout')
-  @DocumentationLogout()
-  async logout(@Body() user: LogoutDTO) {
-    return await this.authService.logout(user);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Post('logout')
+  // @DocumentationLogout()
+  // async logout(@Body() user: LogoutDTO) {
+  //   return await this.authService(user);
+  // }
 
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
-   @DocumentationLoginGoogle()
+  @DocumentationLoginGoogle()
   loginGoogle(@Req() req: Request, @Res() res: Response) {
     const encodedData = encodeURIComponent(JSON.stringify(req.user));
-    res.redirect(process.env.FRONTEND_URL+'/auth/google?state='+encodedData);
-     return {
+    res.redirect(
+      process.env.FRONTEND_URL + '/auth/google?state=' + encodedData,
+    );
+    return {
       msg: 'Login exitoso',
-    }
+    };
   }
 }
