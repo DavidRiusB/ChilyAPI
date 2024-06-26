@@ -69,7 +69,6 @@ export class ProductsController {
     const updatedProduct = this.productsService.productIsPopular(id, status);
     return updatedProduct;
   }
-
   @Delete("delete/:id")
   deleteProduct(@Param("id") id: number): Promise<string> {
     const deletedProduct = this.productsService.deleteProduct(id);

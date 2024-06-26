@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsNotEmpty,
   IsNumber,
@@ -34,9 +35,9 @@ export class createProductDto {
   img: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsArray()
   @DocumentationCreateProductDto.category()
-  category: number;
+  category: number[];
 
   /*
 =======

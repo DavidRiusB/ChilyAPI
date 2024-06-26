@@ -4,7 +4,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { config as dotenvConfig } from 'dotenv';
 import * as session from 'express-session';
 import * as passport from 'passport';
-
 // Modules
 import { AppModule } from './app.module';
 
@@ -36,7 +35,7 @@ async function bootstrap() {
 
   app.use(
     session({
-      secret: 'adfsersdfeasfewasdaCEDSFAASDF',
+      secret: process.env.SESSION_PASSPORT,
       saveUninitialized: false,
       resave: false,
       cookie: {
@@ -44,7 +43,6 @@ async function bootstrap() {
       },
     }),
   );
-
   app.use(passport.initialize());
   app.use(passport.session());
 
