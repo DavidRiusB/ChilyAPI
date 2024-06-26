@@ -49,7 +49,7 @@ export class DocumentationCreateProductDto {
   static category() {
     return ApiProperty({
       description: descriptions.category,
-      example: 'Porciones',
+      example: [1],
     });
   }
 }
