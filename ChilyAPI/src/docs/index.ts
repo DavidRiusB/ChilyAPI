@@ -4,8 +4,10 @@ export * from './docs-api-tags-module';
 
 // Auth
 export * from './doc-auth-module/docs-endpoint-auth';
+export * from './doc-auth-module/docs-user-login-google';
 export * from './doc-auth-module/docs-user-login-dto';
 export * from './doc-auth-module/docs-user-register-dto';
+export * from './doc-auth-module/docs-user-logout-dto';
 
 // Products
 export * from './doc-products-module/docs-endpoint-products';

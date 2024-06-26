@@ -1,8 +1,9 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString } from 'class-validator';
+import { DocumentationLogoutDTO } from 'src/docs';
 
 export class LogoutDTO {
-
-    @IsNotEmpty()
-    @IsString()
-    access_token: string;
-}//
+  @IsNotEmpty()
+  @IsString()
+  @DocumentationLogoutDTO.accessToken()
+  access_token: string;
+} //

@@ -11,13 +11,17 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { UserLoginDTO } from './dto/login.dto';
 import { RegisterUserDTO } from './dto/register.dto';
-import { DocumentationApiTagsModule } from 'src/docs';
+import {
+  DocumentationApiTagsModule,
+  DocumentationLoginGoogle,
+  DocumentationLogout,
+} from 'src/docs';
 import { DocumentationLogin, DocumentationRegister } from 'src/docs';
 import { LogoutDTO } from './dto/logout.dto';
 import { GoogleAuthGuard } from './guards/google.guard';
 import { Request, Response } from 'express';
 @Controller('auth')
-@DocumentationApiTagsModule.clasification('auth')
+@DocumentationApiTagsModule.clasification('Rutas para: Autentificación')
 export class AuthController {
   //
   constructor(
@@ -37,8 +41,16 @@ export class AuthController {
     return await this.authService.register(userData);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  @DocumentationLogout()
+  async logout(@Body() user: LogoutDTO) {
+    return await this.authService.logout(user);
+  }
+
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
+   @DocumentationLoginGoogle()
   loginGoogle(@Req() req: Request, @Res() res: Response) {
     const encodedData = encodeURIComponent(JSON.stringify(req.user));
     res.redirect(process.env.FRONTEND_URL+'/auth/google?state='+encodedData);
