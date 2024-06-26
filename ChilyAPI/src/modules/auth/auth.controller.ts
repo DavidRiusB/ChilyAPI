@@ -7,7 +7,6 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { LocalStrategy } from './local.strategy';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { UserLoginDTO } from './dto/login.dto';
@@ -22,13 +21,13 @@ import { Request, Response } from 'express';
 export class AuthController {
   //
   constructor(
-    private localStrategy: LocalStrategy,
     private authService: AuthService,
   ) {}
 
   @Post('singin')
   @DocumentationLogin()
   async singIn(@Body() credentials: UserLoginDTO) {
+    console.log(process.env.JWT_SECRET)
     return this.authService.singIn(credentials);
   }
 
@@ -38,11 +37,6 @@ export class AuthController {
     return await this.authService.register(userData);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('logout')
-  async logout(@Body() user: LogoutDTO) {
-    return await this.authService.logout(user);
-  }
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
   loginGoogle(@Req() req: Request, @Res() res: Response) {
