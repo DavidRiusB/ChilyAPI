@@ -30,12 +30,18 @@ export class CategoryController {
   getCategoryByName(@Req() request: any,@Param('name') name: string) {
     return this.categoryService.getCategoryByName(name,request.page,request.limit);
   }
+  @Get('filter')
+  @UseInterceptors(QueryInterceptor)
+  getCategoryByFilter(@Req() request: any,@Query('filter') filter: string) {
+    return this.categoryService.getCategoryByFilter(filter,request.page,request.limit);
+  }
 
   @Get(':id')
   @UseInterceptors(QueryInterceptor)
   getCategoryById(@Req() request: any,@Param('id') id: number) {
     return this.categoryService.getCategoryById(id,request.page,request.limit);
   }
+
 
   @Post('create')
   @DocumentationAddCategory()

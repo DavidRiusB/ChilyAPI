@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Category } from "./category.entity";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { createCategoryDto } from "./dto/createCategory.dto";
+import { Product } from "../products/products.entity";
 
 @Injectable()
 export class CategoryRepository {
@@ -12,7 +13,7 @@ export class CategoryRepository {
 
     async getCategories(): Promise<Category[]> {
         try {
-            const categories = await this.categoryRepository.find({where:{ isDeleted: false  }});
+            const categories = await this.categoryRepository.find({ where: { isDeleted: false } });
             return categories;
         } catch (error) {
             throw new NotFoundException("Error al obtener las categorias");
@@ -20,7 +21,7 @@ export class CategoryRepository {
     }
 
     //method with pagination to get categories with their products by id
-    async getCategoryById(id: number, page:number, limit:number): Promise<Category> {
+    async getCategoryById(id: number, page: number, limit: number): Promise<Category> {
         try {
             const category = await this.categoryRepository.findOne({ where: { id: id, isDeleted: false }, relations: ["products"] });
             category.products = category.products.slice((page - 1) * limit, page * limit);
@@ -31,7 +32,7 @@ export class CategoryRepository {
     }
 
     //method with pagination to get categories with their products by name
-    async getCategoryByName(name: string, page:number, limit:number): Promise<Category> {
+    async getCategoryByName(name: string, page: number, limit: number): Promise<Category> {
         try {
             name = name.toUpperCase();
             const category = await this.categoryRepository.findOne({ where: { name: name, isDeleted: false }, relations: ["products"] });
@@ -39,6 +40,32 @@ export class CategoryRepository {
             return category;
         } catch (error) {
             throw new NotFoundException("Error al obtener la categoria o la categoria no existe");
+        }
+    }
+
+    async getCategoryByFilter(filter, page: number, limit: number): Promise<Product[]> {
+        try {
+            const categories = await this.categoryRepository.find({
+                where: { id: In(filter) },
+                relations: ['products'],
+            });
+
+            let products: Product[] = [];
+            categories.forEach(category => {
+                products = [...products, ...category.products];
+            });
+
+            products = Array.from(new Set(products.map(p => p.id))).map(id => {
+                return products.find(p => p.id === id);
+            });
+
+            const startIndex = (page - 1) * limit;
+            const endIndex = page * limit;
+            const paginatedProducts = products.slice(startIndex, endIndex);
+
+            return paginatedProducts;
+        } catch (error) {
+            throw new NotFoundException("Error al obtener las categorias");
         }
     }
 
