@@ -47,11 +47,15 @@ export class ProductsRepository {
 
       let products: Product[] = [];
       categories.forEach(category => {
-        products = [...products, ...category.products];
+          category.products.forEach(product => {
+              if (!product.isDeleted) {
+                  products.push(product);
+              }
+          });
       });
 
       products = Array.from(new Set(products.map(p => p.id))).map(id => {
-        return products.find(p => p.id === id && p.isDeleted === false);
+        return products.find(p => p.id === id);
       });
 
       const startIndex = (page - 1) * limit;
