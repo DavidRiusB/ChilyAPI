@@ -15,7 +15,8 @@ import { RegisterUserDTO } from './dto/register.dto';
 import { DocumentationApiTagsModule } from 'src/docs';
 import { DocumentationLogin, DocumentationRegister } from 'src/docs';
 import { LogoutDTO } from './dto/logout.dto';
-import { UserLoginGoogleDto } from './dto/loginGoogle.dto';
+import { GoogleAuthGuard } from './guards/google.guard';
+import { Request, Response } from 'express';
 @Controller('auth')
 @DocumentationApiTagsModule.clasification('auth')
 export class AuthController {
@@ -42,10 +43,13 @@ export class AuthController {
   async logout(@Body() user: LogoutDTO) {
     return await this.authService.logout(user);
   }
-
-  @Post('google/login')
-  loginGoogle(@Body() data: UserLoginGoogleDto) {
-    console.log(data)
-    return this.authService.googleLogin(data)
+  @Get('google/redirect')
+  @UseGuards(GoogleAuthGuard)
+  loginGoogle(@Req() req: Request, @Res() res: Response) {
+    const encodedData = encodeURIComponent(JSON.stringify(req.user));
+    res.redirect(process.env.FRONTEND_URL+'/auth/google?state='+encodedData);
+     return {
+      msg: 'Login exitoso',
+    }
   }
 }
