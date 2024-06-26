@@ -12,12 +12,16 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { UserLoginDTO } from './dto/login.dto';
 import { RegisterUserDTO } from './dto/register.dto';
-import { DocumentationApiTagsModule } from 'src/docs';
+import {
+  DocumentationApiTagsModule,
+  DocumentationLoginGoogle,
+  DocumentationLogout,
+} from 'src/docs';
 import { DocumentationLogin, DocumentationRegister } from 'src/docs';
 import { LogoutDTO } from './dto/logout.dto';
 import { UserLoginGoogleDto } from './dto/loginGoogle.dto';
 @Controller('auth')
-@DocumentationApiTagsModule.clasification('auth')
+@DocumentationApiTagsModule.clasification('Rutas para: Autentificación')
 export class AuthController {
   //
   constructor(
@@ -39,13 +43,15 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('logout')
+  @DocumentationLogout()
   async logout(@Body() user: LogoutDTO) {
     return await this.authService.logout(user);
   }
 
   @Post('google/login')
+  @DocumentationLoginGoogle()
   loginGoogle(@Body() data: UserLoginGoogleDto) {
-    console.log(data)
-    return this.authService.googleLogin(data)
+    console.log(data);
+    return this.authService.googleLogin(data);
   }
 }
