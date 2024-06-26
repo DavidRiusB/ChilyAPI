@@ -4,7 +4,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { config as dotenvConfig } from 'dotenv';
 import * as session from 'express-session';
 import * as passport from 'passport';
-
 // Modules
 import { AppModule } from './app.module';
 
@@ -20,6 +19,12 @@ async function bootstrap() {
 
   DocumentationConfig(app);
 
+  app.enableCors({
+    origin: '*', // Modify when the front is deployed https://example1.com
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: '*', // Modify when the front is deployed 'Content-Type, Accept'
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -30,7 +35,7 @@ async function bootstrap() {
 
   app.use(
     session({
-      secret: 'adfsersdfeasfewasdaCEDSFAASDF',
+      secret: process.env.SESSION_PASSPORT,
       saveUninitialized: false,
       resave: false,
       cookie: {
@@ -38,7 +43,6 @@ async function bootstrap() {
       },
     }),
   );
-
   app.use(passport.initialize());
   app.use(passport.session());
 

@@ -5,7 +5,7 @@ export const productsSeed = [
     price: 13500,
     img: "https://example.com/yordle_snack.jpg",
     available: true,
-    category: "Snacks",
+    category: "SNACKS",
   },
   {
     name: "Demacian Bread",
@@ -13,7 +13,7 @@ export const productsSeed = [
     price: 12000,
     img: "https://example.com/demacian_bread.jpg",
     available: true,
-    category: "Bakery",
+    category: "BAKERY",
   },
   {
     name: "Piltover Pie",
@@ -21,7 +21,7 @@ export const productsSeed = [
     price: 15000,
     img: "https://example.com/piltover_pie.jpg",
     available: true,
-    category: "Bakery",
+    category: "BAKERY",
   },
   {
     name: "Noxian Stew",
@@ -29,7 +29,7 @@ export const productsSeed = [
     price: 20000,
     img: "https://example.com/noxian_stew.jpg",
     available: true,
-    category: "Meals",
+    category: "MEALS",
   },
   {
     name: "Ionia Tea",
@@ -37,6 +37,6 @@ export const productsSeed = [
     price: 10000,
     img: "https://example.com/ionia_tea.jpg",
     available: true,
-    category: "Beverages",
+    category: "BEVERAGES",
   },
 ];

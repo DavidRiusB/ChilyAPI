@@ -11,12 +11,10 @@ import { UserService } from '../user/user.service';
 import { DataSource, EntityManager } from 'typeorm';
 import { User } from '../user/entity/user.entity';
 import { LogoutDTO } from './dto/logout.dto';
-import { SessionsService } from '../sessions/sessions.service';
 import { usersSeed } from './users-seed';
 import { hashPassword } from 'src/utils/hashing/bcrypt.utils';
 import { Credential } from './entities/auth.entity';
 import { UserLoginDTO } from './dto/login.dto';
-import { UserDataGoogle } from './types';
 import { UserLoginGoogleDto } from './dto/loginGoogle.dto';
 import { JwtService } from '@nestjs/jwt';
 
@@ -26,8 +24,7 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
     private readonly userService: UserService,
     private readonly dataSource: DataSource,
-    private readonly sessionService: SessionsService,
-    private readonly jwtService: JwtService
+    private jwtService: JwtService
   ) {}
 
   async onModuleInit() {
@@ -75,18 +72,21 @@ export class AuthService {
       }
       const user = await this.userService.findByCredentialsId(credentialId);
       console.log("auth.serv fetch user:", user);
-      const access_token = this.jwtService.sign({
+      const payload = {
         id: user.id,
-        email: user.email
+        email: user.email,
+        rol: user.role
+      }
+      const access_token = this.jwtService.sign(payload, {
+        secret: process.env.JWT_SECRET,
       });
-      const date = new Date();
-      const expiresAt = new Date(date.getTime() + 1 * 60 * 1000); // Le consedemos que expire dentro de una hora y se borre
-      this.sessionService.createSession(access_token, expiresAt, false); // Creamos la sesión
+      console.log(access_token)
       return {
         access_token: access_token,
-        user: user,
+        user: user
       };
     } catch (error) {
+      console.log(error)
       if (error instanceof UnauthorizedException) {
         throw error;
       }
@@ -130,17 +130,14 @@ export class AuthService {
       }
     }
   }
-  async logout(user: LogoutDTO) {
-    return await this.sessionService.blacklistSession(user.access_token);
-  }
-
 
   async googleLogin(data: UserLoginGoogleDto) {
     try {
       const user = await this.userService.createUserGoogle(data);
         const access_token = this.jwtService.sign({
         id: user.id,
-        email: user.email
+        email: user.email,
+        rol: 'google'
         })
      return {
       access_token: access_token,

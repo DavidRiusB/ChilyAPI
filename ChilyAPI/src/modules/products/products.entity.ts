@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -51,9 +52,14 @@ export class Product {
   })
   available: boolean;
 
-  @ManyToOne(() => Category, (category) => category.products)
-  @JoinColumn()
-  category: Category;
+  @Column({
+    type:"boolean",
+    default: false
+  })
+  isDeleted: boolean;
+
+  @ManyToMany(() => Category, (category) => category.products)
+  category: Category[];
 
   @ManyToMany(() => OrderDetail, (orderDetail) => orderDetail.product)
   orderDetail: OrderDetail[];

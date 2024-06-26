@@ -13,6 +13,10 @@ export * from './doc-auth-module/docs-user-logout-dto';
 export * from './doc-products-module/docs-endpoint-products';
 export * from './doc-products-module/docs-products-create-dto';
 
-// Categories}
+// Categories
 export * from './doc-categories-module/docs-endpoint-category';
 export * from './doc-categories-module/docs-category-create-dto';
+
+// Users
+export * from './doc-user-module/docs-endpoint-user';
+export * from './doc-user-module/docs-user-update-dto';

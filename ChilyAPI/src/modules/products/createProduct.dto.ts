@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsNotEmpty,
   IsNumber,
@@ -33,16 +34,10 @@ export class createProductDto {
   @DocumentationCreateProductDto.image_url()
   img: string;
 
-  @IsBoolean()
-  isPopular: boolean;
-  
-  @IsBoolean()
-  @DocumentationCreateProductDto.available()
-  available: boolean;
-
   @IsNotEmpty()
+  @IsArray()
   @DocumentationCreateProductDto.category()
-  category: string;
+  category: number[];
 
   /*
 =======

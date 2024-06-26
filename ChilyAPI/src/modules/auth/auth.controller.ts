@@ -7,7 +7,6 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { LocalStrategy } from './local.strategy';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { UserLoginDTO } from './dto/login.dto';
@@ -19,19 +18,20 @@ import {
 } from 'src/docs';
 import { DocumentationLogin, DocumentationRegister } from 'src/docs';
 import { LogoutDTO } from './dto/logout.dto';
-import { UserLoginGoogleDto } from './dto/loginGoogle.dto';
+import { GoogleAuthGuard } from './guards/google.guard';
+import { Request, Response } from 'express';
 @Controller('auth')
 @DocumentationApiTagsModule.clasification('Rutas para: Autentificación')
 export class AuthController {
   //
   constructor(
-    private localStrategy: LocalStrategy,
     private authService: AuthService,
   ) {}
 
   @Post('singin')
   @DocumentationLogin()
   async singIn(@Body() credentials: UserLoginDTO) {
+    console.log(process.env.JWT_SECRET)
     return this.authService.singIn(credentials);
   }
 
@@ -48,10 +48,14 @@ export class AuthController {
     return await this.authService.logout(user);
   }
 
-  @Post('google/login')
-  @DocumentationLoginGoogle()
-  loginGoogle(@Body() data: UserLoginGoogleDto) {
-    console.log(data);
-    return this.authService.googleLogin(data);
+  @Get('google/redirect')
+  @UseGuards(GoogleAuthGuard)
+   @DocumentationLoginGoogle()
+  loginGoogle(@Req() req: Request, @Res() res: Response) {
+    const encodedData = encodeURIComponent(JSON.stringify(req.user));
+    res.redirect(process.env.FRONTEND_URL+'/auth/google?state='+encodedData);
+     return {
+      msg: 'Login exitoso',
+    }
   }
 }

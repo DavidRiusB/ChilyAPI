@@ -33,11 +33,11 @@ export class SeedersService implements OnModuleInit{
             const categoryEntity = [];
       
             console.log(categoryNameSet);
-      
+            //Categories use names on UpperCase for consistency.
             for (const name of categoryNameSet) {
               const newCategory = new Category();
-              newCategory.name = String(name);
-              newCategory.description = `Las ${name} mas deliciosas!!`;
+              newCategory.name = String(name).toUpperCase();
+              newCategory.icon = "https://example.com/" + String(name).toLowerCase() + ".jpg";
               const savedCategory = await manager.save(newCategory);
               categoryEntity.push(savedCategory);
             }
@@ -45,7 +45,7 @@ export class SeedersService implements OnModuleInit{
             // Create and save products
             for (const productData of productsSeed) {
               const category = categoryEntity.find(
-                (category) => category.name === productData.category
+                (category) => category.name === productData.category.toUpperCase()
               );
       
               const newProduct = new Product();
