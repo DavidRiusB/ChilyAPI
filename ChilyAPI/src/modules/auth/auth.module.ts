@@ -9,6 +9,7 @@ import { Credential } from './entities/auth.entity';
 import { AuthRepository } from './auth.repository';
 import { SessionsModule } from '../sessions/sessions.module';
 import { JwtModule } from '@nestjs/jwt';
+import { GoogleStrategy } from './google.strategy';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { JwtModule } from '@nestjs/jwt';
     AuthService,
     LocalStrategy,
     AuthRepository,
+    GoogleStrategy,
   ],
 })
 export class AuthModule {}
