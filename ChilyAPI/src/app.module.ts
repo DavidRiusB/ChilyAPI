@@ -1,8 +1,8 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import typeOrmConfig from './config/database';
-import { JwtModule } from '@nestjs/jwt';
+import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import typeOrmConfig from "./config/database";
+import { JwtModule } from "@nestjs/jwt";
 import {
   AdminModule,
   DeliveryModule,
@@ -12,10 +12,11 @@ import {
   OrderModule,
   ProductsModule,
   CategoryModule,
-} from './modules';
-import { SeedersModule } from './modules/seeders/seeders.module';
-import { PassportModule } from '@nestjs/passport';
-import { AddressesModule } from './modules/addresses/addresses.module';
+} from "./modules";
+import { SeedersModule } from "./modules/seeders/seeders.module";
+import { PassportModule } from "@nestjs/passport";
+import { AddressesModule } from "./modules/addresses/addresses.module";
+import { NotificationEmailsService } from "./utils/shared/notification-register-emails/notificationEmails";
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { AddressesModule } from './modules/addresses/addresses.module';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => config.get('typeorm'),
+      useFactory: (config: ConfigService) => config.get("typeorm"),
     }),
     AdminModule,
     SuperAdminModule,
@@ -38,13 +39,13 @@ import { AddressesModule } from './modules/addresses/addresses.module';
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '7d' },
+      signOptions: { expiresIn: "7d" },
     }),
     SeedersModule,
     PassportModule.register({ session: true }),
     AddressesModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [NotificationEmailsService],
 })
 export class AppModule {}
