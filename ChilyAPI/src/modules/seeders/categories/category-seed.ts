@@ -1,4 +1,4 @@
-import { createCategoryDto } from "src/modules/category/dto/createCategory.dto";
+import { createCategoryDto } from 'src/modules/category/dto/createCategory.dto';
 
 export const categorySeed: createCategoryDto[] = [
   {
