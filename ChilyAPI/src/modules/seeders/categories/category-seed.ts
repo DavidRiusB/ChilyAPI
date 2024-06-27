@@ -1,4 +1,4 @@
-import { createCategoryDto } from 'src/modules/category/dto/createCategory.dto';
+import { createCategoryDto } from "src/modules/category/dto/createCategory.dto";
 
 export const categorySeed: createCategoryDto[] = [
   {
@@ -52,6 +52,10 @@ export const categorySeed: createCategoryDto[] = [
   {
     name: "SALCHIPAPAS",
     icon: "https://images.pexels.com/photos/14454470/pexels-photo-14454470.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "BURRITOS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     name: "OTROS",
