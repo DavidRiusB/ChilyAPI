@@ -26,7 +26,7 @@ export class RegisterUserDTO {
   @IsNotEmpty()
   @IsString()
   @MaxLength(20)
-  //add format validator
+  @DocumentationRegisterUserDto.NIN()
   NIN: string;
 
   @IsNotEmpty()
@@ -38,15 +38,17 @@ export class RegisterUserDTO {
 
   @IsOptional()
   googleAuth: boolean;
-  
+
   @MinLength(8, { message: "La contrasena debe tener al menos 8 caracteres" })
-  @MaxLength(40, { message: "La contraseña debe tener como maximo 40 caracteres" })
+  @MaxLength(40, {
+    message: "La contraseña debe tener como maximo 40 caracteres",
+  })
   @DocumentationRegisterUserDto.password()
   password: string;
 
   @IsNotEmpty()
   @IsString()
-  @Match('password', { message: 'Passwords do not match' })
+  @Match("password", { message: "Passwords do not match" })
   @DocumentationRegisterUserDto.confirmPassword()
   confirmPassword: string;
 
@@ -58,5 +60,4 @@ export class RegisterUserDTO {
   @IsOptional()
   @IsEnum(Role)
   role?: Role;
-
 }
