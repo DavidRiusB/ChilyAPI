@@ -16,7 +16,7 @@ export class ProductsService {
     private productsRepository: ProductsRepository,
     private readonly uploadService: UploadService,
     private readonly dataSource: DataSource
-  ) {}
+  ) { }
 
   getProducts(page: number, limit: number): Promise<Product[]> {
     return this.productsRepository.getProducts(page, limit);
@@ -26,20 +26,25 @@ export class ProductsService {
     return this.productsRepository.getProductById(id);
   }
 
-  getCategoryByFilter(
-    filter: string,
-    page: number,
-    limit: number
-  ): Promise<Product[]> {
-    const filterNumber = filter
-      .split(",")
-      .map((id) => Number(id))
-      .filter((id) => !isNaN(id));
-    return this.productsRepository.getCategoryByFilter(
-      filterNumber,
-      page,
-      limit
-    );
+  getCategoryByFilter(filter: string, page: number, limit: number): Promise<Product[]> {
+    if (filter != "") {
+      const filterNumber = filter.split(",").map((id) => Number(id)).filter(id => !isNaN(id));
+      return this.productsRepository.getCategoryByFilter(filterNumber, page, limit);
+    } else {
+      return this.productsRepository.getProducts(page, limit);
+    }
+  }
+
+  getProductsByPriceRange(min: number, max: number, page: number, limit: number): Promise<Product[]> {
+    return this.productsRepository.getProductsByPriceRange(min, max, page, limit);
+  }
+
+  getProductsBySearch(search: string, page: number, limit: number): Promise<Product[]> {
+    if (search != "") {
+      return this.productsRepository.getProductsBySearch(search, page, limit);
+    } else {
+      return this.productsRepository.getProducts(page, limit);
+    }
   }
 
   async findProductsByIds(ids: number[]): Promise<Product[]> {
