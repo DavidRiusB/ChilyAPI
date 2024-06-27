@@ -21,5 +21,6 @@ import { APP_GUARD } from "@nestjs/core";
     },
   ],
   controllers: [UploadController],
+  exports: [UploadService],
 })
 export class UploadModule {}

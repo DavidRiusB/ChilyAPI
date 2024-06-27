@@ -35,6 +35,9 @@ export class Product {
   })
   price: number;
 
+  @Column({ nullable: true, unique: true })
+  imgName: string;
+
   @Column({
     type: "text",
   })
