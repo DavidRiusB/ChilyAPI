@@ -16,11 +16,8 @@ import {
 import { SeedersModule } from "./modules/seeders/seeders.module";
 import { PassportModule } from "@nestjs/passport";
 import { AddressesModule } from "./modules/addresses/addresses.module";
-
 import { UploadModule } from "./modules/upload/upload.module";
-
 import { NotificationEmailsService } from "./utils/shared/notification-register-emails/notificationEmails";
-
 
 @Module({
   imports: [
