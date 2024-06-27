@@ -16,6 +16,7 @@ import {
 import { SeedersModule } from "./modules/seeders/seeders.module";
 import { PassportModule } from "@nestjs/passport";
 import { AddressesModule } from "./modules/addresses/addresses.module";
+import { UploadModule } from "./modules/upload/upload.module";
 import { NotificationEmailsService } from "./utils/shared/notification-register-emails/notificationEmails";
 
 @Module({
@@ -36,6 +37,7 @@ import { NotificationEmailsService } from "./utils/shared/notification-register-
     ProductsModule,
     OrderModule,
     CategoryModule,
+    UploadModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
