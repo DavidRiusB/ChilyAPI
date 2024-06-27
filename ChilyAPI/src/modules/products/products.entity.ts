@@ -40,13 +40,14 @@ export class Product {
 
   @Column({
     type: "text",
-    default: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    default:
+      "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   })
   img: string;
 
   @Column({
     type: "boolean",
-    default: false,
+    // default: false, // Activar cuando este listo el desarrollo de front
   })
   isPopular: boolean;
 
