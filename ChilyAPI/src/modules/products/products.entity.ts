@@ -31,7 +31,7 @@ export class Product {
   description: string;
 
   @Column({
-    type: "int",
+    type: "float",
   })
   price: number;
 
@@ -53,8 +53,8 @@ export class Product {
   available: boolean;
 
   @Column({
-    type:"boolean",
-    default: false
+    type: "boolean",
+    default: false,
   })
   isDeleted: boolean;
 
