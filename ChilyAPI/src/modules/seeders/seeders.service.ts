@@ -44,14 +44,16 @@ export class SeedersService implements OnModuleInit{
       
             // Create and save products
             for (const productData of productsSeed) {
-              const category = categoryEntity.find(c => c.name === productData.category[0].toUpperCase()) as Category
+              const category = productData.category.map((cat)=> {
+                return categoryEntity.find(c => c.name === cat.toUpperCase()) as Category;
+               })
               
               const newProduct = new Product();
               newProduct.name = productData.name;
               newProduct.description = productData.description;
               newProduct.price = productData.price;
               newProduct.img = productData.img;
-              newProduct.category = new Array<Category>(category);
+              newProduct.category = category;
               await manager.save(newProduct);
             }
             console.log("[SEEDERS] Products seeded Succesfully.");

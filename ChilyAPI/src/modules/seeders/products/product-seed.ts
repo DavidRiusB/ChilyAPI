@@ -25,7 +25,7 @@ export const productsSeed = [
     price: 6,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PORCIONES"],
+    category: ["PORCIONES","CARNES","OTROS"],
   },
   {
     name: "Porciones tocineta ahumada 4.8",

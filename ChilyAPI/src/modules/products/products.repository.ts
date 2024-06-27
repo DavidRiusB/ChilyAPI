@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { In, Repository } from "typeorm";
+import { Between, In, Like, Raw, Repository } from "typeorm";
 import { Product } from "./products.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { createProductDto } from "./createProduct.dto";
@@ -67,6 +67,60 @@ export class ProductsRepository {
       throw new NotFoundException("Error al obtener las categorias");
     }
   }
+
+  async getProductsBySearch(search: string, page: number, limit: number): Promise<Product[]> {
+    try {
+
+      const upperSearch = search.toUpperCase();
+
+      const productsByName = await this.productsRepository.find({
+        where: {
+          name: Raw(alias => `UPPER(${alias}) LIKE UPPER(:search)`, { search: `%${upperSearch}%` }),
+          isDeleted: false,
+        },
+        relations: ["category"],
+      });
+
+      const productsByDescription = await this.productsRepository.find({
+        where: {
+          description: Raw(alias => `UPPER(${alias}) LIKE UPPER(:search)`, { search: `%${upperSearch}%` }),
+          isDeleted: false,
+        },
+        relations: ["category"],
+      })
+
+      let products = productsByName.concat(productsByDescription);
+
+      products = Array.from(new Set(products.map(p => p.id))).map(id => {
+        return products.find(p => p.id === id);
+      });
+
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+      const paginatedProducts = products.slice(startIndex, endIndex);
+      return paginatedProducts;
+    } catch (error) {
+      throw new NotFoundException("Error al obtener los productos");
+    }
+  }
+
+  async getProductsByPriceRange(min: number, max: number,page: number, limit: number): Promise<Product[]> {
+    try {
+      const products = await this.productsRepository.find({
+        where: { isDeleted: false, price: Between(min, max) },
+        relations: ["category"],
+      });
+
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+      const paginatedProducts = products.slice(startIndex, endIndex);
+      return paginatedProducts;
+
+    } catch (error) {
+      throw new NotFoundException("Error al obtener los productos");
+    }
+  }
+
   async createProduct(createProduct: createProductDto): Promise<Product> {
     try {
 

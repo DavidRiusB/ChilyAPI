@@ -27,7 +27,6 @@ export class createProductDto {
   @DocumentationCreateProductDto.price()
   price: number;
 
-  @IsNotEmpty()
   @MaxLength(255)
   @IsString()
   @IsUrl()

@@ -61,4 +61,8 @@ export const categorySeed: createCategoryDto[] = [
     name: "OTROS",
     icon: "https://images.pexels.com/photos/1128678/pexels-photo-1128678.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
+  {
+    name: "CARNES",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
 ];
