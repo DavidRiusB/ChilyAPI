@@ -1,14 +1,22 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
 
 const descriptions = {
-  name: 'Nombre de la categoría',
+  name: "Categoría Prueba",
+  icon: "URL de la imagen",
 };
 
 export class DocumentationCreateCategoryDto {
   static names() {
     return ApiProperty({
       description: descriptions.name,
-      example: 'Porciones',
+      example: "Hamburguesas",
+    });
+  }
+
+  static icon() {
+    return ApiProperty({
+      description: descriptions.name,
+      example: "https://exampleurl.com",
     });
   }
 }
