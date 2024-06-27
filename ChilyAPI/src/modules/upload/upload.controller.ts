@@ -15,9 +15,8 @@ export class UploadController {
   @UseInterceptors(FileInterceptor("img"))
   async uploadImg(@UploadedFile() img: Express.Multer.File) {
     console.log(img);
-    const bucket = "chily-uploader";
-    const upload = await this.uploadService.upload(
-      bucket,
+
+    const upload = await this.uploadService.update(
       img.originalname,
       img.buffer
     );
