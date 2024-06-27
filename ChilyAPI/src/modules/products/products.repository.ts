@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { Product } from "./products.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { createProductDto } from "./createProduct.dto";
@@ -14,6 +14,7 @@ export class ProductsRepository {
   async getProducts(page: number, limit: number): Promise<Product[]> {
     try {
       let products = await this.productsRepository.find({
+        where: { isDeleted: false },
         relations: ["category"],
       });
       const startIndex = (page - 1) * limit;
@@ -28,7 +29,7 @@ export class ProductsRepository {
   async getProductById(id: number): Promise<Product> {
     try {
       const product = await this.productsRepository.findOne({
-        where: { id: id },
+        where: { id: id, isDeleted: false },
         relations: ["category"],
       });
       return product;
@@ -37,14 +38,43 @@ export class ProductsRepository {
     }
   }
 
+  async getCategoryByFilter(filter: number[], page: number, limit: number): Promise<Product[]> {
+    try {
+      const categories = await this.categoryRepository.find({
+        where: { id: In(filter), isDeleted: false },
+        relations: ['products'],
+      });
+
+      let products: Product[] = [];
+      categories.forEach(category => {
+          category.products.forEach(product => {
+              if (!product.isDeleted) {
+                  products.push(product);
+              }
+          });
+      });
+
+      products = Array.from(new Set(products.map(p => p.id))).map(id => {
+        return products.find(p => p.id === id);
+      });
+
+      const startIndex = (page - 1) * limit;
+      const endIndex = page * limit;
+      const paginatedProducts = products.slice(startIndex, endIndex);
+
+      return paginatedProducts;
+    } catch (error) {
+      throw new NotFoundException("Error al obtener las categorias");
+    }
+  }
   async createProduct(createProduct: createProductDto): Promise<Product> {
     try {
 
       const product = new Product();
 
-      const categories = await this.categoryRepository.findOne({
-        where: { id: createProduct.category },
-      });
+      const categories: Category[] = await Promise.all(createProduct.category.map(async (categoryId) => {
+        return await this.categoryRepository.findOneBy({ id: categoryId, isDeleted: false });
+      }))
 
       if (!categories) throw new NotFoundException("La categoria no existe");
 
@@ -61,28 +91,22 @@ export class ProductsRepository {
       const createdProduct = await this.productsRepository.save(product);
       return createdProduct;
     } catch (error) {
-      throw new BadRequestException("Error al crear el producto o posible llave duplicada");
+      throw new BadRequestException("Error al crear el producto o posible nombre duplicado");
     }
   }
 
-  async updateProduct(
-    id: number,
-    updateProduct: createProductDto
-  ): Promise<Product> {
+  async updateProduct(id: number, updateProduct: createProductDto): Promise<Product> {
     try {
-      const product = new Product();
 
-      const existingProduct = await this.productsRepository.findOne({
-        where: { id: id },
+      const product = await this.productsRepository.findOne({
+        where: { id: id, isDeleted: false }, relations: ["category"],
       });
 
-      if (!existingProduct) throw new NotFoundException("El producto no existe");
+      if (!product) throw new NotFoundException("El producto no existe");
 
-      const categories = await this.categoryRepository.findOne({
-        where: { id: updateProduct.category },
-      });
-
-      if (!categories) throw new NotFoundException("La categoria no existe");
+      //const categories:Category[] = await Promise.all(updateProduct.category.map(async (categoryId) => {
+      //  return await this.categoryRepository.findOneBy({ id: categoryId, isDeleted: false });
+      //}))
 
       product.name = updateProduct.name;
 
@@ -90,24 +114,28 @@ export class ProductsRepository {
 
       product.price = updateProduct.price;
 
-      product.category = categories;
+      if (updateProduct.category && updateProduct.category.length > 0) {
+        const categories = await this.categoryRepository.find({ where: { id: In(updateProduct.category), isDeleted: false } })
+        product.category = categories;
+      }
 
-      await this.productsRepository.update(id, product);
-
-      const updatedProduct = await this.productsRepository.update(id, product)
+      await this.productsRepository.save(product);
 
       return await this.getProductById(id);
     } catch (error) {
-      throw new NotFoundException("Error al actualizar el producto con ID: " + id);
+      throw new Error(error);
+      //throw new NotFoundException("Error al actualizar el producto con ID: " + id);
     }
   }
 
   async deleteProduct(id: number): Promise<string> {
     try {
-      const product = await this.productsRepository.softDelete(id);
-      return product.affected > 0 ? "Producto eliminado" : "Producto no encontrado";
+      const product = await this.productsRepository.findOne({ where: { id: id } });
+      product.isDeleted = true;
+      const updatedProduct = await this.productsRepository.update(id, product);
+      return updatedProduct.affected > 0 ? "Producto dado de baja" : "Producto no encontrado";
     } catch (error) {
-      throw new BadRequestException("Error al eliminar el producto con ID: " + id);
+      throw new BadRequestException("Error al dar de baja el producto con ID: " + id);
     }
   }
 
@@ -124,7 +152,7 @@ export class ProductsRepository {
   async availableOrUnavaliableProduct(id: number, status: string): Promise<Product> {
 
     try {
-      const product = await this.getProductById(id);
+      const product = await this.productsRepository.findOne({ where: { id: id, isDeleted: false }, relations: ["category"] });
 
       if (!product) throw new NotFoundException("Error al obtener el producto");
 
@@ -136,8 +164,8 @@ export class ProductsRepository {
         throw new BadRequestException("El estado debe ser true o false")
       };
 
-      const updatedProduct = await this.productsRepository.update(id, product);
-      return await this.getProductById(id);
+      await this.productsRepository.save(product);
+      return product;
 
     } catch (error) {
       throw new NotFoundException("Error al actualizar el producto con ID: " + id);
@@ -146,7 +174,7 @@ export class ProductsRepository {
 
   async productIsPopular(id: number, status: string): Promise<Product> {
     try {
-      const product = await this.getProductById(id);
+      const product = await this.productsRepository.findOne({ where: { id: id, isDeleted: false }, relations: ["category"] });
 
       if (!product) throw new NotFoundException("Error al obtener el producto");
 
@@ -158,8 +186,9 @@ export class ProductsRepository {
         throw new BadRequestException("El estado debe ser true o false")
       };
 
-      const updatedProduct = await this.productsRepository.update(id, product);
-      return await this.getProductById(id);
+      await this.productsRepository.save(product);
+      return product;
+
     } catch (error) {
       throw new NotFoundException("Error al actualizar el producto con ID: " + id);
     }
