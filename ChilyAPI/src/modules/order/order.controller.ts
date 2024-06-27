@@ -1,8 +1,18 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseInterceptors,
+} from "@nestjs/common";
 import { OrderService } from "./order.service";
 import { OrderDto } from "./dto/order.dto";
 import { DocumentationApiTagsModule } from "src/docs";
 import { UpdateOrderDto } from "./dto/update-order.dto";
+import { RemovePropertiesInterceptor } from "src/common/interceptors";
 
 @Controller("orders")
 @DocumentationApiTagsModule.clasification("orders")
@@ -62,6 +72,7 @@ export class OrderController {
    * @body new order DTO
    * @return {Promise<Order>}
    */
+  @UseInterceptors(new RemovePropertiesInterceptor(["order"]))
   async postNewOrder(@Param("id") id: number, @Body() orderData: OrderDto) {
     return await this.orderService.addOrder(orderData, id);
   }
