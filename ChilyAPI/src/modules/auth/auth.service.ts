@@ -138,16 +138,23 @@ export class AuthService {
   async googleLogin(data: UserLoginGoogleDto) {
     try {
       const user = await this.userService.createUserGoogle(data);
+      console.log(user)
       const access_token = this.jwtService.sign({
         id: user.id,
         email: user.email,
         rol: "google",
+      }, {
+        secret: process.env.JWT_SECRET,
       });
+
+      console.log(access_token);
+
       return {
         access_token: access_token,
         user: user,
       };
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(error);
     }
   }

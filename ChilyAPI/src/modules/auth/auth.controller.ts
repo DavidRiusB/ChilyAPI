@@ -26,7 +26,7 @@ export class AuthController {
   //
   constructor(private authService: AuthService) {}
 
-  @Post('singin')
+  @Post('signin')
   @DocumentationLogin()
   async singIn(@Body() credentials: UserLoginDTO) {
     console.log(process.env.JWT_SECRET);
@@ -46,11 +46,18 @@ export class AuthController {
   //   return await this.authService(user);
   // }
 
+  @Get('google/login')
+  @UseGuards(GoogleAuthGuard)
+  @DocumentationLoginGoogle()
+  googleLogin() {
+    return { msg: 'Redirigiendo' };
+  }
   @Get('google/redirect')
   @UseGuards(GoogleAuthGuard)
   @DocumentationLoginGoogle()
   loginGoogle(@Req() req: Request, @Res() res: Response) {
     const encodedData = encodeURIComponent(JSON.stringify(req.user));
+    console.log(encodedData);
     res.redirect(
       process.env.FRONTEND_URL + '/auth/google?state=' + encodedData,
     );
