@@ -26,25 +26,79 @@ export class ProductsService {
     return this.productsRepository.getProductById(id);
   }
 
-  getCategoryByFilter(filter: string, page: number, limit: number): Promise<Product[]> {
-    if (filter != "") {
+  getCategoryByFilter(filter: string): Promise<Product[]> {
       const filterNumber = filter.split(",").map((id) => Number(id)).filter(id => !isNaN(id));
-      return this.productsRepository.getCategoryByFilter(filterNumber, page, limit);
-    } else {
-      return this.productsRepository.getProducts(page, limit);
-    }
+      return this.productsRepository.getCategoryByFilter(filterNumber);
   }
 
-  getProductsByPriceRange(min: number, max: number, page: number, limit: number): Promise<Product[]> {
-    return this.productsRepository.getProductsByPriceRange(min, max, page, limit);
+  getProductsByPriceRange(min: number, max: number): Promise<Product[]> {
+    return this.productsRepository.getProductsByPriceRange(min, max);
   }
 
-  getProductsBySearch(search: string, page: number, limit: number): Promise<Product[]> {
-    if (search != "") {
-      return this.productsRepository.getProductsBySearch(search, page, limit);
-    } else {
-      return this.productsRepository.getProducts(page, limit);
+  getProductsBySearch(search: string): Promise<Product[]> {
+      return this.productsRepository.getProductsBySearch(search);
+  }
+
+  async getProductByFilter(filter: string, search: string, min: number, max: number, page: number, limit: number): Promise<Product[]> {
+    let products: Product[] = await this.productsRepository.getAllProducts();
+
+    if (filter != "") {
+      const productsFilter = await this.getCategoryByFilter(filter);
+
+      products = products.concat(productsFilter);
+
+      const productCountMap = new Map<number, number>();
+
+      products.forEach(product => {
+        const count = productCountMap.get(product.id) || 0;
+        productCountMap.set(product.id, count + 1);
+      });
+
+      products = products.filter(product => productCountMap.get(product.id) > 1);
+
+      products = products.filter((product, index, self) =>
+        index === self.findIndex((p) => p.id === product.id)
+      );
     }
+
+    if (search!= "") {
+      const productsSearch = await this.getProductsBySearch(search);
+      products = products.concat(productsSearch);
+
+      const productCountMap = new Map<number, number>();
+
+      products.forEach(product => {
+        const count = productCountMap.get(product.id) || 0;
+        productCountMap.set(product.id, count + 1);
+      });
+      products = products.filter(product => productCountMap.get(product.id) > 1);
+
+      products = products.filter((product, index, self) =>
+        index === self.findIndex((p) => p.id === product.id)
+      );
+    }
+
+    if(min!= 0 || max!=Infinity){
+      const productsPriceRange = await this.getProductsByPriceRange(min, max);
+      products = products.concat(productsPriceRange);
+
+      const productCountMap = new Map<number, number>();
+
+      products.forEach(product => {
+        const count = productCountMap.get(product.id) || 0;
+        productCountMap.set(product.id, count + 1);
+      });
+      products = products.filter(product => productCountMap.get(product.id) > 1);
+
+      products = products.filter((product, index, self) =>
+        index === self.findIndex((p) => p.id === product.id)
+      );
+    }
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const paginatedProducts = products.slice(startIndex, endIndex);
+    return paginatedProducts;
   }
 
   async findProductsByIds(ids: number[]): Promise<Product[]> {
