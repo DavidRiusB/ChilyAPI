@@ -65,4 +65,14 @@ export class AddressRepository {
         }
     }
 
+        async deleteAddress(id: number) {
+        try {
+            const address = await this.addressRepository.findOne({ where: { id: id}});
+            if(!address) throw new NotFoundException("La dirección no existe");
+            return await this.addressRepository.delete(id);
+        } catch (error) {   
+            if(error instanceof NotFoundException) throw error;
+            throw new InternalServerErrorException(error)
+        }
+    }
 }

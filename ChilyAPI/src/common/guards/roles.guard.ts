@@ -25,4 +25,4 @@ export class RolesGuard implements CanActivate {
 		if (!valid) throw new ForbiddenException('No tienes permisos para acceder a este recurso');
 		return valid;
 	}
-} 
+}

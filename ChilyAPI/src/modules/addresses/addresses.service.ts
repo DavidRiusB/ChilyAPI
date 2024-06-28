@@ -15,4 +15,7 @@ export class AddressesService {
    async updateAddress(addressUpdate: UpdateAddressDto) {
         return await this.addressRepository.updateAddress(addressUpdate);
     }
+    async deleteAddress(id: number) {
+        return await this.addressRepository.deleteAddress(id);
+     }
 }
