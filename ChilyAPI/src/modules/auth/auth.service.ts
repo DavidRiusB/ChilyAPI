@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -10,7 +9,6 @@ import { AuthRepository } from "./auth.repository";
 import { UserService } from "../user/user.service";
 import { DataSource, EntityManager } from "typeorm";
 import { User } from "../user/entity/user.entity";
-import { LogoutDTO } from "./dto/logout.dto";
 import { usersSeed } from "./users-seed";
 import { hashPassword } from "src/utils/hashing/bcrypt.utils";
 import { Credential } from "./entities/auth.entity";
