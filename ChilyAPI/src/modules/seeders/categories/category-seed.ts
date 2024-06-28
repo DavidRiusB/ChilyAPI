@@ -65,4 +65,52 @@ export const categorySeed: createCategoryDto[] = [
     name: "CARNES",
     icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
+  {
+    name: "PESCADOS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "VEGETARIANOS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "ALCOHOLICAS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "NO ALCOHOLICAS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "GASEOSAS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },  
+  {
+    name: "CERVEZAS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "LIMONADAS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "VINOS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "JUGOS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "PASTAS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "PAPAS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
+  {
+    name: "ENSALADAS",
+    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
 ];

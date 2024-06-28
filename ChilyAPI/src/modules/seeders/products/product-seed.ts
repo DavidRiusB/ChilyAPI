@@ -7,7 +7,7 @@ export const productsSeed = [
     price: 4.7,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PORCIONES"],
+    category: ["PORCIONES","PAPAS","VEGETARIANOS"],
   },
   {
     name: "Porciones papa francesa cuatro 7",
@@ -16,7 +16,7 @@ export const productsSeed = [
     price: 4.7,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PORCIONES"],
+    category: ["PORCIONES","PAPAS","VEGETARIANOS"],
   },
   {
     name: "Porciones arroz chorizo de cerdo 6",
@@ -25,7 +25,7 @@ export const productsSeed = [
     price: 6,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PORCIONES","CARNES","OTROS"],
+    category: ["PORCIONES","CARNES"],
   },
   {
     name: "Porciones tocineta ahumada 4.8",
@@ -34,7 +34,7 @@ export const productsSeed = [
     price: 4.8,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PORCIONES"],
+    category: ["PORCIONES","CARNES"],
   },
   {
     name: "Porciones carne desmechada 8.5",
@@ -43,7 +43,7 @@ export const productsSeed = [
     price: 8.5,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PORCIONES"],
+    category: ["PORCIONES","CARNES"],
   },
   {
     name: "Porciones pollo desmechado 8",
@@ -52,7 +52,7 @@ export const productsSeed = [
     price: 8,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PORCIONES"],
+    category: ["PORCIONES","CARNES"],
   },
   {
     name: "Porciones jamón 9",
@@ -61,7 +61,7 @@ export const productsSeed = [
     price: 9,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PORCIONES"],
+    category: ["PORCIONES","CARNES"],
   },
   {
     name: "Porciones guacamole 3",
@@ -69,7 +69,7 @@ export const productsSeed = [
     price: 3,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PORCIONES"],
+    category: ["PORCIONES","VEGETARIANOS"],
   },
   {
     name: "Porciones ejote 2.9",
@@ -78,7 +78,7 @@ export const productsSeed = [
     price: 2.9,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PORCIONES"],
+    category: ["PORCIONES","VEGETARIANOS"],
   },
   {
     name: "Porciones queso mozzarella 4",
@@ -87,7 +87,7 @@ export const productsSeed = [
     price: 4,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PORCIONES"],
+    category: ["PORCIONES","OTROS","VEGETARIANOS"],
   },
   {
     name: "Porciones yuca 4.7",
@@ -96,7 +96,7 @@ export const productsSeed = [
     price: 4.7,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PORCIONES"],
+    category: ["PORCIONES","VEGETARIANOS"],
   },
   {
     name: "Jugos naturales",
@@ -104,7 +104,7 @@ export const productsSeed = [
     price: 7,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS","JUGOS","NO ALCOHOLICAS"],
   },
   {
     name: "Gaseosas de 355 ml",
@@ -113,7 +113,7 @@ export const productsSeed = [
     price: 4,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS", "GASEOSAS", "NO ALCOHOLICAS"],
   },
   {
     name: "Gaseosa no retornable",
@@ -121,7 +121,7 @@ export const productsSeed = [
     price: 4.3,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS","GASEOSAS","NO ALCOHOLICAS"],
   },
   {
     name: "Botella de agua",
@@ -129,7 +129,7 @@ export const productsSeed = [
     price: 4,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS","NO ALCOHOLICAS","OTROS"],
   },
   {
     name: "Té",
@@ -137,7 +137,7 @@ export const productsSeed = [
     price: 4,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS","NO ALCOHOLICAS","OTROS"],
   },
   {
     name: "Cerveza nacional",
@@ -145,7 +145,7 @@ export const productsSeed = [
     price: 5.4,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS","ALCOHOLICAS"],
   },
   {
     name: "Cerveza importada",
@@ -153,7 +153,7 @@ export const productsSeed = [
     price: 8.5,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS","ALCOHOLICAS"],
   },
   {
     name: "Cola y Pola",
@@ -161,7 +161,7 @@ export const productsSeed = [
     price: 5.4,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS","ALCOHOLICAS"],
   },
   {
     name: "Limonada natural",
@@ -169,7 +169,7 @@ export const productsSeed = [
     price: 5.2,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS","LIMONADAS", "NO ALCOHOLICAS"],
   },
   {
     name: "Limonada de hierbabuena",
@@ -177,7 +177,7 @@ export const productsSeed = [
     price: 5.9,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS","LIMONADAS", "NO ALCOHOLICAS"],
   },
   {
     name: "Cerezada",
@@ -185,7 +185,7 @@ export const productsSeed = [
     price: 7.2,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS","JUGOS", "NO ALCOHOLICAS"],
   },
   {
     name: "Coco",
@@ -193,7 +193,7 @@ export const productsSeed = [
     price: 7.5,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS", "NO ALCOHOLICAS","JUGOS"],
   },
   {
     name: "Mango biche",
@@ -201,7 +201,7 @@ export const productsSeed = [
     price: 7.2,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BEBIDAS"],
+    category: ["BEBIDAS", "NO ALCOHOLICAS","JUGOS"],
   },
   {
     name: "Chorizo Tijuano",
@@ -209,7 +209,7 @@ export const productsSeed = [
     price: 9.6,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["ENTRADAS"],
+    category: ["ENTRADAS","CARNES"],
   },
   {
     name: "Chapulines",
@@ -218,7 +218,7 @@ export const productsSeed = [
     price: 8.5,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["ENTRADAS"],
+    category: ["ENTRADAS","OTROS","CARNES"],
   },
   {
     name: "Chinicuiles",
@@ -226,7 +226,7 @@ export const productsSeed = [
     price: 9.9,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["ENTRADAS"],
+    category: ["ENTRADAS","OTROS","CARNES"],
   },
   {
     name: "Ensalada hawaiana",
@@ -234,7 +234,7 @@ export const productsSeed = [
     price: 5.5,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["ENTRADAS"],
+    category: ["ENTRADAS","ENSALADAS","VEGETARIANOS"],
   },
   {
     name: "Ensalada mexicana",
@@ -243,7 +243,7 @@ export const productsSeed = [
     price: 6.6,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["ENTRADAS"],
+    category: ["ENTRADAS","ENSALADAS","VEGETARIANOS"],
   },
   {
     name: "Nacho tradicional",
@@ -251,7 +251,7 @@ export const productsSeed = [
     price: 10.5,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["ENTRADAS"],
+    category: ["ENTRADAS","VEGETARIANOS"],
   },
   {
     name: "Elotes",
@@ -259,7 +259,7 @@ export const productsSeed = [
     price: 9.9,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["ENTRADAS"],
+    category: ["ENTRADAS","VEGETARIANOS"],
   },
   {
     name: "Longaniza con arepa de queso",
@@ -267,7 +267,7 @@ export const productsSeed = [
     price: 8.5,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["ENTRADAS"],
+    category: ["ENTRADAS","CARNES"],
   },
   {
     name: "Burrito chili",
@@ -276,7 +276,7 @@ export const productsSeed = [
     price: 16.5,
     img: "https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BURRITOS"],
+    category: ["BURRITOS","CARNES"],
   },
   {
     name: "Burrito montañero",
@@ -284,7 +284,7 @@ export const productsSeed = [
     price: 3,
     img: "https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["BURRITOS"],
+    category: ["BURRITOS","CARNES"],
   },
   {
     name: "Churrasco",
@@ -292,7 +292,7 @@ export const productsSeed = [
     price: 30.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES"],
   },
   {
     name: "Punta de anca",
@@ -301,7 +301,7 @@ export const productsSeed = [
     price: 32.5,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES"],
   },
   {
     name: "Parrilla mixta",
@@ -309,7 +309,7 @@ export const productsSeed = [
     price: 31.8,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES"],
   },
   {
     name: "Filet migñon",
@@ -317,7 +317,7 @@ export const productsSeed = [
     price: 33.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES"],
   },
   {
     name: "Chuleta de cerdo",
@@ -325,7 +325,7 @@ export const productsSeed = [
     price: 26.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES"],
   },
   {
     name: "Pechuga en salsa de champiñones",
@@ -333,7 +333,7 @@ export const productsSeed = [
     price: 28.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES"],
   },
   {
     name: "Pechuga a la brasa",
@@ -341,7 +341,7 @@ export const productsSeed = [
     price: 26.5,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES"],
   },
   {
     name: "Pechuga gratinada",
@@ -349,7 +349,7 @@ export const productsSeed = [
     price: 28.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES"],
   },
   {
     name: "Pechuga hawaiana",
@@ -357,7 +357,7 @@ export const productsSeed = [
     price: 29.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES"],
   },
   {
     name: "Trucha al ajillo",
@@ -365,7 +365,7 @@ export const productsSeed = [
     price: 27.7,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES","PESCADOS"],
   },
   {
     name: "Trucha gratinada",
@@ -373,7 +373,7 @@ export const productsSeed = [
     price: 29,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES","PESCADOS"],
   },
   {
     name: "Picada",
@@ -381,7 +381,7 @@ export const productsSeed = [
     price: 35.5,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES"],
   },
   {
     name: "Picada Don Chily",
@@ -390,7 +390,7 @@ export const productsSeed = [
     price: 57,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","CARNES","OTROS"],
   },
   {
     name: "Ensalada Doña Florinda",
@@ -399,6 +399,6 @@ export const productsSeed = [
     price: 19.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
-    category: ["PARRILLA GOURMET"],
+    category: ["PARRILLA GOURMET","VEGETARIANOS","ENSALADAS"],
   },
 ];
