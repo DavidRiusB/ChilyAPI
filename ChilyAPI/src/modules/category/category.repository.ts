@@ -13,7 +13,7 @@ export class CategoryRepository {
 
     async getCategories(): Promise<Category[]> {
         try {
-            const categories = await this.categoryRepository.find({ where: { isDeleted: false } });
+            const categories = await this.categoryRepository.find({ where: { isDeleted: false }, relations: ["products"] });
             return categories;
         } catch (error) {
             throw new NotFoundException("Error al obtener las categorias");
