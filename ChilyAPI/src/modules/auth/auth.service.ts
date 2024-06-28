@@ -15,7 +15,7 @@ import { Credential } from "./entities/auth.entity";
 import { UserLoginDTO } from "./dto/login.dto";
 import { UserLoginGoogleDto } from "./dto/loginGoogle.dto";
 import { JwtService } from "@nestjs/jwt";
-import { NotificationEmailsService } from "../../utils/shared/notification-register-emails/notificationEmails";
+import { NotificationEmailsService } from "../notifications/notificationEmails.service";
 
 @Injectable()
 export class AuthService {
@@ -136,14 +136,17 @@ export class AuthService {
   async googleLogin(data: UserLoginGoogleDto) {
     try {
       const user = await this.userService.createUserGoogle(data);
-      console.log(user)
-      const access_token = this.jwtService.sign({
-        id: user.id,
-        email: user.email,
-        rol: "google",
-      }, {
-        secret: process.env.JWT_SECRET,
-      });
+      console.log(user);
+      const access_token = this.jwtService.sign(
+        {
+          id: user.id,
+          email: user.email,
+          rol: "google",
+        },
+        {
+          secret: process.env.JWT_SECRET,
+        },
+      );
 
       console.log(access_token);
 
