@@ -8,7 +8,7 @@ dotenvConfig({ path: '.env.development' });
 
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy) {
+export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(
     private readonly authService: AuthService
   ) {
@@ -22,7 +22,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     console.log(accessToken);
-    console.log(refreshToken);
     console.log(profile);
 
     const user = await this.authService.googleLogin({
