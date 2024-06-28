@@ -4,9 +4,7 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import typeOrmConfig from "./config/database";
 import { JwtModule } from "@nestjs/jwt";
 import {
-  AdminModule,
   DeliveryModule,
-  SuperAdminModule,
   UserModule,
   AuthModule,
   OrderModule,
@@ -30,8 +28,6 @@ import { DiscountModule } from "./modules/discount/discount.module";
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get("typeorm"),
     }),
-    AdminModule,
-    SuperAdminModule,
     AuthModule,
     UserModule,
     DeliveryModule,
