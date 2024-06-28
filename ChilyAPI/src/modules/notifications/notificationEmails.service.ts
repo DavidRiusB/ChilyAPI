@@ -3,6 +3,7 @@ import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import * as nodemailer from "nodemailer";
 
 import { config as dotenvConfig } from "dotenv";
+import { registrationMailTemplate } from "./texts";
 dotenvConfig({ path: ".env.development" });
 
 @Injectable()
@@ -23,8 +24,8 @@ export class NotificationEmailsService {
     const mailOptions = {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
-      subject: "Registro exitoso",
-      text: `Hola ${username}, ¡te has registrado exitosamente en Chily!`,
+      subject: "Registro exitoso en Chily",
+      html: registrationMailTemplate(username),
     };
 
     try {
@@ -32,9 +33,6 @@ export class NotificationEmailsService {
       console.log("Correo enviado: %s", info.messageId);
     } catch (error) {
       console.error("Error al enviar el correo:", error);
-      throw new InternalServerErrorException(
-        "Error al enviar el correo electrónico",
-      );
     }
   }
 }

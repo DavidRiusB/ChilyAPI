@@ -10,7 +10,7 @@ import { SessionSerializer } from "src/common/helpers/serializer";
 import { UserService } from "../user/user.service";
 import { JwtModule, JwtService } from "@nestjs/jwt";
 import { config as dotenvConfig } from "dotenv";
-import { NotificationEmailsService } from "src/utils/shared/notification-register-emails/notificationEmails";
+import { NotificationEmailsService } from "src/modules/notifications/notificationEmails.service";
 dotenvConfig({ path: ".env.development" });
 
 @Module({
