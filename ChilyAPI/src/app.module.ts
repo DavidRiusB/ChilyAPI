@@ -18,6 +18,7 @@ import { PassportModule } from "@nestjs/passport";
 import { AddressesModule } from "./modules/addresses/addresses.module";
 import { UploadModule } from "./modules/upload/upload.module";
 import { NotificationEmailsService } from "./modules/notifications/notificationEmails.service";
+import { DiscountModule } from "./modules/discount/discount.module";
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { NotificationEmailsService } from "./modules/notifications/notificationE
     OrderModule,
     CategoryModule,
     UploadModule,
+    DiscountModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
