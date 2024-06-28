@@ -29,6 +29,7 @@ import { DocumentationAddProduct, DocumentationGetProducts } from "src/docs";
 import { QueryInterceptor } from "src/common/interceptors/query.interceptor";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { PriceQueryInterceptor } from "src/common/interceptors/queryPrice.interceptor";
+import { QueryFilterInterceptor } from "src/common/interceptors/queryFilter.interceptor";
 
 @Controller("products")
 @DocumentationApiTagsModule.clasification("Rutas para: Productos")
@@ -46,26 +47,10 @@ export class ProductsController {
     return products;
   }
 
-  @Get("filter/category")
-  @UseInterceptors(QueryInterceptor)
-  getCategoryByFilter(@Req() request: any, @Query("filter") filter: string) {
-    return this.productsService.getCategoryByFilter(
-      filter,
-      request.page,
-      request.limit
-    );
-  }
-
-  @Get('filter/price') 
-  @UseInterceptors(PriceQueryInterceptor)
-  getProductsByPriceRange(@Req() request: any){
-    return this.productsService.getProductsByPriceRange(request.min, request.max, request.page, request.limit);
-  }
-
-  @Get("filter/search")
-  @UseInterceptors(QueryInterceptor)
-  getProductsBySearch(@Req() request: any, @Query('search') search: string) {
-    return this.productsService.getProductsBySearch(search, request.page, request.limit);
+  @Get("filter")
+  @UseInterceptors(QueryFilterInterceptor)
+  getProductsByFilter(@Req() request:any, @Query('filter') filter: string, @Query('search') search:string){
+    return this.productsService.getProductByFilter(filter, search, request.min, request.max, request.page, request.limit);
   }
 
   @Get(":id")

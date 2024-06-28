@@ -26,6 +26,15 @@ export class ProductsRepository {
     }
   }
 
+  async getAllProducts(): Promise<Product[]> {
+    try {
+      const products = await this.productsRepository.find({ where: { isDeleted: false } });
+      return products;
+    } catch (error) {
+      throw new NotFoundException("Error al obtener los productos");
+    }
+  }
+
   async getProductById(id: number): Promise<Product> {
     try {
       const product = await this.productsRepository.findOne({
@@ -38,7 +47,7 @@ export class ProductsRepository {
     }
   }
 
-  async getCategoryByFilter(filter: number[], page: number, limit: number): Promise<Product[]> {
+  async getCategoryByFilter(filter: number[]): Promise<Product[]> {
     try {
       const categories = await this.categoryRepository.find({
         where: { id: In(filter), isDeleted: false },
@@ -47,28 +56,24 @@ export class ProductsRepository {
 
       let products: Product[] = [];
       categories.forEach(category => {
-          category.products.forEach(product => {
-              if (!product.isDeleted) {
-                  products.push(product);
-              }
-          });
+        category.products.forEach(product => {
+          if (!product.isDeleted) {
+            products.push(product);
+          }
+        });
       });
 
       products = Array.from(new Set(products.map(p => p.id))).map(id => {
         return products.find(p => p.id === id);
       });
 
-      const startIndex = (page - 1) * limit;
-      const endIndex = page * limit;
-      const paginatedProducts = products.slice(startIndex, endIndex);
-
-      return paginatedProducts;
+      return products;
     } catch (error) {
       throw new NotFoundException("Error al obtener las categorias");
     }
   }
 
-  async getProductsBySearch(search: string, page: number, limit: number): Promise<Product[]> {
+  async getProductsBySearch(search: string): Promise<Product[]> {
     try {
 
       const upperSearch = search.toUpperCase();
@@ -94,28 +99,31 @@ export class ProductsRepository {
       products = Array.from(new Set(products.map(p => p.id))).map(id => {
         return products.find(p => p.id === id);
       });
-
-      const startIndex = (page - 1) * limit;
-      const endIndex = page * limit;
-      const paginatedProducts = products.slice(startIndex, endIndex);
-      return paginatedProducts;
+      return products;
     } catch (error) {
       throw new NotFoundException("Error al obtener los productos");
     }
   }
 
-  async getProductsByPriceRange(min: number, max: number,page: number, limit: number): Promise<Product[]> {
+  /*async getProductsByFilter(filter: number[], search: string, min: number, max: number, page: number, limit: number): Promise<Product[]> {
+    try {
+      const products = await this.getProducts(page, limit);
+      if(filter);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new Error('Error al obtener los productos');
+    }
+  }*/
+
+  async getProductsByPriceRange(min: number, max: number): Promise<Product[]> {
     try {
       const products = await this.productsRepository.find({
         where: { isDeleted: false, price: Between(min, max) },
         relations: ["category"],
       });
-
-      const startIndex = (page - 1) * limit;
-      const endIndex = page * limit;
-      const paginatedProducts = products.slice(startIndex, endIndex);
-      return paginatedProducts;
-
+      return products;
     } catch (error) {
       throw new NotFoundException("Error al obtener los productos");
     }
