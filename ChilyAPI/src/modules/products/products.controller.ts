@@ -49,8 +49,8 @@ export class ProductsController {
 
   @Get("filter")
   @UseInterceptors(QueryFilterInterceptor)
-  getProductsByFilter(@Req() request:any, @Query('filter') filter: string, @Query('search') search:string){
-    return this.productsService.getProductByFilter(filter, search, request.min, request.max, request.page, request.limit);
+  getProductsByFilter(@Req() request:any){
+    return this.productsService.getProductByFilter(request.filter, request.search, request.min, request.max, request.page, request.limit);
   }
 
   @Get(":id")
