@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 export function DocumentationLogin() {
   return applyDecorators(
@@ -21,27 +21,6 @@ export function DocumentationRegister() {
       description: 'Solicitud incorrecta. Verifica los datos',
     }),
     ApiResponse({ status: 400, description: 'El usuario ya existe' }),
-  );
-}
-
-export function DocumentationLogout() {
-  return applyDecorators(
-    ApiOperation({ summary: 'Cerrar sesión' }),
-    ApiBody({
-      description: 'Datos necesarios para cerrar sesión',
-    }),
-    ApiResponse({
-      status: 200,
-      description: 'Cierre de sesión exitoso',
-    }),
-    ApiResponse({
-      status: 401,
-      description: 'No autorizado',
-    }),
-    ApiResponse({
-      status: 400,
-      description: 'Datos de entrada inválidos',
-    }),
   );
 }
 

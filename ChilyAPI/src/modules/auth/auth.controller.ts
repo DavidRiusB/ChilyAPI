@@ -14,10 +14,8 @@ import { RegisterUserDTO } from './dto/register.dto';
 import {
   DocumentationApiTagsModule,
   DocumentationLoginGoogle,
-  DocumentationLogout,
 } from 'src/docs';
 import { DocumentationLogin, DocumentationRegister } from 'src/docs';
-import { LogoutDTO } from './dto/logout.dto';
 import { GoogleAuthGuard } from './guards/google.guard';
 import { Request, Response } from 'express';
 @Controller('auth')
