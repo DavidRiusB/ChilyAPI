@@ -12,6 +12,9 @@ import { AddressesService } from './addresses.service';
 import { CreateAddressDto } from './dto/createAddress.dto';
 import { UpdateAddressDto } from './dto/updateAddres.dto';
 import { DocumentationApiTagsModule } from 'src/docs';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { Role } from 'src/common/enums';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @Controller('addresses')
 @DocumentationApiTagsModule.clasification('addresses')
