@@ -40,24 +40,32 @@ export class ProductsService {
   }
 
   async getProductByFilter(filter: string, search: string, min: number, max: number, page: number, limit: number): Promise<Product[]> {
+    // First I get all products into products
     let products: Product[] = await this.productsRepository.getAllProducts();
 
+    // Check if filter is not empty
     if (filter != "") {
+      // Call other method to get products by category
       const productsFilter = await this.getCategoryByFilter(filter);
 
+      // Concatenate the results with the original products array
       products = products.concat(productsFilter);
 
+      // Create a map to count how many times each product appears in the new array
       const productCountMap = new Map<number, number>();
 
+      // Count how many times each product appears in the new array
       products.forEach(product => {
         const count = productCountMap.get(product.id) || 0;
         productCountMap.set(product.id, count + 1);
       });
 
+      // Eliminate products with less than 2 occurrences
       products = products.filter(product => productCountMap.get(product.id) > 1);
 
-      products = products.filter((product, index, self) =>
-        index === self.findIndex((p) => p.id === product.id)
+      // Remove duplicates by comparing product ids
+      products = products.filter((product, index, productArray) =>
+        index === productArray.findIndex((p) => p.id === product.id)
       );
     }
 
@@ -73,8 +81,8 @@ export class ProductsService {
       });
       products = products.filter(product => productCountMap.get(product.id) > 1);
 
-      products = products.filter((product, index, self) =>
-        index === self.findIndex((p) => p.id === product.id)
+      products = products.filter((product, index, productArray) =>
+        index === productArray.findIndex((p) => p.id === product.id)
       );
     }
 
@@ -90,8 +98,8 @@ export class ProductsService {
       });
       products = products.filter(product => productCountMap.get(product.id) > 1);
 
-      products = products.filter((product, index, self) =>
-        index === self.findIndex((p) => p.id === product.id)
+      products = products.filter((product, index, productArray) =>
+        index === productArray.findIndex((p) => p.id === product.id)
       );
     }
 
