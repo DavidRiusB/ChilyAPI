@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Post,
   Put,
@@ -41,5 +42,10 @@ export class AddressesController {
   @UseGuards(JwtAuthGuard)
   async updateAddress(@Body() addressUpdate: UpdateAddressDto) {
     return await this.addressService.updateAddress(addressUpdate);
+  }
+  @Delete('/delete')
+  @UseGuards(JwtAuthGuard)
+  async deleteAddress(@Query('id') id: number) {
+    return await this.addressService.deleteAddress(id);
   }
 }
