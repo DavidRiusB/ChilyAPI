@@ -25,4 +25,4 @@ export function Match(property: string, validationOptions?: ValidationOptions) {
             },
         });
     };
-}
+} //
