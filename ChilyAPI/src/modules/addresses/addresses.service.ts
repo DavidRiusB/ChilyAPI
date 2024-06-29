@@ -9,6 +9,9 @@ export class AddressesService {
     async getUserAddresses(id: number) {
         return await this.addressRepository.getUserAddresses(id);
     }
+    async getUserAddress(id: number) {
+        return await this.addressRepository.getUserAddress(id);
+    }
     async addNewAddress(addressCreate: CreateAddressDto) {
         return await this.addressRepository.addNewAddress(addressCreate);
     }

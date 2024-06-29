@@ -6,6 +6,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { OrderService } from "./order.service";
@@ -13,6 +14,7 @@ import { OrderDto } from "./dto/order.dto";
 import { DocumentationApiTagsModule } from "src/docs";
 import { UpdateOrderDto } from "./dto/update-order.dto";
 import { RemovePropertiesInterceptor } from "src/common/interceptors";
+import { JwtAuthGuard } from "../auth/guards/jwt.guard";
 
 @Controller("orders")
 @DocumentationApiTagsModule.clasification("orders")
@@ -54,34 +56,20 @@ export class OrderController {
   }
 
   @Get(":id")
-  /**
- * Retrieves a order by Id.
- * Accessible only by users with SuperAdmin, admin, delivery and user roles.
-*
- * @param {number} id - Branch ID.
- 
- * @returns {Promise<Order>} - A order.
- */
   async getOrderById(@Param("id") id: number) {
     return await this.orderService.findOrderById(id);
   }
 
-  @Post(":id")
-  /**
-   * Post a new Order
-   * @body new order DTO
-   * @return {Promise<Order>}
-   */
-  @UseInterceptors(new RemovePropertiesInterceptor(["order"]))
-  async postNewOrder(@Param("id") id: number, @Body() orderData: OrderDto) {
-    return await this.orderService.addOrder(orderData, id);
+  @Post("/new")
+  @UseGuards(JwtAuthGuard)
+  async postNewOrder(@Body() orderData: OrderDto) {
+    return await this.orderService.addOrder(orderData);
   }
 
-  @Put(":id")
+  @Put("/update")
   async updateOrderStatus(
-    @Param("id") id: number,
     @Body() update: UpdateOrderDto
   ) {
-    return await this.orderService.updateStatus(id, update);
+    return await this.orderService.updateStatus(update);
   }
 }
