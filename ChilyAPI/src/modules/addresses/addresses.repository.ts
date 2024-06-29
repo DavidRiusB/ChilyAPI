@@ -30,7 +30,16 @@ export class AddressRepository {
             throw new NotFoundException(error.message);
         }
     }
-
+    async getUserAddress(id: number) {
+        try {
+            const address = await this.addressRepository.findOneBy({id: id});
+            if(!address) throw new NotFoundException("La dirección no existe");
+            return address;
+        } catch (error) {
+            if(error instanceof NotFoundException) throw error;
+            throw new InternalServerErrorException(error)
+        }
+    }
     async addNewAddress(address: CreateAddressDto): Promise<Address | NotFoundException | ConflictException | InternalServerErrorException> {
         try {
             return this.dataSource.transaction(async (manager) => {
