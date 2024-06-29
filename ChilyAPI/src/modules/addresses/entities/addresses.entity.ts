@@ -17,6 +17,11 @@ export class Address {
     @Column()
     postalCode: string;
 
+    @Column({
+        nullable: true,
+        length: 50
+    })
+    note: string;
     @ManyToOne(() => User, (user) => user.addresses)
     user: User
 }

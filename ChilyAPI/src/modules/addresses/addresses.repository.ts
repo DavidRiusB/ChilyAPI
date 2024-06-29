@@ -49,6 +49,7 @@ export class AddressRepository {
                 newAddress.city = address.city;
                 newAddress.address = address.address;
                 newAddress.postalCode = address.postalCode;
+                newAddress.note = address.note;
                 newAddress.user = user;
                 return await manager.save(newAddress);
             })
