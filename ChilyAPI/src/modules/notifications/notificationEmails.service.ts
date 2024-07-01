@@ -4,6 +4,7 @@ import * as nodemailer from "nodemailer";
 
 import { config as dotenvConfig } from "dotenv";
 import { registrationMailTemplate } from "./texts";
+import { passwordReset } from "./texts/passwordReset.template";
 dotenvConfig({ path: ".env.development" });
 
 @Injectable()
@@ -37,14 +38,21 @@ export class NotificationEmailsService {
   }
 
   async sendPasswordResetEmail(email: string, token: string): Promise<void> {
-    const resetUrl = `http://yourfrontend.com/reset-password?token=${token}`;
-
-    await this.transporter.sendMail({
-      from: '"Your App" <no-reply@example.com>',
+    const mailOptions = {
+      from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
-      subject: "Password Reset",
-      text: `You requested a password reset. Please click the following link to reset your password: ${resetUrl}`,
-      html: `<p>You requested a password reset. Please click the following link to reset your password: <a href="${resetUrl}">Reset Password</a></p>`,
-    });
+      subject: "Restablecimiento de contraseña",
+      html: passwordReset(
+        process.env.NOTIFICATIONS_PASSWORD_RESET_URL +
+          `reset-password?token=${token}`,
+      ),
+    };
+
+    try {
+      const info = await this.transporter.sendMail(mailOptions);
+      console.log("Correo enviado: %s", info.messageId);
+    } catch (error) {
+      console.error("Error al enviar el correo:", error);
+    }
   }
 }

@@ -131,10 +131,12 @@ export class AuthService {
     await this.notificationEmailsService.sendPasswordResetEmail(email, token);
   }
 
-  async resetPassword(token: string, newPassword: string): Promise<void> {
+  async resetPassword(token: string, newPassword: string):
+    Promise<void> {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
     await this.authRepository.resetPassword(token, hashedPassword);
+
   }
 
   async googleLogin(data: UserLoginGoogleDto) {
