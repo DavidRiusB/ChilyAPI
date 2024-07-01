@@ -52,10 +52,10 @@ export class Product {
   isPopular: boolean;
 
   @Column({
-    type: "boolean",
-    default: true,
+    type: "int",
+    default: 0,
   })
-  available: boolean;
+  stock: number;
 
   @Column({
     type: "boolean",

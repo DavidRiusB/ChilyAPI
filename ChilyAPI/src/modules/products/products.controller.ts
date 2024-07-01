@@ -87,7 +87,7 @@ export class ProductsController {
     return updatedProduct;
   }
 
-  @Put("available")
+  /*@Put("available")
   @DocumentationAvailableOrUnavaliableProduct()
   availableOrUnavaliableProduct(
     @Query("id") id: number,
@@ -98,6 +98,12 @@ export class ProductsController {
       status
     );
     return disabledProduct;
+  }*/
+
+  @Put("stock")
+  updateStock(@Query("id") id: number, @Query("stock") stock: number){
+    const updatedProduct = this.productsService.updateStock(id, stock);
+    return updatedProduct;
   }
 
   @Put("popular")

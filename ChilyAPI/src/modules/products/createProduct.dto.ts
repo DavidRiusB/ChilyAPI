@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsUrl,
   MaxLength,
@@ -26,6 +27,10 @@ export class createProductDto {
   @IsNumber()
   @DocumentationCreateProductDto.price()
   price: number;
+
+  @IsOptional()
+  @IsNumber()
+  stock : number;
 
   @MaxLength(255)
   @IsString()
