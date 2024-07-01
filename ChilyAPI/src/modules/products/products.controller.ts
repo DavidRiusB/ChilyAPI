@@ -34,7 +34,7 @@ import { QueryFilterInterceptor } from "src/common/interceptors/queryFilter.inte
 @Controller("products")
 @DocumentationApiTagsModule.clasification("Rutas para: Productos")
 export class ProductsController {
-  constructor(private productsService: ProductsService) { }
+  constructor(private productsService: ProductsService) {}
 
   @Get()
   @DocumentationGetProducts()
@@ -49,8 +49,15 @@ export class ProductsController {
 
   @Get("filter")
   @UseInterceptors(QueryFilterInterceptor)
-  getProductsByFilter(@Req() request:any){
-    return this.productsService.getProductByFilter(request.filter, request.search, request.min, request.max, request.page, request.limit);
+  getProductsByFilter(@Req() request: any) {
+    return this.productsService.getProductByFilter(
+      request.filter,
+      request.search,
+      request.min,
+      request.max,
+      request.page,
+      request.limit
+    );
   }
 
   @Get(":id")
@@ -117,12 +124,14 @@ export class ProductsController {
     )
     img: Express.Multer.File
   ) {
+    const contenType = img.mimetype;
     const updateProduct = await this.productsService.updateImg(
       id,
       img.originalname,
-      img.buffer
+      img.buffer,
+      contenType
     );
-
+    console.log("content type:", contenType);
     return await updateProduct;
   }
 

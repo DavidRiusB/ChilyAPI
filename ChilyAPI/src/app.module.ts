@@ -17,7 +17,7 @@ import { AddressesModule } from "./modules/addresses/addresses.module";
 import { UploadModule } from "./modules/upload/upload.module";
 import { NotificationEmailsService } from "./modules/notifications/notificationEmails.service";
 import { DiscountModule } from "./modules/discount/discount.module";
-import { GoogleMapsModule } from './modules/google-maps/google-maps.module';
+import { GoogleMapsModule } from "./modules/google-maps/google-maps.module";
 
 @Module({
   imports: [
@@ -31,7 +31,6 @@ import { GoogleMapsModule } from './modules/google-maps/google-maps.module';
     }),
     AuthModule,
     UserModule,
-    DeliveryModule,
     ProductsModule,
     OrderModule,
     CategoryModule,
