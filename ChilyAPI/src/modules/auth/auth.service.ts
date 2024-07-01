@@ -16,6 +16,7 @@ import { UserLoginDTO } from "./dto/login.dto";
 import { UserLoginGoogleDto } from "./dto/loginGoogle.dto";
 import { JwtService } from "@nestjs/jwt";
 import { NotificationEmailsService } from "../notifications/notificationEmails.service";
+import { SessionSerializer } from "src/common/helpers/serializer";
 
 @Injectable()
 export class AuthService {
@@ -59,42 +60,28 @@ export class AuthService {
       }
     });
   }
-
-  async singIn(
-    credentials: UserLoginDTO,
-  ): Promise<{ access_token: string; user: User }> {
-    try {
-      const credentialId = await this.authRepository.signIn(credentials);
-      if (!credentialId) {
-        throw new BadRequestException(
-          "Correo Electronico o Contraseña incorrectos",
-        );
-      }
-      const user = await this.userService.findByCredentialsId(credentialId);
-      console.log("auth.serv fetch user:", user);
-      const payload = {
-        id: user.id,
-        email: user.email,
-        rol: user.role,
-      };
-      const access_token = this.jwtService.sign(payload, {
-        secret: process.env.JWT_SECRET,
-      });
-      console.log(access_token);
-      return {
-        access_token: access_token,
-        user: user,
-      };
-    } catch (error) {
-      console.log(error);
-      if (error instanceof UnauthorizedException) {
-        throw error;
-      }
-      throw new InternalServerErrorException(
-        "Error al durante el login, intentelo nuevamente por favor.",
-        error,
-      );
+  async validateUser(email: string, password: string): Promise<User | null> {
+    const credential = await this.authRepository.signIn({ email, password });
+    if (!credential) {
+      return null;
     }
+    const user = await this.userService.findByCredentialsId(credential);
+    return user;
+  }
+
+  async generateToken(user: User): Promise<{ access_token: string; user: User }> {
+    const payload = {
+      id: user.id,
+      email: user.email,
+      rol: user.role,
+    };
+    const access_token = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+    });
+    return {
+      access_token: access_token,
+      user: user,
+    };
   }
 
   async register(newUserData: RegisterUserDTO): Promise<User> {

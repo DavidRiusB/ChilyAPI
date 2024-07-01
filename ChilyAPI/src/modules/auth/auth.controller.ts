@@ -17,6 +17,7 @@ import {
 } from 'src/docs';
 import { DocumentationLogin, DocumentationRegister } from 'src/docs';
 import { GoogleAuthGuard } from './guards/google.guard';
+import { LocalAuthGuard } from './guards/local-auth.guards';
 import { Request, Response } from 'express';
 @Controller('auth')
 @DocumentationApiTagsModule.clasification('Rutas para: Autentificación')
@@ -24,11 +25,12 @@ export class AuthController {
   //
   constructor(private authService: AuthService) {}
 
+  @UseGuards(LocalAuthGuard) // Usa el guardia local
   @Post('signin')
   @DocumentationLogin()
-  async singIn(@Body() credentials: UserLoginDTO) {
-    console.log(process.env.JWT_SECRET);
-    return this.authService.singIn(credentials);
+  async singIn(@Req() credentials) {
+    console.log(credentials.user);
+    return this.authService.generateToken(credentials.user);
   }
 
   @Post('register')
@@ -54,8 +56,9 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @DocumentationLoginGoogle()
   loginGoogle(@Req() req: Request, @Res() res: Response) {
-    const encodedData = encodeURIComponent(JSON.stringify(req.user));
+    const encodedData = encodeURIComponent(JSON.stringify(req.body));
     console.log(encodedData);
+    
     res.redirect(
       process.env.FRONTEND_URL + '/auth/google?state=' + encodedData,
     );
