@@ -14,6 +14,7 @@ import { Order } from "./entity/order.entity";
 import { OrderDetailsService } from "../order-details/order-details.service";
 import { OrderDetail } from "../order-details/entity/order-details.entity";
 import { UpdateOrderDto } from "./dto/update-order.dto";
+import { AddressesService } from "../addresses/addresses.service";
 
 @Injectable()
 export class OrderService {
@@ -21,6 +22,7 @@ export class OrderService {
     private readonly orderRepository: OrderRepository,
     private readonly productService: ProductsService,
     private readonly userService: UserService,
+    private readonly addressService: AddressesService,
     private readonly orderDetailService: OrderDetailsService,
     private dataSource: DataSource
   ) {}
@@ -79,15 +81,24 @@ export class OrderService {
     }
   }
 
-  async addOrder(orderData: OrderDto, userId: number) {
+  async addOrder(orderData: OrderDto) {
     try {
       return await this.dataSource.transaction(async (manager) => {
-        const { branchId, productsInOrder, generalDiscount } = orderData;
+        const {
+          productsInOrder,
+          generalDiscount,
+          userId,
+          shipping,
+          total,
+          finalPrice,
+        } = orderData;
         const discount = generalDiscount !== undefined ? generalDiscount : 0;
 
         // Fetch User
         const user = await this.userService.findUserById(userId);
+        const address = await this.addressService.getUserAddress(userId);
         console.log("User fetched successfully:", user);
+        console.log("Address fetched successfully:", address);
 
         // Get ids from dto
         const productIds = productsInOrder.map((product) => product.productId);
@@ -102,13 +113,14 @@ export class OrderService {
         }
 
         // Calculate shipping cost (hardcoded for now)
-        const shipping = 10000;
 
         const order = {
-          branchId,
           discount,
           user,
           shipping,
+          address,
+          total,
+          finalPrice,
         };
 
         // Create Order
@@ -125,28 +137,9 @@ export class OrderService {
         );
         console.log("Order details created successfully:", orderDetails);
 
-        // Calculate total price of order details
-        const totalPrice = orderDetails.reduce(
-          (sum, detail) => sum + detail.total,
-          0
-        );
-
-        // Calculate final price with general discount and shipping
-        const finalPrice = discountCalculator(discount, totalPrice) + shipping;
-        console.log("Total price:", totalPrice);
-        console.log("Final price:", finalPrice);
-
-        // Update the order with calculated prices
-        newOrder.price = totalPrice;
-        newOrder.total = finalPrice;
-
-        console.log("New order before save:", newOrder);
-
         // Save order details and order
         await manager.save(OrderDetail, orderDetails);
         console.log("Order details saved successfully");
-        await manager.save(Order, newOrder);
-        console.log("Order saved successfully");
 
         return { newOrder, orderDetails };
       });
@@ -159,8 +152,8 @@ export class OrderService {
     }
   }
 
-  async updateStatus(id: number, update: UpdateOrderDto) {
-    const { status } = update;
+  async updateStatus(update: UpdateOrderDto) {
+    const { status, id } = update;
     try {
       const order = await this.findOrderById(id);
       const result = await this.orderRepository.updateStatus(order, status);

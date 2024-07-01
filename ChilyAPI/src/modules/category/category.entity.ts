@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Product } from "../products/products.entity";
 
 @Entity({
@@ -20,6 +20,23 @@ export class Category {
   })
   icon: string;
 
-  @OneToMany(() => Product, (product) => product.category)
+  @Column({
+    type: "boolean",
+    default: false,
+  })
+  isDeleted: boolean;
+
+  @ManyToMany(() => Product, (product) => product.category)
+  @JoinTable({
+    name: "category_products",
+    joinColumn: {
+      name: "product_id",
+      referencedColumnName: "id"
+    },
+    inverseJoinColumn: {
+      name: "category_id",
+      referencedColumnName: "id"
+    }
+  })
   products: Product[];
 }

@@ -1,7 +1,9 @@
 import {
+  IsArray,
   IsBoolean,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsUrl,
   MaxLength,
@@ -26,7 +28,10 @@ export class createProductDto {
   @DocumentationCreateProductDto.price()
   price: number;
 
-  @IsNotEmpty()
+  @IsOptional()
+  @IsNumber()
+  stock : number;
+
   @MaxLength(255)
   @IsString()
   @IsUrl()
@@ -34,9 +39,9 @@ export class createProductDto {
   img: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsArray()
   @DocumentationCreateProductDto.category()
-  category: number;
+  category: number[];
 
   /*
 =======

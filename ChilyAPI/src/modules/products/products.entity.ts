@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -30,30 +31,40 @@ export class Product {
   description: string;
 
   @Column({
-    type: "int",
+    type: "float",
   })
   price: number;
 
+  @Column({ nullable: true, unique: true })
+  imgName: string;
+
   @Column({
     type: "text",
+    default:
+      "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   })
   img: string;
 
   @Column({
     type: "boolean",
-    default: false,
+    // default: false, // Activar cuando este listo el desarrollo de front
   })
   isPopular: boolean;
 
   @Column({
-    type: "boolean",
-    default: true,
+    type: "int",
+    default: 0,
   })
-  available: boolean;
+  stock: number;
 
-  @ManyToOne(() => Category, (category) => category.products)
-  @JoinColumn()
-  category: Category;
+  @Column({
+    type: "boolean",
+    default: false,
+  })
+  isDeleted: boolean;
+
+  @ManyToMany(() => Category, (category) => category.products)
+  category: Category[];
 
   @ManyToMany(() => OrderDetail, (orderDetail) => orderDetail.product)
   orderDetail: OrderDetail[];

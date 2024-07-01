@@ -1,5 +1,12 @@
 import { Type } from "class-transformer";
-import { IsArray, IsNumber, IsOptional, ValidateNested } from "class-validator";
+import {
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  ValidateNested,
+} from "class-validator";
 
 export class ProductsInOrder {
   @IsNumber()
@@ -17,8 +24,13 @@ export class ProductsInOrder {
 }
 
 export class OrderDto {
-  @IsNumber()
-  branchId: number;
+  @IsNotEmpty()
+  @IsInt()
+  userId: number;
+
+  @IsNotEmpty()
+  @IsInt()
+  addressId: number;
 
   @IsArray()
   @ValidateNested()
@@ -28,4 +40,13 @@ export class OrderDto {
   @IsNumber()
   @IsOptional()
   generalDiscount?: number;
+
+  @IsInt()
+  shipping: number;
+
+  @IsInt()
+  total: number;
+
+  @IsInt()
+  finalPrice: number;
 }

@@ -10,6 +10,7 @@ import {
 import { User } from "../../user/entity/user.entity";
 import { OrderDetail } from "../../order-details/entity/order-details.entity";
 import { OrderStatus } from "src/common/enums";
+import { Address } from "src/modules/addresses/entities/addresses.entity";
 
 @Entity({ name: "orders" })
 export class Order {
@@ -41,7 +42,9 @@ export class Order {
 
   @Column({ type: "enum", enum: OrderStatus, default: OrderStatus.Pending })
   status: OrderStatus;
-
+  @ManyToOne(() => Address)
+  @JoinColumn({ name: 'address_id' })  // Nombre de la columna en la tabla orders
+  address: Address;
   @DeleteDateColumn({ type: "timestamp", nullable: true })
   deletedAt: Date;
 }

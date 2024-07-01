@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Post,
   Put,
@@ -12,6 +13,9 @@ import { AddressesService } from './addresses.service';
 import { CreateAddressDto } from './dto/createAddress.dto';
 import { UpdateAddressDto } from './dto/updateAddres.dto';
 import { DocumentationApiTagsModule } from 'src/docs';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { Role } from 'src/common/enums';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @Controller('addresses')
 @DocumentationApiTagsModule.clasification('addresses')
@@ -28,6 +32,13 @@ export class AddressesController {
     return await this.addressService.getUserAddresses(id);
   }
 
+
+  @Get('/address')
+  @UseGuards(JwtAuthGuard)
+  async getUserAddress(@Query('id') id: number) {
+    return await this.addressService.getUserAddress(id);
+  }
+
   @Post('/add')
   @UseGuards(JwtAuthGuard)
   async addNewAddress(@Body() addressCreate: CreateAddressDto) {
@@ -38,5 +49,10 @@ export class AddressesController {
   @UseGuards(JwtAuthGuard)
   async updateAddress(@Body() addressUpdate: UpdateAddressDto) {
     return await this.addressService.updateAddress(addressUpdate);
+  }
+  @Delete('/delete')
+  @UseGuards(JwtAuthGuard)
+  async deleteAddress(@Query('id') id: number) {
+    return await this.addressService.deleteAddress(id);
   }
 }

@@ -1,4 +1,4 @@
-import { IsEnum, IsInt, IsNotEmpty, IsString } from "class-validator";
+import { IsEnum, IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { City } from "src/common/enums/citys.enum";
 export class CreateAddressDto {
     @IsNotEmpty()
@@ -17,5 +17,9 @@ export class CreateAddressDto {
     @IsNotEmpty()
     @IsString()
     postalCode: string;
+
+    @IsOptional()
+    @IsString()
+    note: string;
 
 }

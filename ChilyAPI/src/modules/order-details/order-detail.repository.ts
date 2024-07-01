@@ -12,7 +12,7 @@ export class OrderDetailRepository {
 
   async create(orderDetailsData: any[]) {
     const orderDetails =
-      await this.orderDetailRepository.create(orderDetailsData);
+    this.orderDetailRepository.create(orderDetailsData);
     return orderDetails;
   }
 }

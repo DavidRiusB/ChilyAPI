@@ -63,15 +63,14 @@ export class DocumentationRegisterUserDto {
   static phone() {
     return ApiProperty({
       description: 'Número de celular del usuario',
-      example: '776877887',
+      example: '+527751488347',
     });
   }
 
-  //   static role() {
-  //     return ApiProperty({
-  //       description: 'Rol del usuario',
-  //       enum: ['USER', 'ADMIN'],
-  //       example: 'USER',
-  //     });
-  //   }
+    static NIN() {
+      return ApiProperty({
+        description: 'Código de identificación',
+        example: 'ujytgtrtgtsy6567yhtg',
+      });
+    }
 }

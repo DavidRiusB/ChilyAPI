@@ -23,3 +23,21 @@ export function DocumentationRegister() {
     ApiResponse({ status: 400, description: 'El usuario ya existe' }),
   );
 }
+
+export function DocumentationLoginGoogle() {
+  return applyDecorators(
+    ApiOperation({ summary: 'Login con Google' }),
+    ApiResponse({
+      status: 200,
+      description: 'Login exitoso',
+    }),
+    ApiResponse({
+      status: 401,
+      description: 'Credenciales inválidas',
+    }),
+    ApiResponse({
+      status: 400,
+      description: 'Datos de entrada inválidos',
+    }),
+  );
+}

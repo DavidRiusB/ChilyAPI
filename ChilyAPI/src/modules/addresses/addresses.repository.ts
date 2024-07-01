@@ -30,7 +30,16 @@ export class AddressRepository {
             throw new NotFoundException(error.message);
         }
     }
-
+    async getUserAddress(id: number) {
+        try {
+            const address = await this.addressRepository.findOneBy({id: id});
+            if(!address) throw new NotFoundException("La dirección no existe");
+            return address;
+        } catch (error) {
+            if(error instanceof NotFoundException) throw error;
+            throw new InternalServerErrorException(error)
+        }
+    }
     async addNewAddress(address: CreateAddressDto): Promise<Address | NotFoundException | ConflictException | InternalServerErrorException> {
         try {
             return this.dataSource.transaction(async (manager) => {
@@ -40,6 +49,7 @@ export class AddressRepository {
                 newAddress.city = address.city;
                 newAddress.address = address.address;
                 newAddress.postalCode = address.postalCode;
+                newAddress.note = address.note;
                 newAddress.user = user;
                 return await manager.save(newAddress);
             })
@@ -65,4 +75,14 @@ export class AddressRepository {
         }
     }
 
+        async deleteAddress(id: number) {
+        try {
+            const address = await this.addressRepository.findOne({ where: { id: id}});
+            if(!address) throw new NotFoundException("La dirección no existe");
+            return await this.addressRepository.delete(id);
+        } catch (error) {   
+            if(error instanceof NotFoundException) throw error;
+            throw new InternalServerErrorException(error)
+        }
+    }
 }

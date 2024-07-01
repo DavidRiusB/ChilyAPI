@@ -1,30 +1,44 @@
-import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import { LocalStrategy } from './local.strategy';
-import { PassportModule } from '@nestjs/passport'; //
-import { UserModule } from '../user/user.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Credential } from './entities/auth.entity';
-import { AuthRepository } from './auth.repository';
-import { SessionsModule } from '../sessions/sessions.module';
-import { JwtModule } from '@nestjs/jwt';
+import { Module } from "@nestjs/common";
+import { AuthController } from "./auth.controller";
+import { AuthService } from "./auth.service";
+import { UserModule } from "../user/user.module";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Credential } from "./entities/auth.entity";
+import { AuthRepository } from "./auth.repository";
+import { GoogleStrategy } from "./google.strategy";
+import { SessionSerializer } from "src/common/helpers/serializer";
+import { UserService } from "../user/user.service";
+import { JwtModule, JwtService } from "@nestjs/jwt";
+import { config as dotenvConfig } from "dotenv";
+import { NotificationEmailsService } from "src/modules/notifications/notificationEmails.service";
+import { PassportModule } from "@nestjs/passport";
+import { LocalStrategy } from "./auth.strategy";
+dotenvConfig({ path: ".env.development" });
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Credential]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1d' },
-    }),
     UserModule,
-    SessionsModule,
+    PassportModule.register({ session: true }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || "SecretSecret",
+      signOptions: { expiresIn: "7d" },
+    }),
+    TypeOrmModule.forFeature([Credential]),
   ],
   controllers: [AuthController],
   providers: [
     AuthService,
-    LocalStrategy,
     AuthRepository,
+    UserService,
+    JwtService,
+    GoogleStrategy,
+    LocalStrategy,
+    SessionSerializer,
+    NotificationEmailsService,
   ],
 })
-export class AuthModule {}
+export class AuthModule {
+  constructor() {
+    console.log(process.env.JWT_SECRET);
+  }
+}
