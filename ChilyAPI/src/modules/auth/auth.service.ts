@@ -17,6 +17,9 @@ import { UserLoginGoogleDto } from "./dto/loginGoogle.dto";
 import { JwtService } from "@nestjs/jwt";
 import { NotificationEmailsService } from "../notifications/notificationEmails.service";
 import { SessionSerializer } from "src/common/helpers/serializer";
+import { IsEmail } from "class-validator";
+import * as bcrypt from "bcryptjs";
+import { ResetPasswordDto } from "./dto/resetPassword.dto";
 
 @Injectable()
 export class AuthService {
@@ -60,6 +63,7 @@ export class AuthService {
       }
     });
   }
+  
   async validateUser(email: string, password: string): Promise<User | null> {
     const credential = await this.authRepository.signIn({ email, password });
     if (!credential) {
@@ -69,7 +73,9 @@ export class AuthService {
     return user;
   }
 
-  async generateToken(user: User): Promise<{ access_token: string; user: User }> {
+  async generateToken(
+    user: User,
+  ): Promise<{ access_token: string; user: User }> {
     const payload = {
       id: user.id,
       email: user.email,
@@ -118,6 +124,17 @@ export class AuthService {
         );
       }
     }
+  }
+
+  async createResetToken(email: string): Promise<void> {
+    const token = await this.authRepository.createResetToken(email);
+    await this.notificationEmailsService.sendPasswordResetEmail(email, token);
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+    await this.authRepository.resetPassword(token, hashedPassword);
   }
 
   async googleLogin(data: UserLoginGoogleDto) {
