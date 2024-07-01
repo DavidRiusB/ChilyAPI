@@ -63,7 +63,8 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @DocumentationLoginGoogle()
   loginGoogle(@Req() req: Request, @Res() res: Response) {
-    const encodedData = encodeURIComponent(JSON.stringify(req.body));
+
+    const encodedData = encodeURIComponent(JSON.stringify(req.user));
     console.log(encodedData);
 
     res.redirect(
