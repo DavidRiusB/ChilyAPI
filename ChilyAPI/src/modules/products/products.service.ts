@@ -47,6 +47,7 @@ export class ProductsService {
     search: string,
     min: number,
     max: number,
+    start: string,
     page: number,
     limit: number
   ): Promise<Product[]> {
@@ -120,6 +121,12 @@ export class ProductsService {
         (product, index, productArray) =>
           index === productArray.findIndex((p) => p.id === product.id)
       );
+    }
+
+    switch (start.toLowerCase()){
+      case "min": products = products.sort((a,b)=> a.price - b.price);break;
+      case "max": products = products.sort((a,b)=> b.price - a.price);break;
+      default: break;
     }
 
     const startIndex = (page - 1) * limit;

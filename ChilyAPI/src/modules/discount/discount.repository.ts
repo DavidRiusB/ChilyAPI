@@ -3,6 +3,7 @@ import { Repository } from "typeorm";
 import { Discount } from "./discount.entity";
 import { createDiscountDto } from "./dto/createDiscount.dto";
 import { InjectRepository } from "@nestjs/typeorm";
+import { randomInt } from "crypto";
 
 @Injectable()
 export class DiscountRepository {
@@ -40,8 +41,21 @@ export class DiscountRepository {
     async creatediscount(createDiscount: createDiscountDto): Promise<Discount> {
         try {
             const discount: Discount = new Discount();
-            discount.code = createDiscount.code.toUpperCase();
-            discount.discount = createDiscount.discount;
+            const codeArray : string[] = [];
+            let isValid = false;
+            do {
+                for (let i: number = 0; i < 15;i++){
+                    codeArray[i] = String.fromCharCode(randomInt(65,90));
+                }
+                const code = codeArray.join("")
+
+                discount.code = code;
+                discount.discount = createDiscount.discount;
+
+                const validCode = await this.discountRepository.findOne({ where: { code: code } })
+                if(!validCode) isValid = true;
+            } while (isValid === false);
+
             const savedDiscount = await this.discountRepository.save(discount)
             return savedDiscount;
         } catch (error) {
@@ -53,7 +67,6 @@ export class DiscountRepository {
         try {
             const discount = await this.discountRepository.findOne({ where: { id: id } });
             if (!discount) throw new BadRequestException("Error al modificar el Descuento, Verifique los datos enviados")
-            discount.code = updateDiscount.code;
             discount.discount = updateDiscount.discount;
             const updatedDiscount = await this.discountRepository.save(discount);
             return updatedDiscount;
@@ -65,11 +78,11 @@ export class DiscountRepository {
     async isValidDiscount(id: number, status: string): Promise<Discount> {
         try {
             const discount = await this.discountRepository.findOne({ where: { id: id } })
-            if (!discount) throw new Error("Error al activar el Descuento, Verifique los datos enviados")
+            if (!discount) throw new Error("Error al activar/desactivar el Descuento, Verifique los datos enviados")
             switch (status) {
                 case "true": discount.isValid = true; break;
                 case "false": discount.isValid = false; break;
-                default: throw new Error("Error al activar el Descuento, Verifique los datos enviados")
+                default: throw new Error("Error al activar/desactivar el Descuento, Verifique los datos enviados")
             }
             const updatedDiscount = await this.discountRepository.save(discount);
             return updatedDiscount;

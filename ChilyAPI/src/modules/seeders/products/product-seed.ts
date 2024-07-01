@@ -7,6 +7,7 @@ export const productsSeed = [
     price: 4.7,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PORCIONES","PAPAS","VEGETARIANOS"],
   },
   {
@@ -16,6 +17,7 @@ export const productsSeed = [
     price: 4.7,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PORCIONES","PAPAS","VEGETARIANOS"],
   },
   {
@@ -25,6 +27,7 @@ export const productsSeed = [
     price: 6,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PORCIONES","CARNES"],
   },
   {
@@ -34,6 +37,7 @@ export const productsSeed = [
     price: 4.8,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PORCIONES","CARNES"],
   },
   {
@@ -43,6 +47,7 @@ export const productsSeed = [
     price: 8.5,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PORCIONES","CARNES"],
   },
   {
@@ -52,6 +57,7 @@ export const productsSeed = [
     price: 8,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PORCIONES","CARNES"],
   },
   {
@@ -61,6 +67,7 @@ export const productsSeed = [
     price: 9,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PORCIONES","CARNES"],
   },
   {
@@ -69,6 +76,7 @@ export const productsSeed = [
     price: 3,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PORCIONES","VEGETARIANOS"],
   },
   {
@@ -78,6 +86,7 @@ export const productsSeed = [
     price: 2.9,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PORCIONES","VEGETARIANOS"],
   },
   {
@@ -87,6 +96,7 @@ export const productsSeed = [
     price: 4,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PORCIONES","OTROS","VEGETARIANOS"],
   },
   {
@@ -96,6 +106,7 @@ export const productsSeed = [
     price: 4.7,
     img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PORCIONES","VEGETARIANOS"],
   },
   {
@@ -104,6 +115,7 @@ export const productsSeed = [
     price: 7,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS","JUGOS","NO ALCOHOLICAS"],
   },
   {
@@ -113,6 +125,7 @@ export const productsSeed = [
     price: 4,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS", "GASEOSAS", "NO ALCOHOLICAS"],
   },
   {
@@ -121,6 +134,7 @@ export const productsSeed = [
     price: 4.3,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS","GASEOSAS","NO ALCOHOLICAS"],
   },
   {
@@ -129,6 +143,7 @@ export const productsSeed = [
     price: 4,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS","NO ALCOHOLICAS","OTROS"],
   },
   {
@@ -137,6 +152,7 @@ export const productsSeed = [
     price: 4,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS","NO ALCOHOLICAS","OTROS"],
   },
   {
@@ -145,6 +161,7 @@ export const productsSeed = [
     price: 5.4,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS","ALCOHOLICAS"],
   },
   {
@@ -153,6 +170,7 @@ export const productsSeed = [
     price: 8.5,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS","ALCOHOLICAS"],
   },
   {
@@ -161,6 +179,7 @@ export const productsSeed = [
     price: 5.4,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS","ALCOHOLICAS"],
   },
   {
@@ -169,6 +188,7 @@ export const productsSeed = [
     price: 5.2,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS","LIMONADAS", "NO ALCOHOLICAS"],
   },
   {
@@ -177,6 +197,7 @@ export const productsSeed = [
     price: 5.9,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS","LIMONADAS", "NO ALCOHOLICAS"],
   },
   {
@@ -185,6 +206,7 @@ export const productsSeed = [
     price: 7.2,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS","JUGOS", "NO ALCOHOLICAS"],
   },
   {
@@ -193,6 +215,7 @@ export const productsSeed = [
     price: 7.5,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS", "NO ALCOHOLICAS","JUGOS"],
   },
   {
@@ -201,6 +224,7 @@ export const productsSeed = [
     price: 7.2,
     img: "https://images.pexels.com/photos/3230214/pexels-photo-3230214.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BEBIDAS", "NO ALCOHOLICAS","JUGOS"],
   },
   {
@@ -209,6 +233,7 @@ export const productsSeed = [
     price: 9.6,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["ENTRADAS","CARNES"],
   },
   {
@@ -218,6 +243,7 @@ export const productsSeed = [
     price: 8.5,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["ENTRADAS","OTROS","CARNES"],
   },
   {
@@ -226,6 +252,7 @@ export const productsSeed = [
     price: 9.9,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["ENTRADAS","OTROS","CARNES"],
   },
   {
@@ -234,6 +261,7 @@ export const productsSeed = [
     price: 5.5,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["ENTRADAS","ENSALADAS","VEGETARIANOS"],
   },
   {
@@ -243,6 +271,7 @@ export const productsSeed = [
     price: 6.6,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["ENTRADAS","ENSALADAS","VEGETARIANOS"],
   },
   {
@@ -251,6 +280,7 @@ export const productsSeed = [
     price: 10.5,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["ENTRADAS","VEGETARIANOS"],
   },
   {
@@ -259,6 +289,7 @@ export const productsSeed = [
     price: 9.9,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["ENTRADAS","VEGETARIANOS"],
   },
   {
@@ -267,6 +298,7 @@ export const productsSeed = [
     price: 8.5,
     img: "https://images.pexels.com/photos/4577740/pexels-photo-4577740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["ENTRADAS","CARNES"],
   },
   {
@@ -276,6 +308,7 @@ export const productsSeed = [
     price: 16.5,
     img: "https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BURRITOS","CARNES"],
   },
   {
@@ -284,6 +317,7 @@ export const productsSeed = [
     price: 3,
     img: "https://images.pexels.com/photos/2955819/pexels-photo-2955819.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["BURRITOS","CARNES"],
   },
   {
@@ -292,6 +326,7 @@ export const productsSeed = [
     price: 30.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES"],
   },
   {
@@ -301,6 +336,7 @@ export const productsSeed = [
     price: 32.5,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES"],
   },
   {
@@ -309,6 +345,7 @@ export const productsSeed = [
     price: 31.8,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES"],
   },
   {
@@ -317,6 +354,7 @@ export const productsSeed = [
     price: 33.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES"],
   },
   {
@@ -325,6 +363,7 @@ export const productsSeed = [
     price: 26.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES"],
   },
   {
@@ -333,6 +372,7 @@ export const productsSeed = [
     price: 28.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES"],
   },
   {
@@ -341,6 +381,7 @@ export const productsSeed = [
     price: 26.5,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES"],
   },
   {
@@ -349,6 +390,7 @@ export const productsSeed = [
     price: 28.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES"],
   },
   {
@@ -357,6 +399,7 @@ export const productsSeed = [
     price: 29.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES"],
   },
   {
@@ -365,6 +408,7 @@ export const productsSeed = [
     price: 27.7,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES","PESCADOS"],
   },
   {
@@ -373,6 +417,7 @@ export const productsSeed = [
     price: 29,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES","PESCADOS"],
   },
   {
@@ -381,6 +426,7 @@ export const productsSeed = [
     price: 35.5,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES"],
   },
   {
@@ -390,6 +436,7 @@ export const productsSeed = [
     price: 57,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","CARNES","OTROS"],
   },
   {
@@ -399,6 +446,7 @@ export const productsSeed = [
     price: 19.9,
     img: "https://images.pexels.com/photos/4551907/pexels-photo-4551907.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
     available: true,
+    stock: 10,
     category: ["PARRILLA GOURMET","VEGETARIANOS","ENSALADAS"],
   },
 ];
