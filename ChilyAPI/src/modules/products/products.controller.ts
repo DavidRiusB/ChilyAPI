@@ -28,8 +28,8 @@ import {
 import { DocumentationAddProduct, DocumentationGetProducts } from "src/docs";
 import { QueryInterceptor } from "src/common/interceptors/query.interceptor";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { PriceQueryInterceptor } from "src/common/interceptors/queryPrice.interceptor";
 import { QueryFilterInterceptor } from "src/common/interceptors/queryFilter.interceptor";
+import { GetAllQueryInterceptor } from "src/common/interceptors/GetAllQuery.interceptor";
 
 @Controller("products")
 @DocumentationApiTagsModule.clasification("Rutas para: Productos")
@@ -38,7 +38,7 @@ export class ProductsController {
 
   @Get()
   @DocumentationGetProducts()
-  @UseInterceptors(QueryInterceptor)
+  @UseInterceptors(GetAllQueryInterceptor)
   getProducts(@Req() request: any): Promise<Product[]> {
     const products = this.productsService.getProducts(
       request.page,
