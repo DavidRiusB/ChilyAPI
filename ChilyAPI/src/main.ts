@@ -1,4 +1,3 @@
-// Vendors
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { config as dotenvConfig } from "dotenv";
@@ -35,14 +34,12 @@ async function bootstrap() {
 
   app.use(
     session({
-      secret: process.env.SESSION_PASSPORT,
-      saveUninitialized: false,
+      secret: process.env.SESSION_PASSPORT || 'secret',
       resave: false,
-      cookie: {
-        maxAge: 60000,
-      },
+      saveUninitialized: false,
     }),
   );
+
   app.use(passport.initialize());
   app.use(passport.session());
 
