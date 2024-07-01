@@ -16,7 +16,7 @@ export class ProductsService {
     private productsRepository: ProductsRepository,
     private readonly uploadService: UploadService,
     private readonly dataSource: DataSource
-  ) { }
+  ) {}
 
   getProducts(page: number, limit: number): Promise<Product[]> {
     return this.productsRepository.getProducts(page, limit);
@@ -27,8 +27,11 @@ export class ProductsService {
   }
 
   getCategoryByFilter(filter: string): Promise<Product[]> {
-      const filterNumber = filter.split(",").map((id) => Number(id)).filter(id => !isNaN(id));
-      return this.productsRepository.getCategoryByFilter(filterNumber);
+    const filterNumber = filter
+      .split(",")
+      .map((id) => Number(id))
+      .filter((id) => !isNaN(id));
+    return this.productsRepository.getCategoryByFilter(filterNumber);
   }
 
   getProductsByPriceRange(min: number, max: number): Promise<Product[]> {
@@ -36,10 +39,17 @@ export class ProductsService {
   }
 
   getProductsBySearch(search: string): Promise<Product[]> {
-      return this.productsRepository.getProductsBySearch(search);
+    return this.productsRepository.getProductsBySearch(search);
   }
 
-  async getProductByFilter(filter: string, search: string, min: number, max: number, page: number, limit: number): Promise<Product[]> {
+  async getProductByFilter(
+    filter: string,
+    search: string,
+    min: number,
+    max: number,
+    page: number,
+    limit: number
+  ): Promise<Product[]> {
     // First I get all products into products
     let products: Product[] = await this.productsRepository.getAllProducts();
 
@@ -55,51 +65,60 @@ export class ProductsService {
       const productCountMap = new Map<number, number>();
 
       // Count how many times each product appears in the new array
-      products.forEach(product => {
+      products.forEach((product) => {
         const count = productCountMap.get(product.id) || 0;
         productCountMap.set(product.id, count + 1);
       });
 
       // Eliminate products with less than 2 occurrences
-      products = products.filter(product => productCountMap.get(product.id) > 1);
+      products = products.filter(
+        (product) => productCountMap.get(product.id) > 1
+      );
 
       // Remove duplicates by comparing product ids
-      products = products.filter((product, index, productArray) =>
-        index === productArray.findIndex((p) => p.id === product.id)
+      products = products.filter(
+        (product, index, productArray) =>
+          index === productArray.findIndex((p) => p.id === product.id)
       );
     }
 
-    if (search!= "") {
+    if (search != "") {
       const productsSearch = await this.getProductsBySearch(search);
       products = products.concat(productsSearch);
 
       const productCountMap = new Map<number, number>();
 
-      products.forEach(product => {
+      products.forEach((product) => {
         const count = productCountMap.get(product.id) || 0;
         productCountMap.set(product.id, count + 1);
       });
-      products = products.filter(product => productCountMap.get(product.id) > 1);
+      products = products.filter(
+        (product) => productCountMap.get(product.id) > 1
+      );
 
-      products = products.filter((product, index, productArray) =>
-        index === productArray.findIndex((p) => p.id === product.id)
+      products = products.filter(
+        (product, index, productArray) =>
+          index === productArray.findIndex((p) => p.id === product.id)
       );
     }
 
-    if(min!= 0 || max!=Infinity){
+    if (min != 0 || max != Infinity) {
       const productsPriceRange = await this.getProductsByPriceRange(min, max);
       products = products.concat(productsPriceRange);
 
       const productCountMap = new Map<number, number>();
 
-      products.forEach(product => {
+      products.forEach((product) => {
         const count = productCountMap.get(product.id) || 0;
         productCountMap.set(product.id, count + 1);
       });
-      products = products.filter(product => productCountMap.get(product.id) > 1);
+      products = products.filter(
+        (product) => productCountMap.get(product.id) > 1
+      );
 
-      products = products.filter((product, index, productArray) =>
-        index === productArray.findIndex((p) => p.id === product.id)
+      products = products.filter(
+        (product, index, productArray) =>
+          index === productArray.findIndex((p) => p.id === product.id)
       );
     }
 
@@ -133,7 +152,12 @@ export class ProductsService {
     return this.productsRepository.productIsPopular(id, status);
   }
 
-  async updateImg(id: number, originalname: string, buffer: Buffer) {
+  async updateImg(
+    id: number,
+    originalname: string,
+    buffer: Buffer,
+    contenType: string
+  ) {
     return await this.dataSource.transaction(async (manager) => {
       try {
         const product = await this.getProductById(id);
@@ -147,7 +171,11 @@ export class ProductsService {
           await manager.save(Product, product); // This might throw error on unique constraint violation
         }
 
-        const uploadImg = await this.uploadService.update(fileName, buffer);
+        const uploadImg = await this.uploadService.update(
+          fileName,
+          buffer,
+          contenType
+        );
 
         // Handle S3 upload failure
         if (!uploadImg) {

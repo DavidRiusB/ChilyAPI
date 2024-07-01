@@ -16,13 +16,15 @@ export class UploadService {
     });
   }
 
-  async update(fileName: string, file: Buffer) {
+  async update(fileName: string, file: Buffer, contenType: string) {
     try {
       const upload = await this.s3Client.send(
         new PutObjectCommand({
           Bucket: this.bucket,
           Key: fileName,
           Body: file,
+          ContentType: contenType,
+          ACL: "public-read",
         })
       );
 

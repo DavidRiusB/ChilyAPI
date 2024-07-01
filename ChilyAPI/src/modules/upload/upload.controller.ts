@@ -11,7 +11,7 @@ import { UploadService } from "./upload.service";
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
   //For testing
-  @Post()
+  /* @Post()
   @UseInterceptors(FileInterceptor("img"))
   async uploadImg(@UploadedFile() img: Express.Multer.File) {
     console.log(img);
@@ -22,4 +22,5 @@ export class UploadController {
     );
     console.log(upload);
   }
+} */
 }
