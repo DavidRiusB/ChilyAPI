@@ -56,6 +56,7 @@ export class SeedersService implements OnModuleInit {
         newProduct.description = productData.description;
         newProduct.price = productData.price;
         newProduct.img = productData.img;
+        newProduct.stock = productData.stock;
         newProduct.category = category;
         newProduct.isPopular = false;
 

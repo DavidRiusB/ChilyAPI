@@ -11,6 +11,8 @@ export class QueryFilterInterceptor implements NestInterceptor {
         const max = request.query.max ? parseInt(request.query.max) : Infinity;
         const search = request.query.search? request.query.search : '';
         const filter = request.query.filter? request.query.filter : '';
+        const start = request.query.start ? request.query.start : '';
+        request.start= start;
         request.search = search;
         request.filter = filter;
         request.page = page;
