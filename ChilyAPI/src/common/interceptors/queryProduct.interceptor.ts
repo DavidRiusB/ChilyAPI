@@ -1,8 +1,9 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
 import { Observable } from "rxjs";
 
+
 @Injectable()
-export class GetAllQueryInterceptor implements NestInterceptor { 
+export class QueryProductInterceptor implements NestInterceptor {
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
         const request = context.switchToHttp().getRequest();
         const page = request.query.page ? parseInt(request.query.page) : 0;
@@ -10,5 +11,5 @@ export class GetAllQueryInterceptor implements NestInterceptor {
         request.page = page;
         request.limit = limit;
         return next.handle();
-    }    
+    }
 }
