@@ -17,10 +17,16 @@ export class ProductsRepository {
         where: { isDeleted: false },
         relations: ["category"],
       });
-      const startIndex = (page - 1) * limit;
-      const endIndex = page * limit;
 
-      return products.slice(startIndex, endIndex);
+      if (page != 0 && limit != 0) {
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+
+        return products.slice(startIndex, endIndex);
+      }else{
+        return products;
+      }
+
     } catch (error) {
       throw new NotFoundException("Error al obtener los productos");
     }
@@ -146,6 +152,8 @@ export class ProductsRepository {
 
       product.price = createProduct.price;
 
+      product.stock = createProduct.stock;
+
       product.img = createProduct.img;
 
       product.category = categories;
@@ -175,6 +183,8 @@ export class ProductsRepository {
       product.description = updateProduct.description;
 
       product.price = updateProduct.price;
+
+      product.stock = updateProduct.stock;
 
       if (updateProduct.category && updateProduct.category.length > 0) {
         const categories = await this.categoryRepository.find({ where: { id: In(updateProduct.category), isDeleted: false } })
@@ -211,7 +221,18 @@ export class ProductsRepository {
     return products;
   }
 
-  async availableOrUnavaliableProduct(id: number, status: string): Promise<Product> {
+  async updateStock(id: number, stock: number): Promise<Product> {
+    try {
+      const product = await this.productsRepository.findOne({ where: { id: id } })
+      product.stock = stock;
+      const updatedProduct = await this.productsRepository.save(product);
+      return updatedProduct;
+    } catch (error) {
+      throw new BadRequestException("Hubo un error al guardar el nuevo stock")
+    }
+  }
+
+  /*async availableOrUnavaliableProduct(id: number, status: string): Promise<Product> {
 
     try {
       const product = await this.productsRepository.findOne({ where: { id: id, isDeleted: false }, relations: ["category"] });
@@ -232,7 +253,7 @@ export class ProductsRepository {
     } catch (error) {
       throw new NotFoundException("Error al actualizar el producto con ID: " + id);
     }
-  }
+  }*/
 
   async productIsPopular(id: number, status: string): Promise<Product> {
     try {

@@ -113,6 +113,10 @@ export class ProductsService {
     return await this.productsRepository.findByIds(ids);
   }
 
+  async updateStock(id: number, stock: number): Promise<Product> {
+    return await this.productsRepository.updateStock(id, stock);
+  }
+
   createProduct(createProduct: createProductDto): Promise<Product> {
     return this.productsRepository.createProduct(createProduct);
   }
@@ -125,9 +129,9 @@ export class ProductsService {
     return this.productsRepository.deleteProduct(id);
   }
 
-  availableOrUnavaliableProduct(id: number, status: string): Promise<Product> {
+  /*availableOrUnavaliableProduct(id: number, status: string): Promise<Product> {
     return this.productsRepository.availableOrUnavaliableProduct(id, status);
-  }
+  }*/
 
   productIsPopular(id: number, status: string): Promise<Product> {
     return this.productsRepository.productIsPopular(id, status);
