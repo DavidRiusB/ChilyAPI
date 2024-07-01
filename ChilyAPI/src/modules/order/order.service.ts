@@ -84,12 +84,19 @@ export class OrderService {
   async addOrder(orderData: OrderDto) {
     try {
       return await this.dataSource.transaction(async (manager) => {
-        const { productsInOrder, generalDiscount, id } = orderData;
+        const {
+          productsInOrder,
+          generalDiscount,
+          userId,
+          shipping,
+          total,
+          finalPrice,
+        } = orderData;
         const discount = generalDiscount !== undefined ? generalDiscount : 0;
 
         // Fetch User
-        const user = await this.userService.findUserById(id);
-        const address = await this.addressService.getUserAddress(id);
+        const user = await this.userService.findUserById(userId);
+        const address = await this.addressService.getUserAddress(userId);
         console.log("User fetched successfully:", user);
         console.log("Address fetched successfully:", address);
 
@@ -110,8 +117,10 @@ export class OrderService {
         const order = {
           discount,
           user,
-          shipping: 0,
-          address
+          shipping,
+          address,
+          total,
+          finalPrice,
         };
 
         // Create Order
@@ -128,28 +137,9 @@ export class OrderService {
         );
         console.log("Order details created successfully:", orderDetails);
 
-        // Calculate total price of order details
-        const totalPrice = orderDetails.reduce(
-          (sum, detail) => sum + detail.total,
-          0
-        );
-
-        // Calculate final price with general discount and shipping
-        const finalPrice = discountCalculator(discount, totalPrice);
-        console.log("Total price:", totalPrice);
-        console.log("Final price:", finalPrice);
-
-        // Update the order with calculated prices
-        newOrder.price = totalPrice;
-        newOrder.total = finalPrice;
-
-        console.log("New order before save:", newOrder);
-
         // Save order details and order
         await manager.save(OrderDetail, orderDetails);
         console.log("Order details saved successfully");
-        await manager.save(Order, newOrder);
-        console.log("Order saved successfully");
 
         return { newOrder, orderDetails };
       });

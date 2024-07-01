@@ -76,9 +76,8 @@ export class OrderRepository {
     });
   }
 
-
   async create(order: any) {
-    const { discount, user, shipping, address } = order;
+    const { discount, user, shipping, address, total, finalPrice } = order;
 
     const newOrder = new Order();
 
@@ -87,6 +86,8 @@ export class OrderRepository {
     newOrder.user = user;
     newOrder.address = address;
     newOrder.date = new Date();
+    newOrder.price = total;
+    newOrder.total = finalPrice;
     return this.orderRepository.create(newOrder);
   }
 

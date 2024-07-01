@@ -60,16 +60,14 @@ export class OrderController {
     return await this.orderService.findOrderById(id);
   }
 
-  @Post("/new")
+  @Post()
   @UseGuards(JwtAuthGuard)
   async postNewOrder(@Body() orderData: OrderDto) {
     return await this.orderService.addOrder(orderData);
   }
 
   @Put("/update")
-  async updateOrderStatus(
-    @Body() update: UpdateOrderDto
-  ) {
+  async updateOrderStatus(@Body() update: UpdateOrderDto) {
     return await this.orderService.updateStatus(update);
   }
 }
