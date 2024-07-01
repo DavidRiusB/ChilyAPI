@@ -10,6 +10,7 @@ export class SessionSerializer extends PassportSerializer {
     private readonly userService: UserService,
   ) {
     super();
+    console.log('testtetststst')
   }
   serializeUser(user: User, done: Function) {
     console.log('serializeUser', user);
@@ -17,6 +18,7 @@ export class SessionSerializer extends PassportSerializer {
   }
   async deserializeUser(payload: User, done: Function) {
     const user = await this.userService.findUserById(payload.id);
+    console.log(user);
     return user ? done(null, user) : done(null, null);
   }
 }

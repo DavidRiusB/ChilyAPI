@@ -76,22 +76,18 @@ export class OrderRepository {
     });
   }
 
-  /**
-   * Creates a new order.
-   *
-   * @param {OrderDto} order - The order to create.
-   * @returns {Promise<Object>} - The created order.
-   */
-  async create(order) {
-    const { branchId, discount, user, shipping } = order;
+
+  async create(order: any) {
+    const { discount, user, shipping, address } = order;
 
     const newOrder = new Order();
 
     newOrder.generalDiscount = discount;
     newOrder.shipping = shipping;
     newOrder.user = user;
+    newOrder.address = address;
     newOrder.date = new Date();
-    return await this.orderRepository.create(newOrder);
+    return this.orderRepository.create(newOrder);
   }
 
   async updateStatus(order: Order, newStatus: OrderStatus) {

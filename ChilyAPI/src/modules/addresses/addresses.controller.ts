@@ -32,6 +32,13 @@ export class AddressesController {
     return await this.addressService.getUserAddresses(id);
   }
 
+
+  @Get('/address')
+  @UseGuards(JwtAuthGuard)
+  async getUserAddress(@Query('id') id: number) {
+    return await this.addressService.getUserAddress(id);
+  }
+
   @Post('/add')
   @UseGuards(JwtAuthGuard)
   async addNewAddress(@Body() addressCreate: CreateAddressDto) {
