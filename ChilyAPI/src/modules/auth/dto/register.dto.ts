@@ -48,7 +48,7 @@ export class RegisterUserDTO {
 
   @IsNotEmpty()
   @IsString()
-  @Match("password", { message: "Passwords do not match" })
+  @Match("password", { message: "La contraseña no coincide" })
   @DocumentationRegisterUserDto.confirmPassword()
   confirmPassword: string;
 

@@ -22,4 +22,10 @@ export class Credential {
 
   @Column({ length: 60, select: false })
   password: string;
+
+  @Column({ nullable: true })
+  resetPasswordToken: string;
+
+  @Column({ type: "timestamp", nullable: true })
+  resetPasswordExpires: Date;
 }
