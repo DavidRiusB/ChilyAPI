@@ -58,7 +58,7 @@ export class ProductsController {
       request.search,
       request.min,
       request.max,
-      request.start,
+      request.price,
       request.page,
       request.limit,
     );
