@@ -22,8 +22,11 @@ import {
   DocumentationAvailableOrUnavaliableProduct,
   DocumentationDeleteProduct,
   DocumentationGetProductById,
+  DocumentationGetProductsByFilter,
   DocumentationProductIsPopular,
+  DocumentationUpdateImg,
   DocumentationUpdateProduct,
+  DocumentationUpdateStock,
 } from "src/docs";
 import { DocumentationAddProduct, DocumentationGetProducts } from "src/docs";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -41,12 +44,13 @@ export class ProductsController {
   getProducts(@Req() request: any): Promise<Product[]> {
     const products = this.productsService.getProducts(
       request.page,
-      request.limit
+      request.limit,
     );
     return products;
   }
 
   @Get("filter")
+  @DocumentationGetProductsByFilter()
   @UseInterceptors(QueryFilterInterceptor)
   getProductsByFilter(@Req() request: any) {
     return this.productsService.getProductByFilter(
@@ -56,7 +60,7 @@ export class ProductsController {
       request.max,
       request.start,
       request.page,
-      request.limit
+      request.limit,
     );
   }
 
@@ -78,11 +82,11 @@ export class ProductsController {
   @DocumentationUpdateProduct()
   updateProduct(
     @Param("id") id: number,
-    @Body() updateProduct: createProductDto
+    @Body() updateProduct: createProductDto,
   ): Promise<Product> {
     const updatedProduct = this.productsService.updateProduct(
       id,
-      updateProduct
+      updateProduct,
     );
     return updatedProduct;
   }
@@ -101,7 +105,8 @@ export class ProductsController {
   }*/
 
   @Put("stock")
-  updateStock(@Query("id") id: number, @Query("stock") stock: number){
+  @DocumentationUpdateStock()
+  updateStock(@Query("id") id: number, @Query("stock") stock: number) {
     const updatedProduct = this.productsService.updateStock(id, stock);
     return updatedProduct;
   }
@@ -110,13 +115,14 @@ export class ProductsController {
   @DocumentationProductIsPopular()
   productIsPopular(
     @Query("id") id: number,
-    @Query("status") status: string
+    @Query("status") status: string,
   ): Promise<Product> {
     const updatedProduct = this.productsService.productIsPopular(id, status);
     return updatedProduct;
   }
 
   @Put("img/:id")
+  @DocumentationUpdateImg()
   @UseInterceptors(FileInterceptor("img"))
   async updateImg(
     @Param("id") id: number,
@@ -126,16 +132,16 @@ export class ProductsController {
           new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5 MB file size limit
           new FileTypeValidator({ fileType: "image/jpeg|image/png|image/jpg" }),
         ],
-      })
+      }),
     )
-    img: Express.Multer.File
+    img: Express.Multer.File,
   ) {
     const contenType = img.mimetype;
     const updateProduct = await this.productsService.updateImg(
       id,
       img.originalname,
       img.buffer,
-      contenType
+      contenType,
     );
     console.log("content type:", contenType);
     return await updateProduct;
