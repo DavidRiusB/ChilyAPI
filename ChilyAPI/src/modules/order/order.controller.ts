@@ -11,17 +11,25 @@ import {
 } from "@nestjs/common";
 import { OrderService } from "./order.service";
 import { OrderDto } from "./dto/order.dto";
-import { DocumentationApiTagsModule } from "src/docs";
+import {
+  DocumentationApiTagsModule,
+  DocumentationGetAllOrders,
+  DocumentationGetAllOrdersByBranchId,
+  DocumentationGetOrderById,
+  DocumentationPostNewOrder,
+  DocumentationUpdateOrderStatus,
+} from "src/docs";
 import { UpdateOrderDto } from "./dto/update-order.dto";
 import { RemovePropertiesInterceptor } from "src/common/interceptors";
 import { JwtAuthGuard } from "../auth/guards/jwt.guard";
 
 @Controller("orders")
-@DocumentationApiTagsModule.clasification("orders")
+@DocumentationApiTagsModule.clasification("Rutas para: Ordenes")
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
   @Get()
+  @DocumentationGetAllOrders()
   /**
    * Retrieves all orders with pagination.
    * Accessible only by users with SuperAdmin role.
@@ -32,12 +40,13 @@ export class OrderController {
    */
   async getAllOrders(
     @Query("page") page: number = 1,
-    @Query("limit") limit: number = 5
+    @Query("limit") limit: number = 5,
   ) {
     return await this.orderService.findAll({ page, limit });
   }
 
   @Get("branch/:id")
+  @DocumentationGetAllOrdersByBranchId()
   /**
    * Retrieves all orders for a specific branch with pagination.
    * Accessible only by users with SuperAdmin and admin roles.
@@ -50,23 +59,26 @@ export class OrderController {
   async getAllOrdersByBranchId(
     @Param("id") id: number,
     @Query("page") page: number = 1,
-    @Query("limit") limit: number = 5
+    @Query("limit") limit: number = 5,
   ) {
     return await this.orderService.findAllOrderByBranchId(id, { page, limit });
   }
 
   @Get(":id")
+  @DocumentationGetOrderById()
   async getOrderById(@Param("id") id: number) {
     return await this.orderService.findOrderById(id);
   }
 
   @Post()
+  @DocumentationPostNewOrder()
   @UseGuards(JwtAuthGuard)
   async postNewOrder(@Body() orderData: OrderDto) {
     return await this.orderService.addOrder(orderData);
   }
 
   @Put("/update")
+  @DocumentationUpdateOrderStatus()
   async updateOrderStatus(@Body() update: UpdateOrderDto) {
     return await this.orderService.updateStatus(update);
   }

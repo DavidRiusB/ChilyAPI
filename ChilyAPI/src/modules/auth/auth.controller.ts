@@ -11,7 +11,12 @@ import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "./guards/jwt.guard";
 import { UserLoginDTO } from "./dto/login.dto";
 import { RegisterUserDTO } from "./dto/register.dto";
-import { DocumentationApiTagsModule, DocumentationLoginGoogle } from "src/docs";
+import {
+  DocumentationApiTagsModule,
+  DocumentationLoginGoogle,
+  DocumentationRequestPasswordReset,
+  DocumentationResetPassword,
+} from "src/docs";
 import { DocumentationLogin, DocumentationRegister } from "src/docs";
 import { GoogleAuthGuard } from "./guards/google.guard";
 import { LocalAuthGuard } from "./guards/local-auth.guards";
@@ -38,6 +43,7 @@ export class AuthController {
   }
 
   @Post("request-reset")
+  @DocumentationRequestPasswordReset()
   async requestPasswordReset(@Body() authDto: ResetPasswordDto): Promise<void> {
     if (!authDto.email) {
       throw new Error("Por favor ingrese tu email");
@@ -46,6 +52,7 @@ export class AuthController {
   }
 
   @Post("reset-password")
+  @DocumentationResetPassword()
   async resetPassword(@Body() authDto: ResetPasswordDto): Promise<void> {
     if (!authDto.token || !authDto.newPassword) {
       throw new Error("Contraseña y token requeridos");
@@ -63,7 +70,6 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @DocumentationLoginGoogle()
   loginGoogle(@Req() req: Request, @Res() res: Response) {
-
     const encodedData = encodeURIComponent(JSON.stringify(req.user));
     console.log(encodedData);
 

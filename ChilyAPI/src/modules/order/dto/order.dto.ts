@@ -7,6 +7,7 @@ import {
   IsOptional,
   ValidateNested,
 } from "class-validator";
+import { DocumentationOrderDto } from "src/docs/doc-orders-module/docs-order-dto";
 
 export class ProductsInOrder {
   @IsNumber()
@@ -26,27 +27,34 @@ export class ProductsInOrder {
 export class OrderDto {
   @IsNotEmpty()
   @IsInt()
+  @DocumentationOrderDto.userId()
   userId: number;
 
   @IsNotEmpty()
   @IsInt()
+  @DocumentationOrderDto.addressId()
   addressId: number;
 
   @IsArray()
   @ValidateNested()
   @Type(() => ProductsInOrder)
+  @DocumentationOrderDto.productsInOrder()
   productsInOrder: ProductsInOrder[];
 
   @IsNumber()
   @IsOptional()
+  @DocumentationOrderDto.generalDiscount()
   generalDiscount?: number;
 
   @IsInt()
+  @DocumentationOrderDto.shipping()
   shipping: number;
 
   @IsInt()
+  @DocumentationOrderDto.total()
   total: number;
 
   @IsInt()
+  @DocumentationOrderDto.finalPrice()
   finalPrice: number;
 }
