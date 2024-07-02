@@ -4,6 +4,7 @@ import { GoogleMapsController } from './google-maps.controller';
 
 @Module({
   providers: [GoogleMapsService],
-  controllers: [GoogleMapsController]
+  controllers: [GoogleMapsController],
+  exports: [GoogleMapsService]
 })
 export class GoogleMapsModule {}
