@@ -215,7 +215,6 @@ export class ProductsRepository {
     const products = await this.productsRepository
       .createQueryBuilder("product")
       .where("product.id IN (:...ids)", { ids })
-      .andWhere("product.available = true")
       .getMany();
 
     return products;

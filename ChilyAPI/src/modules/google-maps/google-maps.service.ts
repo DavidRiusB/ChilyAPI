@@ -42,4 +42,17 @@ export class GoogleMapsService {
             throw new InternalServerErrorException(error);
         }
      }
+     async convertAddressToLatLng(address: string) {
+        try {
+            const response = await this.client.geocode({
+                params: {
+                    address: address,
+                    key: process.env.GOOGLE_MAPS_API_KEY
+                }
+            })
+            return response.data.results[0].geometry.location;
+        } catch (error) {   
+            throw new InternalServerErrorException(error);
+        }
+     }
 }

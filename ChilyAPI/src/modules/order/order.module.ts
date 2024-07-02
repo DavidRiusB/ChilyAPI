@@ -8,6 +8,7 @@ import { ProductsModule } from "../products/products.module";
 import { UserModule } from "../user/user.module";
 import { OrderDetailsModule } from "../order-details/order-details.module";
 import { AddressesModule } from "../addresses/addresses.module";
+import { GoogleMapsModule } from "../google-maps/google-maps.module";
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AddressesModule } from "../addresses/addresses.module";
     UserModule,
     AddressesModule,
     OrderDetailsModule,
+    GoogleMapsModule
   ],
   providers: [OrderService, OrderRepository],
   controllers: [OrderController],
