@@ -15,6 +15,9 @@ import { OrderDetailsService } from "../order-details/order-details.service";
 import { OrderDetail } from "../order-details/entity/order-details.entity";
 import { UpdateOrderDto } from "./dto/update-order.dto";
 import { AddressesService } from "../addresses/addresses.service";
+import { GoogleMapsService } from "../google-maps/google-maps.service";
+import { TravelMode } from "@googlemaps/google-maps-services-js";
+import { EstimatedTime } from "../google-maps/dto/estimatedTime.dto";
 
 @Injectable()
 export class OrderService {
@@ -24,6 +27,7 @@ export class OrderService {
     private readonly userService: UserService,
     private readonly addressService: AddressesService,
     private readonly orderDetailService: OrderDetailsService,
+    private readonly googleMapsService: GoogleMapsService,
     private dataSource: DataSource
   ) {}
 
@@ -104,6 +108,7 @@ export class OrderService {
         const productIds = productsInOrder.map((product) => product.productId);
 
         // Fetch products
+        console.log("AA")
         const products =
           await this.productService.findProductsByIds(productIds);
         console.log("Products fetched successfully:", products);
@@ -170,4 +175,24 @@ export class OrderService {
       }
     }
   }
+  async getEstimatedTimeFromOrder(id: number) {
+    const order = await this.findOrderById(id);
+    const address = await this.addressService.getUserAddress(order.user.id);
+    console.log(address)
+    const convertAddressToGeometrySource = await this.googleMapsService.convertAddressToLatLng(process.env.ADDRESS);
+    const convertToGeometryDestination = await this.googleMapsService.convertAddressToLatLng(`${address.city}, ${address.address}`);
+
+    let request: EstimatedTime = {
+      origin: {lat: convertAddressToGeometrySource.lat, lng: convertAddressToGeometrySource.lng},
+      destination: {lat: convertToGeometryDestination.lat, lng: convertToGeometryDestination.lng},
+      mode: TravelMode.driving
+    };
+    const estimatedTime = await this.googleMapsService.getEstimatedTime(request);
+
+    return {
+      order,
+      estimatedTime
+    };
+  }
 }
+

@@ -82,4 +82,9 @@ export class OrderController {
   async updateOrderStatus(@Body() update: UpdateOrderDto) {
     return await this.orderService.updateStatus(update);
   }
+
+  @Get('/order/estimated')
+  async getEstimatedTime(@Query('id') id: number) {
+    return await this.orderService.getEstimatedTimeFromOrder(id);
+  }
 }
