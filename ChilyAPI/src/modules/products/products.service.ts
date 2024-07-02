@@ -47,7 +47,7 @@ export class ProductsService {
     search: string,
     min: number,
     max: number,
-    start: string,
+    price: string,
     page: number,
     limit: number
   ): Promise<Product[]> {
@@ -123,7 +123,7 @@ export class ProductsService {
       );
     }
 
-    switch (start.toLowerCase()){
+    switch (price.toLowerCase()){
       case "min": products = products.sort((a,b)=> a.price - b.price);break;
       case "max": products = products.sort((a,b)=> b.price - a.price);break;
       default: break;
