@@ -18,6 +18,7 @@ import { UploadModule } from "./modules/upload/upload.module";
 import { NotificationEmailsService } from "./modules/notifications/notificationEmails.service";
 import { DiscountModule } from "./modules/discount/discount.module";
 import { GoogleMapsModule } from "./modules/google-maps/google-maps.module";
+import { PaymentsModule } from "./modules/payments/payments.module";
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { GoogleMapsModule } from "./modules/google-maps/google-maps.module";
     SeedersModule,
     AddressesModule,
     GoogleMapsModule,
+    PaymentsModule,
   ],
   controllers: [],
   providers: [NotificationEmailsService],
