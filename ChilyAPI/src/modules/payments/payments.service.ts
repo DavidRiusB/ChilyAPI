@@ -14,12 +14,12 @@ export class PaymentsService {
       );
     }
     this.stripe = new Stripe(stripeSecretKey, {
-      apiVersion: "2024-06-20", 
+      apiVersion: "2024-06-20",
     });
   }
 
   async createPaymentIntent(amount: number, currency: string) {
-    const amountInCents = Math.round(amount * 100);
+    const amountInCents = Math.round(amount * 100); // pendiente de verificar con respecto a cosots en colombia
 
     try {
       const paymentIntent = await this.stripe.paymentIntents.create({
