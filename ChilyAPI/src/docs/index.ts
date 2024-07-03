@@ -29,3 +29,4 @@ export * from "./doc-googleMaps-module/docs-endpoint-maps";
 
 // Addresses
 export * from "./docs-addresses-module/docs-endpoints-addresses";
+export * from "./docs-addresses-module/doc-create-address-dto";
