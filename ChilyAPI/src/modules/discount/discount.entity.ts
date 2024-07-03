@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "../user/entity/user.entity";
 
 @Entity({
     name: "dicounts"    
@@ -27,6 +28,9 @@ export class Discount {
         default: true
     })
     isValid: boolean;
+
+    @ManyToOne(()=> User, (user)=> user.discounts)
+    user: User;
 
     @Column({
         type: "boolean",

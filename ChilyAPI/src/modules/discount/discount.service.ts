@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { DiscountRepository } from "./discount.repository";
-import { createDiscountDto } from "./dto/createDiscount.dto";
+import { createDiscountDto, updateDiscountDto } from "./dto/createDiscount.dto";
 import { Discount } from "./discount.entity";
 
 @Injectable()
@@ -29,12 +29,12 @@ export class DiscountService {
         return this.discountRepository.creatediscount(createDiscount);
     }
 
-    updateDiscount(id: number, updateDiscount: createDiscountDto): Promise<Discount>{
+    updateDiscount(id: number, updateDiscount: updateDiscountDto): Promise<Discount>{
         return this.discountRepository.updateDiscount(id, updateDiscount);
     }
 
-    isValidDiscount(id: number, status: string): Promise<Discount>{
-        return this.discountRepository.isValidDiscount(id, status);
+    InvalidDiscount(id: number): Promise<Discount>{
+        return this.discountRepository.InvalidDiscount(id);
     }
 
     deleteDiscount(id: number): Promise<String>{

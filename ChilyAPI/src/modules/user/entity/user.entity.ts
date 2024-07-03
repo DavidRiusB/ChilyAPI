@@ -11,6 +11,7 @@ import {
 import { Credential } from "../../auth/entities/auth.entity";
 import { Order } from "../../order/entity/order.entity";
 import { Address } from "src/modules/addresses/entities/addresses.entity";
+import { Discount } from "src/modules/discount/discount.entity";
 
 @Entity({ name: "users" })
 export class User {
@@ -55,4 +56,7 @@ export class User {
 
   @DeleteDateColumn({ type: "timestamp", nullable: true })
   deletedAt?: Date;
+
+  @OneToMany(() => Discount, (discount)=> discount.user)
+  discounts: Discount[];
 }
