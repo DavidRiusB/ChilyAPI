@@ -157,3 +157,27 @@ export function DocumentationUpdateOrderStatus() {
     }),
   );
 }
+
+export function DocumentationObtainEstimatedTime() {
+  return applyDecorators(
+    ApiOperation({ summary: 'Obtener tiempo estimado de entrega de una orden' }),
+    ApiQuery({
+      name: 'id',
+      required: true,
+      description: 'ID de la orden',
+      example: 1,
+    }),
+    ApiResponse({
+      status: 200,
+      description: 'Tiempo estimado de entrega',
+    }),
+    ApiResponse({
+      status: 404,
+      description: 'Orden no encontrada',
+    }),
+    ApiResponse({
+      status: 400,
+      description: 'ID de orden inválido',
+    }),
+  );
+}
