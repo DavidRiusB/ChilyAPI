@@ -19,6 +19,7 @@ import { NotificationEmailsService } from "./modules/notifications/notificationE
 import { DiscountModule } from "./modules/discount/discount.module";
 import { GoogleMapsModule } from "./modules/google-maps/google-maps.module";
 import { PaymentsModule } from "./modules/payments/payments.module";
+import { ChatModule } from "./modules/chat/chat.module";
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { PaymentsModule } from "./modules/payments/payments.module";
     AddressesModule,
     GoogleMapsModule,
     PaymentsModule,
+    ChatModule,
   ],
   controllers: [],
   providers: [NotificationEmailsService],
