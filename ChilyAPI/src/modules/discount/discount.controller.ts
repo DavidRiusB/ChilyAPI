@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { DiscountService } from "./discount.service";
-import { createDiscountDto } from "./dto/createDiscount.dto";
+import { createDiscountDto, updateDiscountDto } from "./dto/createDiscount.dto";
 
 @Controller("discount")
 export class DiscountController {
@@ -29,13 +29,13 @@ export class DiscountController {
     }
 
     @Put("update/:id")
-    updateDiscount(@Param("id") id:number, @Body() updateDiscount: createDiscountDto){
+    updateDiscount(@Param("id") id:number, @Body() updateDiscount: updateDiscountDto){
         return this.discountService.updateDiscount(id, updateDiscount);
     }
 
-    @Put("valid")
-    isValidDiscount(@Query("id") id:number, @Query("status") status:string){
-        return this.discountService.isValidDiscount(id, status);
+    @Put("invalid/:id")
+    InvalidDiscount(@Param("id") id:number){
+        return this.discountService.InvalidDiscount(id);
     }
 
     @Delete("delete/:id")

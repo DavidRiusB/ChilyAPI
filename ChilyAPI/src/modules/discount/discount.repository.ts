@@ -1,19 +1,23 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { Discount } from "./discount.entity";
-import { createDiscountDto } from "./dto/createDiscount.dto";
+import { createDiscountDto, updateDiscountDto } from "./dto/createDiscount.dto";
 import { InjectRepository } from "@nestjs/typeorm";
-import { randomInt } from "crypto";
+import { LargeNumberLike, randomInt } from "crypto";
+import { User } from "../user/entity/user.entity";
+import { NotificationEmailsService } from "../notifications/notificationEmails.service";
 
 @Injectable()
 export class DiscountRepository {
     constructor(
-        @InjectRepository(Discount) private discountRepository: Repository<Discount>
+        @InjectRepository(Discount) private discountRepository: Repository<Discount>,
+        @InjectRepository(User) private userRepository: Repository<User>,
+        private readonly notificationEmailsService: NotificationEmailsService
     ) { }
 
     async getDiscounts(): Promise<Discount[]> {
         try {
-            const dicounts = await this.discountRepository.find({ where: { isDeleted: false } })
+            const dicounts = await this.discountRepository.find({ where: { isDeleted: false },relations:["user"] })
             return dicounts;
         } catch (error) {
             throw new BadRequestException("Erorr al traer los Descuentos")
@@ -22,7 +26,7 @@ export class DiscountRepository {
     
     async getDiscountsByValid(status: boolean): Promise<Discount[]> {
         try {
-            const discounts = await this.discountRepository.find({ where: { isDeleted: false, isValid: status } })
+            const discounts = await this.discountRepository.find({ where: { isDeleted: false, isValid: status },relations:["user"] })
             return discounts;
         } catch (error) {
             throw new BadRequestException("Erorr al traer los Descuentos por valides")
@@ -31,7 +35,7 @@ export class DiscountRepository {
 
     async getDiscountById(id: number): Promise<Discount> {
         try {
-            const discount = await this.discountRepository.findOne({ where: { id: id, isDeleted: false } })
+            const discount = await this.discountRepository.findOne({ where: { id: id, isDeleted: false },relations:["user"] })
             return discount;
         } catch (error) {
             throw new BadRequestException("Erorr al traer el Descuento con ID: " + id)
@@ -43,6 +47,8 @@ export class DiscountRepository {
             const discount: Discount = new Discount();
             const codeArray : string[] = [];
             let isValid = false;
+            const user: User = await this.userRepository.findOne({where:{id:createDiscount.user}})
+            if(!user)throw new BadRequestException("Usuario no encontrado");
             do {
                 for (let i: number = 0; i < 15;i++){
                     codeArray[i] = String.fromCharCode(randomInt(65,90));
@@ -55,39 +61,41 @@ export class DiscountRepository {
                 const validCode = await this.discountRepository.findOne({ where: { code: code } })
                 if(!validCode) isValid = true;
             } while (isValid === false);
-
+            discount.user =user;
             const savedDiscount = await this.discountRepository.save(discount)
+            this.notificationEmailsService.sendDiscountCodeEmail(user.email,user.name, discount.discount, discount.code);
             return savedDiscount;
         } catch (error) {
-            throw new BadRequestException("Error al crear el Descuento, Verifique los datos enviados y/o nombre duplicado")
+            if(error === BadRequestException) throw error;
+            throw new InternalServerErrorException("Error al crear el Descuento")
         }
     }
 
-    async updateDiscount(id: number, updateDiscount: createDiscountDto): Promise<Discount> {
+    async updateDiscount(id: number, updateDiscount: updateDiscountDto): Promise<Discount> {
         try {
-            const discount = await this.discountRepository.findOne({ where: { id: id } });
-            if (!discount) throw new BadRequestException("Error al modificar el Descuento, Verifique los datos enviados")
+            const discount = await this.discountRepository.findOne({ where: { id: id, isValid:true} });
+            if (!discount) throw new BadRequestException("Error el descuento a modificar ya fue utilizado")
             discount.discount = updateDiscount.discount;
             const updatedDiscount = await this.discountRepository.save(discount);
             return updatedDiscount;
         } catch (error) {
-            throw new BadRequestException("Error al modificar el Descuento, Verifique los datos enviados")
+            throw new BadRequestException("Error el descuento a modificar ya fue utilizado")
         }
     }
 
-    async isValidDiscount(id: number, status: string): Promise<Discount> {
+    async InvalidDiscount(id: number): Promise<Discount> {
         try {
-            const discount = await this.discountRepository.findOne({ where: { id: id } })
-            if (!discount) throw new Error("Error al activar/desactivar el Descuento, Verifique los datos enviados")
-            switch (status) {
-                case "true": discount.isValid = true; break;
-                case "false": discount.isValid = false; break;
-                default: throw new Error("Error al activar/desactivar el Descuento, Verifique los datos enviados")
-            }
+            const discount = await this.discountRepository.findOne({ where: { id: id, isValid:true },relations:["user"]})
+            if (!discount) throw new BadRequestException("Error al activar/desactivar el Descuento, Verifique los datos enviados")
+                discount.isValid = false;
             const updatedDiscount = await this.discountRepository.save(discount);
+            this.notificationEmailsService.sendUsedDiscountCodeEmail(discount.user.email, discount.user.name, discount.discount, discount.code);
             return updatedDiscount;
         } catch (error) {
-            throw new BadRequestException(error.message)
+            if (error === BadRequestException) {
+                throw new BadRequestException(error.message)
+            }
+            throw new InternalServerErrorException("Ocurrio un error al desactivar el Descuento")
         }
     }
 

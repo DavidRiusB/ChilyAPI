@@ -5,6 +5,8 @@ import * as nodemailer from "nodemailer";
 import { config as dotenvConfig } from "dotenv";
 import { registrationMailTemplate } from "./texts";
 import { passwordReset } from "./texts/passwordReset.template";
+import { DiscountMailTemplate } from "./texts/mailDiscountCreate.template";
+import { UsedDiscountMailTemplate } from "./texts/mailUsedDiscount.template";
 dotenvConfig({ path: ".env.development" });
 
 @Injectable()
@@ -46,6 +48,37 @@ export class NotificationEmailsService {
         process.env.NOTIFICATIONS_PASSWORD_RESET_URL +
           `reset-password?token=${token}`,
       ),
+    };
+
+    try {
+      const info = await this.transporter.sendMail(mailOptions);
+      console.log("Correo enviado: %s", info.messageId);
+    } catch (error) {
+      console.error("Error al enviar el correo:", error);
+    }
+  }
+
+  async sendDiscountCodeEmail(email: string, username: string, discount : number, code:string){
+    const mailOptions = {
+      from: process.env.NOTIFICATIONS_EMAIL_USER,
+      to: email,
+      subject: "Codigo de Descuento en Chily",
+      html: DiscountMailTemplate(username, discount,code),
+    };
+
+    try {
+      const info = await this.transporter.sendMail(mailOptions);
+      console.log("Correo enviado: %s", info.messageId);
+    } catch (error) {
+      console.error("Error al enviar el correo:", error);
+    }
+  }
+  async sendUsedDiscountCodeEmail(email: string, username: string, discount : number, code:string){
+    const mailOptions = {
+      from: process.env.NOTIFICATIONS_EMAIL_USER,
+      to: email,
+      subject: "Uso de tu Codigo de Descuento en Chily",
+      html: UsedDiscountMailTemplate(username, discount,code),
     };
 
     try {
