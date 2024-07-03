@@ -16,6 +16,7 @@ import {
   DocumentationGetAllOrders,
   DocumentationGetAllOrdersByBranchId,
   DocumentationGetOrderById,
+  DocumentationObtainEstimatedTime,
   DocumentationPostNewOrder,
   DocumentationUpdateOrderStatus,
 } from "src/docs";
@@ -83,8 +84,9 @@ export class OrderController {
     return await this.orderService.updateStatus(update);
   }
 
-  @Get('/order/estimated')
-  async getEstimatedTime(@Query('id') id: number) {
+  @Get("/order/estimated")
+  @DocumentationObtainEstimatedTime()
+  async getEstimatedTime(@Query("id") id: number) {
     return await this.orderService.getEstimatedTimeFromOrder(id);
   }
 }

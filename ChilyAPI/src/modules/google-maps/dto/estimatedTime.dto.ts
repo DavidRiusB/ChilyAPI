@@ -5,3 +5,4 @@ export class EstimatedTime {
     destination: { lat: number, lng: number };
     mode: TravelMode;
 }
+

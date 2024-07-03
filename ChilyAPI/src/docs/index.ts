@@ -23,3 +23,9 @@ export * from "./doc-user-module/docs-user-update-dto";
 export * from "./doc-orders-module/doc-endpoint-orders";
 export * from "./doc-orders-module/docs-update-order-dto";
 export * from "./doc-orders-module/docs-order-dto";
+
+// Google maps
+export * from "./doc-googleMaps-module/docs-endpoint-maps";
+
+// Addresses
+export * from "./docs-addresses-module/docs-endpoints-addresses";
