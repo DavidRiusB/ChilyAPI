@@ -14,8 +14,11 @@ import { CreateAddressDto } from "./dto/createAddress.dto";
 import { UpdateAddressDto } from "./dto/updateAddres.dto";
 import {
   DocumentacionObtainAddresse,
+  DocumentationAddNewAddress,
   DocumentationApiTagsModule,
+  DocumentationDeleteAddress,
   DocumentationObtainUserAdress,
+  DocumentationUpdateAddress,
 } from "src/docs";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { Role } from "src/common/enums";
@@ -43,17 +46,21 @@ export class AddressesController {
 
   @Post("/add")
   @UseGuards(JwtAuthGuard)
+  @DocumentationAddNewAddress()
   async addNewAddress(@Body() addressCreate: CreateAddressDto) {
     return await this.addressService.addNewAddress(addressCreate);
   }
 
   @Put("/update")
   @UseGuards(JwtAuthGuard)
+  @DocumentationUpdateAddress()
   async updateAddress(@Body() addressUpdate: UpdateAddressDto) {
     return await this.addressService.updateAddress(addressUpdate);
   }
+
   @Delete("/delete")
   @UseGuards(JwtAuthGuard)
+  @DocumentationDeleteAddress()
   async deleteAddress(@Query("id") id: number) {
     return await this.addressService.deleteAddress(id);
   }
