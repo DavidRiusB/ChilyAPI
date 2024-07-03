@@ -1,31 +1,26 @@
-import { Controller, Post, Body } from "@nestjs/common";
+import { Controller, Post, Body, BadRequestException } from "@nestjs/common";
 import { PaymentsService } from "./payments.service";
-import { CreatePaymentDto } from "./create-payment.dto";
-import { HandleCardPaymentDto } from "./buy-payment.dto";
+import { ProcessPaymentDto } from "./processPayment.dto";
+import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { DocumentationApiTagsModule } from "src/docs";
 
 @Controller("payments")
+@ApiTags("Rutas para: Pagos con tarjeta")
+@DocumentationApiTagsModule.clasification("Rutas para: Pagos con tarjeta")
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  @Post("create-payment")
-  async createPaymentIntent(@Body() createPaymentDto: CreatePaymentDto) {
-    {
-      const { amount, currency } = createPaymentDto;
-      const clientSecret = await this.paymentsService.createPaymentIntent(
-        amount,
-        currency,
-      );
-      return { clientSecret };
+  @Post("process-payment")
+  @ApiOperation({ summary: "Procesar pago con tarjeta" })
+  @ApiResponse({ status: 200, description: "Pago procesado exitosamente" })
+  @ApiResponse({ status: 400, description: "Error al procesar el pago" })
+  async processPayment(@Body() processPaymentDto: ProcessPaymentDto) {
+    try {
+      const paymentIntent =
+        await this.paymentsService.processPayment(processPaymentDto);
+      return { paymentIntent };
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-  }
-
-  @Post("handle-card-payment")
-  async handleCardPayment(@Body() body: HandleCardPaymentDto) {
-    const { paymentIntentId, paymentMethodId } = body;
-    const paymentIntent = await this.paymentsService.handleCardPayment(
-      paymentIntentId,
-      paymentMethodId,
-    );
-    return { paymentIntent };
   }
 }
