@@ -1,17 +1,21 @@
-// notification-emails.service.ts
+// Vendors
 import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import * as nodemailer from "nodemailer";
-
 import { config as dotenvConfig } from "dotenv";
-import { registrationMailTemplate } from "./texts";
-import { passwordReset } from "./texts/passwordReset.template";
-import { DiscountMailTemplate } from "./texts/mailDiscountCreate.template";
-import { UsedDiscountMailTemplate } from "./texts/mailUsedDiscount.template";
 dotenvConfig({ path: ".env.development" });
+import { SentMessageInfo } from "nodemailer/lib/smtp-transport";
+
+// Templates
+import {
+  registrationMailTemplate,
+  passwordReset,
+  DiscountMailTemplate,
+  UsedDiscountMailTemplate,
+} from "./texts";
 
 @Injectable()
 export class NotificationEmailsService {
-  private transporter;
+  private transporter: nodemailer.Transporter<SentMessageInfo>;
 
   constructor() {
     this.transporter = nodemailer.createTransport({
@@ -23,69 +27,73 @@ export class NotificationEmailsService {
     });
   }
 
-  async sendRegistrationEmail(email: string, username: string) {
+  private createTransporter() {
+    return nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.NOTIFICATIONS_EMAIL_USER,
+        pass: process.env.NOTIFICATIONS_EMAIL_PASS,
+      },
+    });
+  }
+
+  private async sendEmail(mailOptions): Promise<void> {
+    try {
+      const info = await this.transporter.sendMail(mailOptions);
+      console.log("Correo enviado: %s", info.messageId);
+    } catch (error) {
+      console.error("Error al enviar el correo:", error);
+    }
+  }
+
+  async sendRegistrationEmail(email: string, username: string): Promise<void> {
     const mailOptions = {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
       subject: "Registro exitoso en Chily",
       html: registrationMailTemplate(username),
     };
-
-    try {
-      const info = await this.transporter.sendMail(mailOptions);
-      console.log("Correo enviado: %s", info.messageId);
-    } catch (error) {
-      console.error("Error al enviar el correo:", error);
-    }
+    await this.sendEmail(mailOptions);
   }
 
   async sendPasswordResetEmail(email: string, token: string): Promise<void> {
+    const resetUrl = `${process.env.NOTIFICATIONS_PASSWORD_RESET_URL}/reset-password?token=${token}`;
     const mailOptions = {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
       subject: "Restablecimiento de contraseña",
-      html: passwordReset(
-        process.env.NOTIFICATIONS_PASSWORD_RESET_URL +
-          `reset-password?token=${token}`,
-      ),
+      html: passwordReset(resetUrl),
     };
-
-    try {
-      const info = await this.transporter.sendMail(mailOptions);
-      console.log("Correo enviado: %s", info.messageId);
-    } catch (error) {
-      console.error("Error al enviar el correo:", error);
-    }
+    await this.sendEmail(mailOptions);
   }
 
-  async sendDiscountCodeEmail(email: string, username: string, discount : number, code:string){
+  async sendDiscountCodeEmail(
+    email: string,
+    username: string,
+    discount: number,
+    code: string,
+  ): Promise<void> {
     const mailOptions = {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
-      subject: "Codigo de Descuento en Chily",
-      html: DiscountMailTemplate(username, discount,code),
+      subject: "Código de Descuento en Chily",
+      html: DiscountMailTemplate(username, discount, code),
     };
-
-    try {
-      const info = await this.transporter.sendMail(mailOptions);
-      console.log("Correo enviado: %s", info.messageId);
-    } catch (error) {
-      console.error("Error al enviar el correo:", error);
-    }
+    await this.sendEmail(mailOptions);
   }
-  async sendUsedDiscountCodeEmail(email: string, username: string, discount : number, code:string){
+
+  async sendUsedDiscountCodeEmail(
+    email: string,
+    username: string,
+    discount: number,
+    code: string,
+  ): Promise<void> {
     const mailOptions = {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
-      subject: "Uso de tu Codigo de Descuento en Chily",
-      html: UsedDiscountMailTemplate(username, discount,code),
+      subject: "Uso de tu Código de Descuento en Chily",
+      html: UsedDiscountMailTemplate(username, discount, code),
     };
-
-    try {
-      const info = await this.transporter.sendMail(mailOptions);
-      console.log("Correo enviado: %s", info.messageId);
-    } catch (error) {
-      console.error("Error al enviar el correo:", error);
-    }
+    await this.sendEmail(mailOptions);
   }
 }
