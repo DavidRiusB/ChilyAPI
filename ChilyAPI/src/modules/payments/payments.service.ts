@@ -1,6 +1,7 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, BadRequestException } from "@nestjs/common";
 import Stripe from "stripe";
 import { ConfigService } from "@nestjs/config";
+import { ProcessPaymentDto } from "./processPayment.dto";
 
 @Injectable()
 export class PaymentsService {
@@ -18,31 +19,25 @@ export class PaymentsService {
     });
   }
 
-  async createPaymentIntent(amount: number, currency: string) {
-    const amountInCents = Math.round(amount * 100); // pendiente de verificar con respecto a cosots en colombia
+  async processPayment({
+    paymentMethodId,
+    amount,
+    currency,
+  }: ProcessPaymentDto) {
+    const amountInCents = Math.round(amount * 100);
 
     try {
+      // Crear PaymentIntent con el PaymentMethodId recibido del frontend
       const paymentIntent = await this.stripe.paymentIntents.create({
         amount: amountInCents,
         currency,
+        payment_method: paymentMethodId,
+        confirm: true,
       });
-      return paymentIntent.client_secret;
-    } catch (error) {
-      throw new Error("Error al crear el intento de pago con Stripe");
-    }
-  }
 
-  async handleCardPayment(paymentIntentId: string, paymentMethodId: string) {
-    try {
-      const paymentIntent = await this.stripe.paymentIntents.confirm(
-        paymentIntentId,
-        {
-          payment_method: paymentMethodId,
-        },
-      );
       return paymentIntent;
     } catch (error) {
-      throw new Error("Error al procesar el pago con tarjeta con Stripe");
+      throw new BadRequestException(error.message);
     }
   }
 }
