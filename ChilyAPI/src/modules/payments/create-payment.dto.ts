@@ -16,8 +16,4 @@ export class CreatePaymentDto {
   @IsString({ message: "La moneda debe ser una cadena de caracteres" })
   @IsNotEmpty({ message: "La moneda no puede estar vacía" })
   currency: string = "COP";
-
-  @IsNotEmpty({ message: "El método de pago no puede estar vacío" })
-  @IsString({ message: "El método de pago debe ser una cadena de caracteres" })
-  payment_method: string = "card";
 }

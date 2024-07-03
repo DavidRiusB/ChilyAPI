@@ -1,18 +1,23 @@
-import { IsString, IsNumber, IsInt, Min, Max } from "class-validator";
+import {
+  IsString,
+  IsNumber,
+  IsInt,
+  Min,
+  Max,
+  IsOptional,
+} from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class ProcessPaymentDto {
   @ApiProperty({
-    description: "Token del método de pago generado por Stripe",
+    description: "ID del método de pago de Stripe",
     example: "pm_1GqIC8HYgolSBA35d6TB9Xgr",
   })
   @IsString()
+  @IsOptional()
   paymentMethodId: string;
 
-  @ApiProperty({
-    description: "Monto a cobrar en centavos",
-    example: 5000,
-  })
+  @ApiProperty({ description: "Monto a cobrar", example: 5000 })
   @IsNumber()
   amount: number;
 
@@ -21,5 +26,5 @@ export class ProcessPaymentDto {
     example: "COP",
   })
   @IsString()
-  currency: string;
+  currency: string = "COP";
 }
