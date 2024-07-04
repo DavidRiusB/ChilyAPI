@@ -14,13 +14,7 @@ dotenvConfig({
 });
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  app.enableCors({
-    origin: "*", // Modify when the front is deployed https://example1.com
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-    allowedHeaders: "*", // Modify when the front is deployed 'Content-Type, Accept'
-  });
+  const app = await NestFactory.create(AppModule, { cors: true});
 
   DocumentationConfig(app);
 
