@@ -54,4 +54,15 @@ export const usersSeed = [
     city: "Ionia City",
     role: "user",
   },
+  {
+    name: "Chily",
+    email: "chily@gmail.com",
+    password: "Chily123$",
+    NIN: "77.777.707",
+    phone: "+573001294578",
+    address: "Calle 123, Bogotá",
+    country: "Colombia",
+    city: "Bogotá",
+    role: "user",
+  },
 ];

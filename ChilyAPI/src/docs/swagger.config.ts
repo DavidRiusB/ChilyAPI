@@ -10,7 +10,10 @@ export function DocumentationConfig(app: INestApplication): void {
       "API para la gestión del restaurante Donde Chily y sus franquicias. Consulta las variables de entorno en el archivo README.md para más detalles.",
     )
     .setVersion("1.0")
-    .addCookieAuth("Token en Cookies", { type: "apiKey", in: "cookie" })
+    .addApiKey(
+      { type: "apiKey", name: "access_token", in: "query" },
+      "Token en Parámetros",
+    )
     .addOAuth2({
       type: "oauth2",
       flows: {
