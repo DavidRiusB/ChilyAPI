@@ -50,6 +50,7 @@ export class DiscountRepository {
             const discount: Discount = new Discount();
             const codeArray: string[] = [];
             let isValid = false;
+            if(createDiscount.discount>100 || createDiscount.discount<1)throw new BadRequestException("Ingrese un valor de descuento valido")
             do {
                 for (let i: number = 0; i < 15; i++) {
                     codeArray[i] = String.fromCharCode(randomInt(65, 90));
@@ -66,7 +67,7 @@ export class DiscountRepository {
             const savedDiscount = await this.discountRepository.save(discount)
             return savedDiscount;
         } catch (error) {
-            if (error === BadRequestException) throw error;
+            if (error instanceof BadRequestException) throw error;
             throw new InternalServerErrorException("Error al crear el Descuento")
         }
     }
