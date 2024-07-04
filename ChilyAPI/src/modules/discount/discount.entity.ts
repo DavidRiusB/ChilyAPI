@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "../user/entity/user.entity";
+import { DiscountState } from "src/common/enums/discount-states.enum";
 
 @Entity({
     name: "dicounts"    
@@ -24,17 +25,10 @@ export class Discount {
     discount: number;
 
     @Column({
-        type: "boolean",
-        default: true
+        type: "varchar",
     })
-    isValid: boolean;
+    isValid: DiscountState;
 
     @ManyToOne(()=> User, (user)=> user.discounts)
     user: User;
-
-    @Column({
-        type: "boolean",
-        default: false
-    })
-    isDeleted: boolean;
 }
