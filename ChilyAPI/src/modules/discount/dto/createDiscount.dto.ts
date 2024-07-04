@@ -5,11 +5,6 @@ export class createDiscountDto {
     @IsOptional()
     @IsNumber()
     discount: number;
-
-    @IsNotEmpty()
-    @IsNumber()
-    user : number;
-
 }
 
 export class updateDiscountDto {

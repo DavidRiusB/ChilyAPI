@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { DiscountRepository } from "./discount.repository";
 import { createDiscountDto, updateDiscountDto } from "./dto/createDiscount.dto";
 import { Discount } from "./discount.entity";
+import { DiscountState } from "src/common/enums/discount-states.enum";
 
 @Injectable()
 export class DiscountService {
@@ -10,19 +11,23 @@ export class DiscountService {
         return this.discountRepository.getDiscounts();
     }
     getDiscountsByValid(status: string): Promise<Discount[]>{
-        status.toLowerCase();
-        let statusBoolean:boolean;
-        switch(status){
-            case "true":statusBoolean = true;break;
-            case "false":statusBoolean = false;break;
+        const aux = status.toUpperCase();
+        let statusBoolean:DiscountState;
+        switch(aux){
+            case "CREATED":statusBoolean = DiscountState.CREATED;break;
+            case "USED":statusBoolean = DiscountState.USED;break;
             default:
-                throw new BadRequestException("Estado enviado debe ser verdadero o falso");break;
+                throw new BadRequestException("Estado enviado debe ser CREATED o USED");break;
         }
         return this.discountRepository.getDiscountsByValid(statusBoolean);
     }
 
     getDiscountById(id: number): Promise<Discount>{
         return this.discountRepository.getDiscountById(id);
+    }
+
+    setDiscountToUser(discount: string, userId: string): Promise<Discount>{
+        return this.discountRepository.setDiscountToUser(Number(discount), Number(userId));
     }
 
     creatediscount(createDiscount: createDiscountDto): Promise<Discount>{
@@ -33,8 +38,9 @@ export class DiscountService {
         return this.discountRepository.updateDiscount(id, updateDiscount);
     }
 
-    InvalidDiscount(id: number): Promise<Discount>{
-        return this.discountRepository.InvalidDiscount(id);
+    InvalidDiscount(id: string, userId:string): Promise<Discount>{
+        if(!id || !userId) throw new BadRequestException("Verifique los datos enviados, no se permiten campos vacios")
+        return this.discountRepository.InvalidDiscount(Number(id),Number(userId));
     }
 
     deleteDiscount(id: number): Promise<String>{

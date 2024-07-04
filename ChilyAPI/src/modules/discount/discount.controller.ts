@@ -15,7 +15,7 @@ import { DocumentationApiTagsModule } from "src/docs";
 @Controller("discount")
 @DocumentationApiTagsModule.clasification("Rutas para: Descuentos")
 export class DiscountController {
-  constructor(private readonly discountService: DiscountService) {}
+  constructor(private readonly discountService: DiscountService) { }
 
   @Get()
   getDiscounts() {
@@ -37,15 +37,20 @@ export class DiscountController {
     return this.discountService.creatediscount(createDiscount);
   }
 
-    @Put("update/:id")
-    updateDiscount(@Param("id") id:number, @Body() updateDiscount: updateDiscountDto){
-        return this.discountService.updateDiscount(id, updateDiscount);
-    }
+  @Put("update/:id")
+  updateDiscount(@Param("id") id: number, @Body() updateDiscount: updateDiscountDto) {
+    return this.discountService.updateDiscount(id, updateDiscount);
+  }
 
-    @Put("invalid/:id")
-    InvalidDiscount(@Param("id") id:number){
-        return this.discountService.InvalidDiscount(id);
-    }
+  @Put("invalid")
+  InvalidDiscount(@Query("id") id: string, @Query("userId") userId: string) {
+    return this.discountService.InvalidDiscount(id, userId);
+  }
+
+  @Put("setdiscount")
+  setDiscountToUser(@Query("discount") discount: string, @Query("userId") userId: string) {
+    return this.discountService.setDiscountToUser(discount, userId);
+  }
 
   @Delete("delete/:id")
   deleteDiscount(@Param("id") id: number) {
