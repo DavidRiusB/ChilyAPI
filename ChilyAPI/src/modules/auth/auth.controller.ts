@@ -22,6 +22,7 @@ import { GoogleAuthGuard } from "./guards/google.guard";
 import { LocalAuthGuard } from "./guards/local-auth.guards";
 import { Request, Response } from "express";
 import { ResetPasswordDto } from "./dto/resetPassword.dto";
+import { RequestPasswordResetDto } from "./dto/requestPasswordReset.dto";
 @Controller("auth")
 @DocumentationApiTagsModule.clasification("Rutas para: Autentificación")
 export class AuthController {
@@ -40,24 +41,6 @@ export class AuthController {
   @DocumentationRegister()
   async register(@Body() userData: RegisterUserDTO) {
     return await this.authService.register(userData);
-  }
-
-  @Post("request-reset")
-  @DocumentationRequestPasswordReset()
-  async requestPasswordReset(@Body() authDto: ResetPasswordDto): Promise<void> {
-    if (!authDto.email) {
-      throw new Error("Por favor ingrese tu email");
-    }
-    return await this.authService.createResetToken(authDto.email);
-  }
-
-  @Post("reset-password")
-  @DocumentationResetPassword()
-  async resetPassword(@Body() authDto: ResetPasswordDto): Promise<void> {
-    if (!authDto.token || !authDto.newPassword) {
-      throw new Error("Contraseña y token requeridos");
-    }
-    await this.authService.resetPassword(authDto.token, authDto.newPassword);
   }
 
   @Get("google/login")
@@ -79,5 +62,17 @@ export class AuthController {
     return {
       msg: "Login exitoso",
     };
+  }
+
+  @Post("request-password-reset")
+  async requestPasswordReset(@Body() { email }: RequestPasswordResetDto) {
+    return this.authService.requestPasswordReset(email);
+  }
+
+  @Post("reset-password")
+  async resetPassword(
+    @Body() { token, newPassword }: ResetPasswordDto,
+  ) {
+    return this.authService.resetPassword(token, newPassword);
   }
 }

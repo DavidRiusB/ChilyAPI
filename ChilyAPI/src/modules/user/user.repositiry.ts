@@ -15,10 +15,9 @@ import { UserLoginGoogleDto } from "../auth/dto/loginGoogle.dto";
 
 @Injectable()
 export class UserRepository {
-
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async findByCredentialsId(credentialId: number): Promise<User> {
@@ -31,7 +30,7 @@ export class UserRepository {
 
       if (!user) {
         throw new NotFoundException(
-          `Usuario con credencial ${credentialId}, no encontrado`
+          `Usuario con credencial ${credentialId}, no encontrado`,
         );
       }
 
@@ -41,25 +40,19 @@ export class UserRepository {
         throw error;
       }
       throw new InternalServerErrorException(
-        "Error inesperado del servidor al buscar usuario"
+        "Error inesperado del servidor al buscar usuario",
       );
     }
   }
 
   async create(newUserData: RegisterUserDTO, credential: Credential) {
     try {
-      const {
-        email,
-        name,
-        phone,
-        role = Role.User,
-        NIN,
-      } = newUserData;
+      const { email, name, phone, role = Role.User, NIN } = newUserData;
       const newUser = new User();
       newUser.NIN = NIN;
       newUser.email = email;
       newUser.name = name;
-     // newUser.address = address;
+      // newUser.address = address;
       newUser.credential = credential;
       newUser.phone = phone;
       newUser.role = role;
@@ -69,11 +62,11 @@ export class UserRepository {
       if (error.code === "23505") {
         throw new ConflictException(
           "Datos de Registro invalidos",
-          error.detail
+          error.detail,
         );
       }
       throw new InternalServerErrorException(
-        "Error inesperado al registrar al usuario, por favor intentelo de nuevo"
+        "Error inesperado al registrar al usuario, por favor intentelo de nuevo",
       );
     }
   }
@@ -104,7 +97,7 @@ export class UserRepository {
         throw new BadRequestException("Numero de telefono ya registrado");
       }
       throw new InternalServerErrorException(
-        "Error inesperado del servidor al modificar datos del usuario"
+        "Error inesperado del servidor al modificar datos del usuario",
       );
     }
   }
@@ -114,20 +107,24 @@ export class UserRepository {
     return result;
   }
 
- async createGoogle(newUserData: UserLoginGoogleDto): Promise<User>{
+  async createGoogle(newUserData: UserLoginGoogleDto): Promise<User> {
     try {
-        const newUser = new User();
-        newUser.email = newUserData.email;
-        newUser.name = newUserData.name;
-        newUser.role = Role.User;
-        newUser.googleAuth = true;
-        return await this.userRepository.save(newUser);
+      const newUser = new User();
+      newUser.email = newUserData.email;
+      newUser.name = newUserData.name;
+      newUser.role = Role.User;
+      newUser.googleAuth = true;
+      return await this.userRepository.save(newUser);
     } catch {
-      throw new InternalServerErrorException('Error inesperado al registrar al usuario');
+      throw new InternalServerErrorException(
+        "Error inesperado al registrar al usuario",
+      );
     }
   }
   async findByEmail(email: string) {
     const user = await this.userRepository.findOne({ where: { email } });
     return user;
   }
+
+
 }
