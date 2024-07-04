@@ -90,33 +90,7 @@ export class AuthRepository {
     return this.credentialRepository.findOneBy({ email });
   }
 
-  async createResetToken(email: string): Promise<string> {
-    const user = await this.findByEmailInCredentials(email);
-
-    const token = randomBytes(32).toString("hex");
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = new Date(Date.now() + 600000); // 10 min
-
-    await this.credentialRepository.save(user);
-    return token;
-  }
-
-  async resetPassword(token: string, newPassword: string) {
-    const user = await this.credentialRepository.findOne({
-      where: {
-        resetPasswordToken: token,
-        resetPasswordExpires: MoreThan(new Date()),
-      },
-    });
-
-    if (!user) {
-      throw new Error("El token ha expirado, genere uno nuevo");
-    }
-
-    user.password = newPassword;
-    user.resetPasswordToken = null;
-    user.resetPasswordExpires = null;
-
-    await this.credentialRepository.save(user);
+  async updatePassword(id: string, newPassword: string) {
+    await this.credentialRepository.update(id, { password: newPassword });
   }
 }

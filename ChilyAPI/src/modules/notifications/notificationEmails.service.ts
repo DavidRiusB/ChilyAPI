@@ -11,6 +11,7 @@ import {
   passwordReset,
   DiscountMailTemplate,
   UsedDiscountMailTemplate,
+  passwordChangeSuccessTemplate,
 } from "./texts";
 
 @Injectable()
@@ -57,7 +58,7 @@ export class NotificationEmailsService {
   }
 
   async sendPasswordResetEmail(email: string, token: string): Promise<void> {
-    const resetUrl = `${process.env.NOTIFICATIONS_PASSWORD_RESET_URL}/reset-password?token=${token}`;
+    const resetUrl = token;
     const mailOptions = {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
@@ -96,4 +97,17 @@ export class NotificationEmailsService {
     };
     await this.sendEmail(mailOptions);
   }
+
+   async sendPasswordChangeSuccessEmail(email: string, username: string): Promise<void> {
+    const mailOptions = {
+      from: process.env.NOTIFICATIONS_EMAIL_USER,
+      to: email,
+      subject: "Cambio de contraseña exitoso en Donde Chily",
+      html: passwordChangeSuccessTemplate(username),
+    };
+    await this.sendEmail(mailOptions);
+  }
+
 }
+
+

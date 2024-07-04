@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  UnauthorizedException,
 } from "@nestjs/common";
 import { RegisterUserDTO } from "./dto/register.dto";
 import { AuthRepository } from "./auth.repository";
@@ -12,14 +11,14 @@ import { User } from "../user/entity/user.entity";
 import { usersSeed } from "./users-seed";
 import { hashPassword } from "src/utils/hashing/bcrypt.utils";
 import { Credential } from "./entities/auth.entity";
-import { UserLoginDTO } from "./dto/login.dto";
 import { UserLoginGoogleDto } from "./dto/loginGoogle.dto";
 import { JwtService } from "@nestjs/jwt";
 import { NotificationEmailsService } from "../notifications/notificationEmails.service";
-import { SessionSerializer } from "src/common/helpers/serializer";
-import { IsEmail } from "class-validator";
 import * as bcrypt from "bcryptjs";
-import { ResetPasswordDto } from "./dto/resetPassword.dto";
+import { config as dotenvConfig } from "dotenv";
+dotenvConfig({
+  path: ".env.development",
+});
 
 @Injectable()
 export class AuthService {
@@ -63,7 +62,7 @@ export class AuthService {
       }
     });
   }
-  
+
   async validateUser(email: string, password: string): Promise<User | null> {
     const credential = await this.authRepository.signIn({ email, password });
     if (!credential) {
@@ -126,19 +125,6 @@ export class AuthService {
     }
   }
 
-  async createResetToken(email: string): Promise<void> {
-    const token = await this.authRepository.createResetToken(email);
-    await this.notificationEmailsService.sendPasswordResetEmail(email, token);
-  }
-
-  async resetPassword(token: string, newPassword: string):
-    Promise<void> {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-    await this.authRepository.resetPassword(token, hashedPassword);
-
-  }
-
   async googleLogin(data: UserLoginGoogleDto) {
     try {
       const user = await this.userService.createUserGoogle(data);
@@ -163,6 +149,51 @@ export class AuthService {
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(error);
+    }
+  }
+
+  async requestPasswordReset(email: string) {
+    const user = await this.userService.findByEmail(email);
+    if (!user) {
+      console.log("Email no encontrado");
+    }
+
+    const payload = { userId: user.id };
+    const token = this.jwtService.sign(payload, {
+      secret: process.env.JWT_SECRET,
+    });
+
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+    await this.notificationEmailsService.sendPasswordResetEmail(
+      email,
+      resetLink,
+    );
+
+    return { message: "Link para cambiar contraseña enviado" };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    try {
+      const payload = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET,
+      });
+      const userId = payload.userId;
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      await this.authRepository.updatePassword(userId, hashedPassword);
+
+      const user = await this.userService.findUserById(userId);
+      if (user.email && user.name) {
+        await this.notificationEmailsService.sendPasswordChangeSuccessEmail(
+          user.email,
+          user.name,
+        );
+      } else {
+        console.error("Email or username is missing from user object");
+      }
+      return { message: "Contraseña restablecida exitosamente" };
+    } catch (error) {
+      throw new BadRequestException("Token invalido o expirado");
     }
   }
 }
