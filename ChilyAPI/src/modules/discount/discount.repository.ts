@@ -21,7 +21,7 @@ export class DiscountRepository {
             const dicounts = await this.discountRepository.find({ where: { isValid: DiscountState.CREATED }, relations: ["user"] })
             return dicounts;
         } catch (error) {
-            throw new BadRequestException("Erorr al traer los Descuentos")
+            throw new BadRequestException("Error al traer los Descuentos")
         }
     }
 
@@ -30,18 +30,18 @@ export class DiscountRepository {
             const discounts = await this.discountRepository.find({ where: { isValid: status }, relations: ["user"] })
             return discounts;
         } catch (error) {
-            throw new BadRequestException("Erorr al traer los Descuentos por valides")
+            throw new BadRequestException("Error al traer los Descuentos por valides")
         }
     }
 
     async getDiscountById(id: number): Promise<Discount> {
         try {
             const discount = await this.discountRepository.findOne({where: [ { id: id, isValid: DiscountState.CREATED },{ id: id, isValid: DiscountState.USED }],relations: ["user"]});
-            if(!discount) throw new BadRequestException("Erorr al traer el descuento, verifique los datos")
+            if(!discount) throw new BadRequestException("Error al traer el descuento, verifique los datos")
             return discount;
         } catch (error) {
             if(error instanceof BadRequestException) throw error;
-            throw new BadRequestException("Erorr al traer el Descuento con ID: " + id)
+            throw new BadRequestException("Error al traer el Descuento con ID: " + id)
         }
     }
 
@@ -75,13 +75,14 @@ export class DiscountRepository {
             const user = await this.userRepository.findOne({ where: { id: userId } })
             if (!user) throw new BadRequestException("Error al encontrar el usuario")
             const existingDiscount = await this.discountRepository.findOne({ where: { id: discount, isValid: DiscountState.CREATED },relations:["user"] })
+            if (!existingDiscount) throw new BadRequestException("Error, este descuento se encuentra usado o eliminado")
             existingDiscount.user = user;
             await this.discountRepository.save(existingDiscount)
             this.notificationEmailsService.sendDiscountCodeEmail(user.email, user.name, existingDiscount.discount, existingDiscount.code);
             return existingDiscount;
         } catch (error) {
             if(error instanceof BadRequestException) throw error
-            throw new BadRequestException("Error al agregar el descuento al usuario, este descuento ya esta registrado o usado")
+            throw new BadRequestException("Error al agregar el descuento al usuario, este descuento se encuentra usado o eliminado")
         }
     }
 
