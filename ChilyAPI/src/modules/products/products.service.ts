@@ -143,8 +143,8 @@ export class ProductsService {
     return await this.productsRepository.updateStock(id, stock);
   }
 
-  createProduct(createProduct: createProductDto): Promise<Product> {
-    return this.productsRepository.createProduct(createProduct);
+  createProduct(createProduct: createProductDto, fileUrl: string): Promise<Product> {
+    return this.productsRepository.createProduct(createProduct, fileUrl);
   }
 
   updateProduct(id: number, updateProduct: createProductDto): Promise<Product> {

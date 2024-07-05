@@ -1,6 +1,7 @@
 import { ProductsService } from "./products.service";
 import { Product } from "./products.entity";
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -32,11 +33,15 @@ import { DocumentationAddProduct, DocumentationGetProducts } from "src/docs";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { QueryFilterInterceptor } from "src/common/interceptors/queryFilter.interceptor";
 import { QueryProductInterceptor } from "src/common/interceptors/queryProduct.interceptor";
+import { UploadService } from "../upload/upload.service";
 
 @Controller("products")
 @DocumentationApiTagsModule.clasification("Rutas para: Productos")
 export class ProductsController {
-  constructor(private productsService: ProductsService) {}
+  constructor(
+    private productsService: ProductsService,
+    private uploadService: UploadService
+  ) {}
 
   @Get()
   @DocumentationGetProducts()
@@ -44,7 +49,7 @@ export class ProductsController {
   getProducts(@Req() request: any): Promise<Product[]> {
     const products = this.productsService.getProducts(
       request.page,
-      request.limit,
+      request.limit
     );
     return products;
   }
@@ -60,7 +65,7 @@ export class ProductsController {
       request.max,
       request.price,
       request.page,
-      request.limit,
+      request.limit
     );
   }
 
@@ -73,8 +78,18 @@ export class ProductsController {
 
   @Post("create")
   @DocumentationAddProduct()
-  createProduct(@Body() createProduct: createProductDto): Promise<Product> {
-    const newProduct = this.productsService.createProduct(createProduct);
+  @UseInterceptors(FileInterceptor("image"))
+  async createProduct(
+    @Body() createProduct: createProductDto,
+    @UploadedFile() file: Express.Multer.File
+  ): Promise<Product> {
+    if(!file) throw new BadRequestException("Verifique los datos enviados, falta la imagen");
+    const fileUrl = await this.uploadService.update(
+      file.originalname,
+      file.buffer,
+      file.mimetype
+    );
+    const newProduct = await this.productsService.createProduct(createProduct, fileUrl);
     return newProduct;
   }
 
@@ -82,11 +97,11 @@ export class ProductsController {
   @DocumentationUpdateProduct()
   updateProduct(
     @Param("id") id: number,
-    @Body() updateProduct: createProductDto,
+    @Body() updateProduct: createProductDto
   ): Promise<Product> {
     const updatedProduct = this.productsService.updateProduct(
       id,
-      updateProduct,
+      updateProduct
     );
     return updatedProduct;
   }
@@ -115,7 +130,7 @@ export class ProductsController {
   @DocumentationProductIsPopular()
   productIsPopular(
     @Query("id") id: number,
-    @Query("status") status: string,
+    @Query("status") status: string
   ): Promise<Product> {
     const updatedProduct = this.productsService.productIsPopular(id, status);
     return updatedProduct;
@@ -132,16 +147,16 @@ export class ProductsController {
           new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5 MB file size limit
           new FileTypeValidator({ fileType: "image/jpeg|image/png|image/jpg" }),
         ],
-      }),
+      })
     )
-    img: Express.Multer.File,
+    img: Express.Multer.File
   ) {
     const contenType = img.mimetype;
     const updateProduct = await this.productsService.updateImg(
       id,
       img.originalname,
       img.buffer,
-      contenType,
+      contenType
     );
     console.log("content type:", contenType);
     return await updateProduct;
