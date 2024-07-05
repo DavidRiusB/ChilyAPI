@@ -17,7 +17,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from "@nestjs/common";
-import { createProductDto } from "./createProduct.dto";
+import { createProductDto, UpdateProductDto } from "./createProduct.dto";
 import {
   DocumentationApiTagsModule,
   DocumentationAvailableOrUnavaliableProduct,
@@ -97,7 +97,7 @@ export class ProductsController {
   @DocumentationUpdateProduct()
   updateProduct(
     @Param("id") id: number,
-    @Body() updateProduct: createProductDto
+    @Body() updateProduct: UpdateProductDto
   ): Promise<Product> {
     const updatedProduct = this.productsService.updateProduct(
       id,
@@ -121,8 +121,8 @@ export class ProductsController {
 
   @Put("stock")
   @DocumentationUpdateStock()
-  updateStock(@Query("id") id: number, @Query("stock") stock: number) {
-    const updatedProduct = this.productsService.updateStock(id, stock);
+  updateStock(@Query("id") id: string, @Query("stock") stock: string) {
+    const updatedProduct = this.productsService.updateStock(Number(id), Number(stock));
     return updatedProduct;
   }
 
