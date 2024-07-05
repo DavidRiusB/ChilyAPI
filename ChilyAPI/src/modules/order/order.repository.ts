@@ -9,7 +9,7 @@ import { OrderStatus } from "src/common/enums";
 export class OrderRepository {
   constructor(
     @InjectRepository(Order)
-    private readonly orderRepository: Repository<Order>
+    private readonly orderRepository: Repository<Order>,
   ) {}
   // Mock data (replace with actual database or service calls)
   private orders = [
@@ -52,7 +52,7 @@ export class OrderRepository {
    */
   async findAllOrderByBranchId(
     id: number,
-    pagination: { page: number; limit: number }
+    pagination: { page: number; limit: number },
   ) {
     const { page, limit } = pagination;
     const offset = (page - 1) * limit;
@@ -74,6 +74,10 @@ export class OrderRepository {
       where: { id },
       relations: ["user", "details"],
     });
+  }
+
+  async findOrdersByUser(userId: number): Promise<Order[]> {
+    return await this.orderRepository.find({ where: { user: { id: userId } } });
   }
 
   async create(order: any) {

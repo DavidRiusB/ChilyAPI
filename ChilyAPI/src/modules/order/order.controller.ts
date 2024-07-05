@@ -71,6 +71,11 @@ export class OrderController {
     return await this.orderService.findOrderById(id);
   }
 
+  @Get("user/:id")
+  async getOrdersByUser(@Param("id") id: number) {
+    return await this.orderService.findOrdersByUser(id);
+  }
+
   @Post()
   @DocumentationPostNewOrder()
   @UseGuards(JwtAuthGuard)
