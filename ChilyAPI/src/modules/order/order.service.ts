@@ -195,34 +195,36 @@ export class OrderService {
       }
     }
   }
-  async getEstimatedTimeFromOrder(id: number) {
-    const order = await this.findOrderById(id);
-    const address = await this.addressService.getUserAddress(order.user.id);
-    console.log(address);
-    const convertAddressToGeometrySource =
-      await this.googleMapsService.convertAddressToLatLng(process.env.ADDRESS);
-    const convertToGeometryDestination =
-      await this.googleMapsService.convertAddressToLatLng(
-        `${address.city}, ${address.address}`,
-      );
 
-    let request: EstimatedTime = {
-      origin: {
-        lat: convertAddressToGeometrySource.lat,
-        lng: convertAddressToGeometrySource.lng,
-      },
-      destination: {
-        lat: convertToGeometryDestination.lat,
-        lng: convertToGeometryDestination.lng,
-      },
-      mode: TravelMode.driving,
-    };
-    const estimatedTime =
-      await this.googleMapsService.getEstimatedTime(request);
+  // async getEstimatedTimeFromOrder(id: number) {
+  //   const order = await this.findOrderById(id);
+  //   const address = await this.addressService.getUserAddress(order.user.id);
+  //   console.log(address);
+  //   const convertAddressToGeometrySource =
+  //     await this.googleMapsService.convertAddressToLatLng(process.env.ADDRESS);
 
-    return {
-      order,
-      estimatedTime,
-    };
-  }
+  //   const convertToGeometryDestination =
+  //     await this.googleMapsService.convertAddressToLatLng(
+  //       `${address.city}, ${address.address}`,
+  //     );
+
+  //   let request: EstimatedTime = {
+  //     origin: {
+  //       lat: convertAddressToGeometrySource.lat,
+  //       lng: convertAddressToGeometrySource.lng,
+  //     },
+  //     destination: {
+  //       lat: convertToGeometryDestination.lat,
+  //       lng: convertToGeometryDestination.lng,
+  //     },
+  //     mode: TravelMode.driving,
+  //   };
+  //   const estimatedTime =
+  //     await this.googleMapsService.getEstimatedTime(request);
+
+  //   return {
+  //     order,
+  //     estimatedTime,
+  //   };
+  // }
 }
