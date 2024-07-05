@@ -41,7 +41,8 @@ export class GoogleMapsService {
         } catch (error) {
             throw new InternalServerErrorException(error);
         }
-     }
+    }
+    
      async convertAddressToLatLng(address: string) {
         try {
             const response = await this.client.geocode({

@@ -1,12 +1,20 @@
 import {
-  IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
+  ValidateNested,
 } from "class-validator";
-import { City } from "src/common/enums/citys.enum";
-import { DocumentacionCreateAddressDto } from "src/docs/docs-addresses-module/doc-create-address-dto";
+import { Type } from "class-transformer";
+
+class Location {
+  @IsNotEmpty()
+  lat: number;
+
+  @IsNotEmpty()
+  lng: number;
+}
+
 export class CreateAddressDto {
   @IsNotEmpty()
   @IsInt()
@@ -14,22 +22,16 @@ export class CreateAddressDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsEnum(City)
-  @DocumentacionCreateAddressDto.city()
-  city: City;
-
-  @IsNotEmpty()
-  @IsString()
-  @DocumentacionCreateAddressDto.address()
   address: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @DocumentacionCreateAddressDto.postalCode()
-  postalCode: string;
+  @ValidateNested()
+  @Type(() => Location)
+  location: Location = {
+    lat: 0,
+    lng: 0,
+  };
 
   @IsOptional()
   @IsString()
-  @DocumentacionCreateAddressDto.note()
   note: string;
 }
