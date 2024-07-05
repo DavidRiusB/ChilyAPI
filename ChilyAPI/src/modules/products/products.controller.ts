@@ -83,13 +83,13 @@ export class ProductsController {
     @Body() createProduct: createProductDto,
     @UploadedFile() file: Express.Multer.File
   ): Promise<Product> {
+    console.log(createProduct)
+    console.log(file)
     if(!file) throw new BadRequestException("Verifique los datos enviados, falta la imagen");
     const fileUrl = await this.uploadService.update(
-      file.originalname,
-      file.buffer,
-      file.mimetype
+      file
     );
-    const newProduct = await this.productsService.createProduct(createProduct, fileUrl);
+    const newProduct = await this.productsService.createProduct(createProduct, fileUrl.secure_url);
     return newProduct;
   }
 

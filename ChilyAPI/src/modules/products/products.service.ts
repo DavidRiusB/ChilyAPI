@@ -182,21 +182,19 @@ export class ProductsService {
           await manager.save(Product, product); // This might throw error on unique constraint violation
         }
 
-        const uploadImg = await this.uploadService.update(
-          fileName,
+       /* const uploadImg = await this.uploadService.update(
           buffer,
-          contenType
-        );
+        );*/
 
         // Handle S3 upload failure
-        if (!uploadImg) {
+    /*    if (!uploadImg) {
           throw new InternalServerErrorException(
             "Error al cargar imagen a S3."
           );
-        }
+        }*/
 
         // Update product's img property with the new URL
-        product.img = uploadImg;
+        product.img = "on repairing";
         await manager.save(Product, product);
 
         return product;

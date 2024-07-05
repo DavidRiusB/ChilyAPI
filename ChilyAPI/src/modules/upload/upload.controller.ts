@@ -11,16 +11,15 @@ import { UploadService } from "./upload.service";
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
   //For testing
-  /* @Post()
-  @UseInterceptors(FileInterceptor("img"))
+   @Post()
+  @UseInterceptors(FileInterceptor("image"))
   async uploadImg(@UploadedFile() img: Express.Multer.File) {
     console.log(img);
 
     const upload = await this.uploadService.update(
-      img.originalname,
-      img.buffer
+      img
     );
-    console.log(upload);
+    console.log(upload.secure_url);
+    return 'Imagen subida con éxito: '+upload.secure_url
   }
-} */
 }
