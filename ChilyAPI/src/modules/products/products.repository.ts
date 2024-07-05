@@ -1,5 +1,5 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { Between, In, Like, Raw, Repository } from "typeorm";
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { Between, DataSource, In, Like, Raw, Repository } from "typeorm";
 import { Product } from "./products.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { createProductDto } from "./createProduct.dto";
@@ -9,7 +9,8 @@ import { Category } from "../category/category.entity";
 export class ProductsRepository {
   constructor(
     @InjectRepository(Product) private productsRepository: Repository<Product>,
-    @InjectRepository(Category) private categoryRepository: Repository<Category>
+    @InjectRepository(Category) private categoryRepository: Repository<Category>,
+    private readonly dataSource: DataSource,
   ) { }
   async getProducts(page: number, limit: number): Promise<Product[]> {
     try {
@@ -135,33 +136,35 @@ export class ProductsRepository {
     }
   }
 
-  async createProduct(createProduct: createProductDto): Promise<Product> {
+  async createProduct(createProduct: createProductDto, fileUrl: string): Promise<Product> {
     try {
 
-      const product = new Product();
-
-      const categories: Category[] = await Promise.all(createProduct.category.map(async (categoryId) => {
-        return await this.categoryRepository.findOneBy({ id: categoryId, isDeleted: false });
-      }))
-
-      if (!categories) throw new NotFoundException("La categoria no existe");
-
-      product.name = createProduct.name;
-
-      product.description = createProduct.description;
-
-      product.price = createProduct.price;
-
-      product.stock = createProduct.stock;
-
-      product.img = createProduct.img;
-
-      product.category = categories;
-
-      const createdProduct = await this.productsRepository.save(product);
-      return createdProduct;
+      return this.dataSource.transaction(async(manager) => {       
+        const product = new Product();
+        const categories: Category[] = await Promise.all(createProduct.category.map(async (categoryId) => {
+          return await this.categoryRepository.findOneBy({ id: categoryId, isDeleted: false });
+        }))
+  
+        if (!categories) throw new NotFoundException("La categoria no existe");
+  
+        product.name = createProduct.name;
+  
+        product.description = createProduct.description;
+  
+        product.price = createProduct.price;
+  
+        product.stock = createProduct.stock;
+  
+        product.img = fileUrl;
+  
+        product.category = categories;
+  
+        const createdProduct = await manager.save(product);
+        return createdProduct;
+      })
     } catch (error) {
-      throw new BadRequestException("Error al crear el producto o posible nombre duplicado");
+      if(error.code === '23505') throw new ConflictException("Error al crear el producto o posible nombre duplicado");
+      throw new InternalServerErrorException("Error inesperado del servidor al crear el producto");
     }
   }
 

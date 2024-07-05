@@ -32,12 +32,6 @@ export class createProductDto {
   @IsNumber()
   stock : number;
 
-  @MaxLength(255)
-  @IsString()
-  @IsUrl()
-  @DocumentationCreateProductDto.image_url()
-  img: string;
-
   @IsNotEmpty()
   @IsArray()
   @DocumentationCreateProductDto.category()
