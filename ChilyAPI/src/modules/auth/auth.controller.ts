@@ -32,9 +32,9 @@ export class AuthController {
   @UseGuards(LocalAuthGuard) // Usa el guardia local
   @Post("signin")
   @DocumentationLogin()
-  async singIn(@Req() credentials) {
-    console.log(credentials.user);
-    return this.authService.generateToken(credentials.user);
+  async signIn(@Req() req, @Body() credentials: UserLoginDTO) {
+    console.log(req.user);
+    return this.authService.generateToken(req.user);
   }
 
   @Post("register")
@@ -70,9 +70,7 @@ export class AuthController {
   }
 
   @Post("reset-password")
-  async resetPassword(
-    @Body() { token, newPassword }: ResetPasswordDto,
-  ) {
+  async resetPassword(@Body() { token, newPassword }: ResetPasswordDto) {
     return this.authService.resetPassword(token, newPassword);
   }
 }
