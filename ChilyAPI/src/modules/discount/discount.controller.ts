@@ -43,8 +43,8 @@ export class DiscountController {
   }
 
   @Put("invalid")
-  InvalidDiscount(@Query("id") id: string, @Query("userId") userId: string) {
-    return this.discountService.InvalidDiscount(id, userId);
+  InvalidDiscount(@Query("code") code: string, @Query("userId") userId: string) {
+    return this.discountService.InvalidDiscount(code, userId);
   }
 
   @Put("setdiscount")

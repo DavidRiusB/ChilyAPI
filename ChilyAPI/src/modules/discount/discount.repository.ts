@@ -100,11 +100,11 @@ export class DiscountRepository {
         }
     }
 
-    async InvalidDiscount(id: number, userId: number): Promise<Discount> {
+    async InvalidDiscount(code:string, userId: number): Promise<Discount> {
         try {
             const user = await this.userRepository.findOne({ where: { id: userId } });
             if (!user) throw new BadRequestException("Error al encontrar el usuario");
-            const discount = await this.discountRepository.findOne({ where: { id: id, isValid: DiscountState.CREATED },relations:["user"] })
+            const discount = await this.discountRepository.findOne({ where: { code:code, isValid: DiscountState.CREATED },relations:["user"] })
             if (!discount) throw new BadRequestException("Error al utilizar el Descuento, Verifique los datos enviados, el descuento prodria estar usado")
 
             if (discount.user != null && discount.user.id != userId) throw new BadRequestException("Error al desactivar el descuento, este descuento ya esta registrado a nombre de otro usuario")

@@ -38,9 +38,10 @@ export class DiscountService {
         return this.discountRepository.updateDiscount(id, updateDiscount);
     }
 
-    InvalidDiscount(id: string, userId:string): Promise<Discount>{
-        if(!id || !userId) throw new BadRequestException("Verifique los datos enviados, no se permiten campos vacios")
-        return this.discountRepository.InvalidDiscount(Number(id),Number(userId));
+    InvalidDiscount(code: string, userId:string): Promise<Discount>{
+        if(!code || !userId) throw new BadRequestException("Verifique los datos enviados, no se permiten campos vacios")
+        if(code.length != 15)throw new BadRequestException("Verifique los datos enviados");
+        return this.discountRepository.InvalidDiscount(code.toUpperCase(),Number(userId));
     }
 
     deleteDiscount(id: number): Promise<String>{
