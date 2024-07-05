@@ -26,6 +26,10 @@ export class DiscountService {
         return this.discountRepository.getDiscountById(id);
     }
 
+    getDiscountByCode(code:string):Promise<Discount>{
+        return this.discountRepository.getDiscountByCode(code);
+    }
+
     setDiscountToUser(discount: string, userId: string): Promise<Discount>{
         return this.discountRepository.setDiscountToUser(Number(discount), Number(userId));
     }

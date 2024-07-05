@@ -32,6 +32,11 @@ export class DiscountController {
     return this.discountService.getDiscountById(id);
   }
 
+  @Get("code/:code")
+  getDiscountByCOde(@Param("code")code:string){
+    return this.discountService.getDiscountByCode(code);
+  }
+
   @Post("create")
   creatediscount(@Body() createDiscount: createDiscountDto) {
     return this.discountService.creatediscount(createDiscount);
