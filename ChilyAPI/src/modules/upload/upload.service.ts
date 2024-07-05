@@ -1,42 +1,22 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import { ConfigService } from "@nestjs/config";
-
+import { Injectable } from "@nestjs/common";
+import { UploadApiResponse, v2 as cloudinary } from 'cloudinary';
+const toStream = require('buffer-to-stream');
 @Injectable()
 export class UploadService {
-  private readonly bucket: string;
-  private readonly region: string;
-  private readonly s3Client: S3Client;
-
-  constructor(private readonly configService: ConfigService) {
-    this.region = configService.getOrThrow<string>("AWS_S3_REGION");
-    this.bucket = this.configService.getOrThrow<string>("BUCKET");
-    this.s3Client = new S3Client({
-      region: this.configService.getOrThrow("AWS_S3_REGION"),
-    });
-  }
-
-  async update(fileName: string, file: Buffer, contenType: string) {
-    try {
-      const upload = await this.s3Client.send(
-        new PutObjectCommand({
-          Bucket: this.bucket,
-          Key: fileName,
-          Body: file,
-          ContentType: contenType,
-          ACL: "public-read",
-        })
+  async update(file: Express.Multer.File) {
+    return new Promise<UploadApiResponse>((resolve, reject) => {
+      const upload = cloudinary.uploader.upload_stream(
+          { resource_type: 'image',
+            quality: 'auto:good',
+           },
+          (error, result) => {
+              if (error) {
+                  return reject(error);
+              }
+              resolve(result);
+          }
       );
-
-      console.log(upload);
-      const fileUrl = `https://${this.bucket}.s3.${this.region}.amazonaws.com/${fileName}`;
-
-      return fileUrl;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `Error occurred while uploading file to S3: ${error.message}`,
-        error
-      );
-    }
+      toStream(file.buffer).pipe(upload);
+  });
   }
 }
