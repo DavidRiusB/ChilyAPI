@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { ProductsRepository } from "./products.repository";
 import { Product } from "./products.entity";
-import { createProductDto } from "./createProduct.dto";
+import { createProductDto, UpdateProductDto } from "./createProduct.dto";
 import { UploadService } from "../upload/upload.service";
 import { DataSource } from "typeorm";
 
@@ -147,7 +147,7 @@ export class ProductsService {
     return this.productsRepository.createProduct(createProduct, fileUrl);
   }
 
-  updateProduct(id: number, updateProduct: createProductDto): Promise<Product> {
+  updateProduct(id: number, updateProduct: UpdateProductDto): Promise<Product> {
     return this.productsRepository.updateProduct(id, updateProduct);
   }
 

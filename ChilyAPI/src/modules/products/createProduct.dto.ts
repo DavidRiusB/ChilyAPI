@@ -46,3 +46,26 @@ export class createProductDto {
     sucursal: number;
     */
 }
+export class UpdateProductDto{
+  @IsNotEmpty()
+  @MaxLength(50)
+  @IsString()
+  @DocumentationCreateProductDto.names()
+  name: string;
+
+  @IsNotEmpty()
+  @MaxLength(255)
+  @IsString()
+  @DocumentationCreateProductDto.description()
+  description: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @DocumentationCreateProductDto.price()
+  price: number;
+
+  @IsOptional()
+  @IsArray()
+  @DocumentationCreateProductDto.category()
+  category: number[];
+}

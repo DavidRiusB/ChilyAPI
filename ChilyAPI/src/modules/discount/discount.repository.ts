@@ -107,7 +107,7 @@ export class DiscountRepository {
             const discount = await this.discountRepository.findOne({ where: { code:code, isValid: DiscountState.CREATED },relations:["user"] })
             if (!discount) throw new BadRequestException("Error al utilizar el Descuento, Verifique los datos enviados, el descuento prodria estar usado")
 
-            if (discount.user != null && discount.user.id != userId) throw new BadRequestException("Error al desactivar el descuento, este descuento ya esta registrado a nombre de otro usuario")
+            if (discount.user != null && discount.user.id != userId) throw new BadRequestException("Error al utilizar el descuento, este descuento ya esta registrado a nombre de otro usuario")
 
 
             discount.isValid = DiscountState.USED;
@@ -119,7 +119,7 @@ export class DiscountRepository {
             if (error instanceof BadRequestException) {
                 throw error
             }
-            throw new InternalServerErrorException("Ocurrio un error al desactivar el Descuento")
+            throw new InternalServerErrorException("Ocurrio un error al utilizar el Descuento")
         }
     }
 
