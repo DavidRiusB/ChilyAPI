@@ -85,6 +85,25 @@ export class OrderService {
     }
   }
 
+  async findOrdersByUser(id: number) {
+    try {
+      const orderUser = await this.orderRepository.findOrdersByUser(id);
+      if (!orderUser || orderUser.length === 0) {
+        throw new NotFoundException(
+          `No se encontraron órdenes para el usuario: ${id}`,
+        );
+      }
+      return orderUser;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException(
+        "Error interno del servidor al buscar órdenes",
+      );
+    }
+  }
+
   async addOrder(orderData: OrderDto) {
     try {
       return await this.dataSource.transaction(async (manager) => {
