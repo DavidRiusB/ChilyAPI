@@ -45,6 +45,17 @@ export class DiscountRepository {
         }
     }
 
+    async getDiscountByCode(code: string): Promise<Discount> {
+        try {
+            const discount = await this.discountRepository.findOne({where: [ { code: code.toUpperCase(), isValid: DiscountState.CREATED },{ code: code, isValid: DiscountState.USED }],relations: ["user"]});
+            if(!discount) throw new BadRequestException("Error al traer el descuento, verifique los datos")
+            return discount;
+        } catch (error) {
+            if(error instanceof BadRequestException) throw error;
+            throw new BadRequestException("Error al traer el Descuento con codigo: " + code)
+        }
+    }
+
     async creatediscount(createDiscount: createDiscountDto): Promise<Discount> {
         try {
             const discount: Discount = new Discount();
