@@ -85,7 +85,7 @@ export class OrderRepository {
 
     const newOrder = new Order();
 
-    newOrder.generalDiscount = discount;
+    // newOrder.generalDiscount = discount;
     newOrder.shipping = shipping;
     newOrder.user = user;
     newOrder.address = address;

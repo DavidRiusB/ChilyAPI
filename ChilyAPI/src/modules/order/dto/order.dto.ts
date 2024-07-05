@@ -54,7 +54,7 @@ export class OrderDto {
   @DocumentationOrderDto.total()
   total: number;
 
-  @IsInt()
-  @DocumentationOrderDto.finalPrice()
-  finalPrice: number;
+  // @IsInt()
+  // @DocumentationOrderDto.finalPrice()
+  // finalPrice: number;
 }

@@ -28,23 +28,25 @@ export class Order {
   details: OrderDetail[];
 
   @Column({ type: "int" })
-  shipping: number;
+  shipping: number = 0;
 
   // price = sum of details prices
   @Column({ type: "int", default: 0 })
   price: number;
 
-  @Column({ name: "discount", default: 0 })
-  generalDiscount?: number;
+  // @Column({ name: "discount", default: 0 })
+  // generalDiscount?: number;
 
   @Column({ type: "int", default: 0 })
   total: number;
 
   @Column({ type: "enum", enum: OrderStatus, default: OrderStatus.Pending })
   status: OrderStatus;
+
   @ManyToOne(() => Address)
   @JoinColumn({ name: 'address_id' })  // Nombre de la columna en la tabla orders
   address: Address;
+
   @DeleteDateColumn({ type: "timestamp", nullable: true })
   deletedAt: Date;
 }

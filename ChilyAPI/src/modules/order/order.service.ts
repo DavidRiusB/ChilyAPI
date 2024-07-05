@@ -114,7 +114,7 @@ export class OrderService {
           addressId,
           shipping,
           total,
-          finalPrice,
+          // finalPrice,
         } = orderData;
         const discount = generalDiscount !== undefined ? generalDiscount : 0;
 
@@ -145,7 +145,7 @@ export class OrderService {
           shipping,
           address,
           total,
-          finalPrice,
+          // finalPrice,
         };
 
         // Create Order
