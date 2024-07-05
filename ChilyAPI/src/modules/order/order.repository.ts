@@ -80,19 +80,25 @@ export class OrderRepository {
     return await this.orderRepository.find({ where: { user: { id: userId } } });
   }
 
-  async create(order: any) {
-    const { discount, user, shipping, address, total, finalPrice } = order;
+  // Assuming Order class has an 'id' property
+  async create(orderDto): Promise<Order> {
+    const { user, address, total, couponId, coupoundDiscount, formBuy } =
+      orderDto;
 
-    const newOrder = new Order();
+    const newOrder = new Order(); // Ensure proper initialization of 'id'
 
-    newOrder.generalDiscount = discount;
-    newOrder.shipping = shipping;
+    // Set other properties
     newOrder.user = user;
     newOrder.address = address;
     newOrder.date = new Date();
+    newOrder.couponId = couponId ?? null;
+    newOrder.coupoundDiscount = coupoundDiscount;
+    newOrder.formBuy = formBuy;
     newOrder.price = total;
-    newOrder.total = finalPrice;
-    return this.orderRepository.create(newOrder);
+    // Calculate total based on price, discounts, etc.
+    newOrder.total = total; // Or set total after calculation
+
+    return await this.orderRepository.save(newOrder); // Save the new order
   }
 
   async updateStatus(order: Order, newStatus: OrderStatus) {
