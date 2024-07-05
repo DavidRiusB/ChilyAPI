@@ -1,5 +1,5 @@
 import { NestFactory } from "@nestjs/core";
-import { ValidationPipe } from "@nestjs/common";
+import { Logger, ValidationPipe } from "@nestjs/common";
 import { config as dotenvConfig } from "dotenv";
 import * as session from "express-session";
 import * as passport from "passport";
@@ -15,7 +15,7 @@ dotenvConfig({
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true});
-
+  const logger = new Logger('SERVER_STATUS');
   DocumentationConfig(app);
 
   app.useGlobalPipes(
@@ -40,7 +40,7 @@ async function bootstrap() {
   const PORT = process.env.PORT || 3000;
 
   await app.listen(PORT);
-  console.log(`Server is running on http://localhost:${PORT}`);
+  logger.log(`Server is running on http://localhost:${PORT}`);
   console.log("Press CTRL+C to stop the server.");
 }
 
