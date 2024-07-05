@@ -163,7 +163,7 @@ export class AuthService {
       secret: process.env.JWT_SECRET,
     });
 
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}&email=${email}`;
 
     await this.notificationEmailsService.sendPasswordResetEmail(
       email,
