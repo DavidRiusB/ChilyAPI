@@ -28,7 +28,7 @@ export class OrderService {
     private readonly addressService: AddressesService,
     private readonly orderDetailService: OrderDetailsService,
     private readonly googleMapsService: GoogleMapsService,
-    private dataSource: DataSource
+    private dataSource: DataSource,
   ) {}
 
   /**
@@ -50,7 +50,7 @@ export class OrderService {
    */
   async findAllOrderByBranchId(
     id: number,
-    pagination: { page: number; limit: number }
+    pagination: { page: number; limit: number },
   ): Promise<Object> {
     // Placeholder logic for fetching orders by branch ID
     id = 1; // Replace with actual logic to fetch orders by branch ID
@@ -71,7 +71,7 @@ export class OrderService {
       const order = await this.orderRepository.findById(id);
       if (!order) {
         throw new NotFoundException(
-          `No se encontraron registros con el numero de Orden: ${id}`
+          `No se encontraron registros con el numero de Orden: ${id}`,
         );
       }
       return order;
@@ -80,7 +80,7 @@ export class OrderService {
         throw error;
       }
       throw new InternalServerErrorException(
-        "Error interno del servidor al buscar Orden"
+        "Error interno del servidor al buscar Orden",
       );
     }
   }
@@ -92,6 +92,7 @@ export class OrderService {
           productsInOrder,
           generalDiscount,
           userId,
+          addressId,
           shipping,
           total,
           finalPrice,
@@ -100,7 +101,7 @@ export class OrderService {
 
         // Fetch User
         const user = await this.userService.findUserById(userId);
-        const address = await this.addressService.getUserAddress(userId);
+        const address = await this.addressService.getUserAddress(addressId);
         console.log("User fetched successfully:", user);
         console.log("Address fetched successfully:", address);
 
@@ -108,7 +109,7 @@ export class OrderService {
         const productIds = productsInOrder.map((product) => product.productId);
 
         // Fetch products
-        console.log("AA")
+        console.log("AA");
         const products =
           await this.productService.findProductsByIds(productIds);
         console.log("Products fetched successfully:", products);
@@ -138,7 +139,7 @@ export class OrderService {
         const orderDetails = await this.orderDetailService.createOrderDetail(
           products,
           newOrder,
-          productsInOrder
+          productsInOrder,
         );
         console.log("Order details created successfully:", orderDetails);
 
@@ -164,7 +165,7 @@ export class OrderService {
       const result = await this.orderRepository.updateStatus(order, status);
       if (result.affected !== 1) {
         throw new InternalServerErrorException(
-          "Error interno del servidor al actualizar el estado de la Order"
+          "Error interno del servidor al actualizar el estado de la Order",
         );
       }
       order.status = status;
@@ -178,21 +179,31 @@ export class OrderService {
   async getEstimatedTimeFromOrder(id: number) {
     const order = await this.findOrderById(id);
     const address = await this.addressService.getUserAddress(order.user.id);
-    console.log(address)
-    const convertAddressToGeometrySource = await this.googleMapsService.convertAddressToLatLng(process.env.ADDRESS);
-    const convertToGeometryDestination = await this.googleMapsService.convertAddressToLatLng(`${address.city}, ${address.address}`);
+    console.log(address);
+    const convertAddressToGeometrySource =
+      await this.googleMapsService.convertAddressToLatLng(process.env.ADDRESS);
+    const convertToGeometryDestination =
+      await this.googleMapsService.convertAddressToLatLng(
+        `${address.city}, ${address.address}`,
+      );
 
     let request: EstimatedTime = {
-      origin: {lat: convertAddressToGeometrySource.lat, lng: convertAddressToGeometrySource.lng},
-      destination: {lat: convertToGeometryDestination.lat, lng: convertToGeometryDestination.lng},
-      mode: TravelMode.driving
+      origin: {
+        lat: convertAddressToGeometrySource.lat,
+        lng: convertAddressToGeometrySource.lng,
+      },
+      destination: {
+        lat: convertToGeometryDestination.lat,
+        lng: convertToGeometryDestination.lng,
+      },
+      mode: TravelMode.driving,
     };
-    const estimatedTime = await this.googleMapsService.getEstimatedTime(request);
+    const estimatedTime =
+      await this.googleMapsService.getEstimatedTime(request);
 
     return {
       order,
-      estimatedTime
+      estimatedTime,
     };
   }
 }
-
