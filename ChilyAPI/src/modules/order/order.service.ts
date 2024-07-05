@@ -108,15 +108,18 @@ export class OrderService {
     try {
       return await this.dataSource.transaction(async (manager) => {
         const {
-          productsInOrder,
-          generalDiscount,
           userId,
+          productsInOrder,
           addressId,
-          shipping,
           total,
-          finalPrice,
+          couponId,
+          coupoundDiscount,
+          formBuy,
+          // generalDiscount,
+          // shipping,
+          // finalPrice,
         } = orderData;
-        const discount = generalDiscount !== undefined ? generalDiscount : 0;
+        // const discount = generalDiscount !== undefined ? generalDiscount : 0;
 
         // Fetch User
         const user = await this.userService.findUserById(userId);
@@ -140,12 +143,15 @@ export class OrderService {
         // Calculate shipping cost (hardcoded for now)
 
         const order = {
-          discount,
+          // discount,
           user,
-          shipping,
+          // shipping,
           address,
           total,
-          finalPrice,
+          // finalPrice,
+          couponId,
+          coupoundDiscount,
+          formBuy,
         };
 
         // Create Order
