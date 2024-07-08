@@ -51,11 +51,6 @@ export class AuthRepository {
           "Correo Electronico o Contraseña incorrectos",
         );
       }
-      if (!isValidPassword) {
-        throw new UnauthorizedException(
-          "Correo Electronico o Contraseña incorrectos",
-        );
-      }
       console.log("isvalidpass:", isValidPassword);
       return credential.id;
     } catch (error) {
