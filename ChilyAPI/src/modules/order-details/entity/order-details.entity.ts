@@ -28,13 +28,13 @@ export class OrderDetail {
   @Column({ default: 1 })
   quantity: number;
 
-  @Column({ type: "int" })
+  @Column()
   price: number;
 
   @Column({ nullable: true, default: 0 })
   discount: number;
 
-  @Column({ type: "int" })
+  @Column()
   total: number;
 
   @Column({
@@ -45,6 +45,6 @@ export class OrderDetail {
   @DeleteDateColumn({ type: "timestamp", nullable: true })
   deletedAt: Date;
 
-  @OneToOne(()=>Discount)
-  discountCode:Discount;
+  @OneToOne(() => Discount)
+  discountCode: Discount;
 }

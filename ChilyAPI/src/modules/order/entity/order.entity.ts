@@ -18,7 +18,7 @@ export class Order {
   id: number;
 
   @Column()
-  date: Date;
+  date?: Date;
 
   @ManyToOne(() => User, (user) => user.orders)
   user: User;
@@ -31,7 +31,7 @@ export class Order {
   // shipping: number;
 
   // price = sum of details prices
-  @Column({ type: "int", default: 0 })
+  @Column({ default: 0 })
   price: number;
 
   // @Column({ name: "discount", default: 0 })
@@ -45,7 +45,7 @@ export class Order {
   @Column()
   formBuy: "efectivo" | "tarjeta";
 
-  @Column({ type: "int", default: 0 })
+  @Column({ default: 0 })
   total: number;
 
   @Column({ type: "enum", enum: OrderStatus, default: OrderStatus.Pending })
