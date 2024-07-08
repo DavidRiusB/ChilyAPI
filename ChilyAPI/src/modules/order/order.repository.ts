@@ -100,7 +100,7 @@ export class OrderRepository {
     newOrder.couponId = couponId;
     newOrder.coupoundDiscount = coupoundDiscount;
     newOrder.orderInstructions = orderInstructions;
-    newOrder.address.id = address;
+    newOrder.address.id = address.id;
     newOrder.formBuy = formBuy;
     newOrder.price = total;
     // Calculate total based on price, discounts, etc.
