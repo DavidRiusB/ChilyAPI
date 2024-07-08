@@ -90,9 +90,6 @@ export class OrderService {
       const orderUser = await this.orderRepository.findOrdersByUser(id);
       if (!orderUser || orderUser.length === 0) {
         console.log("Este usuario no tiene orderes aún");
-        // throw new NotFoundException(
-        //   `No se encontraron órdenes para el usuario: ${id}`,
-        // );
       }
       return orderUser;
     } catch (error) {

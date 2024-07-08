@@ -77,7 +77,33 @@ export class OrderRepository {
   }
 
   async findOrdersByUser(userId: number): Promise<Order[]> {
-    return await this.orderRepository.find({ where: { user: { id: userId } } });
+    return await this.orderRepository
+      .createQueryBuilder("order")
+      .leftJoinAndSelect("order.details", "details")
+      .leftJoinAndSelect("details.product", "product") // Asegúrate de tener la relación entre OrderDetail y Product
+      .leftJoinAndSelect("order.address", "address")
+      .where("order.userId = :userId", { userId })
+      .select([
+        // "order.id",
+        "order.date",
+        "order.price",
+        "order.couponId",
+        "order.coupoundDiscount",
+        "order.total",
+        "order.status",
+        "order.orderInstructions",
+        "order.formBuy",
+        "details.product", // Incluir los detalles de la orden
+        "details.quantity",
+        "details.price",
+        "details.discount",
+        "details.quantity",
+        // "product.id",
+        "product.name",
+        "product.price",
+        "address",
+      ])
+      .getMany();
   }
 
   // Assuming Order class has an 'id' property
