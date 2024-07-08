@@ -112,7 +112,6 @@ export class AuthService {
     } catch (error) {
       if (error.code === "23505") {
         throw new BadRequestException(
-          "Datos de registro invalido",
           error.detail,
         );
       } else if (error instanceof InternalServerErrorException) {

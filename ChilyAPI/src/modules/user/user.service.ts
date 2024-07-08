@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -33,16 +34,11 @@ export class UserService {
 
   async createUser(newUserData: RegisterUserDTO, credential?: Credential) {
     try {
-      
       return await this.userRepository.create(newUserData, credential);
     } catch (error) {
-      if (error instanceof ConflictException) {
+      if (error instanceof BadRequestException) {
         throw error;
       }
-      throw new InternalServerErrorException(
-        "Error al registrar al usuario",
-        error.detail
-      );
     }
   }
   async createUserGoogle(newUserData: UserLoginGoogleDto): Promise<User>{
