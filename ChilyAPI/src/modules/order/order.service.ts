@@ -125,9 +125,7 @@ export class OrderService {
 
         // Fetch User
         const user = await this.userService.findUserById(userId);
-        const addressUser = await this.addressService.getUserAddress(
-          address.id,
-        );
+        const addressUser = await this.addressService.getUserAddress(address);
         console.log("User fetched successfully:", user);
         console.log("Address fetched successfully:", addressUser);
 
