@@ -82,17 +82,25 @@ export class OrderRepository {
 
   // Assuming Order class has an 'id' property
   async create(orderDto): Promise<Order> {
-    const { user, address, total, couponId, coupoundDiscount, formBuy } =
-      orderDto;
+    const {
+      userId,
+      address,
+      total,
+      couponId,
+      coupoundDiscount,
+      formBuy,
+      orderInstructions,
+    } = orderDto;
 
     const newOrder = new Order(); // Ensure proper initialization of 'id'
 
     // Set other properties
-    newOrder.user = user;
-    newOrder.address = address;
+    newOrder.user = userId;
     newOrder.date = new Date();
-    newOrder.couponId = couponId ?? null;
+    newOrder.couponId = couponId;
     newOrder.coupoundDiscount = coupoundDiscount;
+    newOrder.orderInstructions = orderInstructions;
+    newOrder.address.id = address;
     newOrder.formBuy = formBuy;
     newOrder.price = total;
     // Calculate total based on price, discounts, etc.

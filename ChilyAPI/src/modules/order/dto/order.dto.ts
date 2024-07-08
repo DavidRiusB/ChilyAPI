@@ -15,15 +15,21 @@ export class ProductsInOrder {
   @IsNumber()
   productId: number;
 
+  @IsString()
+  name: string;
+
+  @IsNumber()
+  price: number;
+
   @IsNumber()
   quantity: number;
 
-  @IsNumber()
-  @IsOptional()
-  individualDiscount?: number;
+  // @IsNumber()
+  // @IsOptional()
+  // individualDiscount?: number;
 
-  @IsNumber()
-  individualPrice: number;
+  // @IsNumber()
+  // individualPrice: number;
 }
 
 export class OrderDto {
@@ -35,13 +41,16 @@ export class OrderDto {
   @IsNotEmpty()
   @IsInt()
   @DocumentationOrderDto.addressId()
-  addressId: number;
+  address: number;
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ProductsInOrder)
   @DocumentationOrderDto.productsInOrder()
   productsInOrder: ProductsInOrder[];
+
+  @IsString()
+  orderInstructions: string;
 
   // @IsNumber()
   // @IsOptional()
@@ -51,10 +60,6 @@ export class OrderDto {
   // @IsInt()
   // @DocumentationOrderDto.shipping()
   // shipping?: number;
-
-  @IsInt()
-  @DocumentationOrderDto.total()
-  total: number;
 
   @IsString()
   @IsOptional()
@@ -67,6 +72,9 @@ export class OrderDto {
   @IsString()
   formBuy: "efectivo" | "tarjeta" = "efectivo";
 
+  @IsInt()
+  @DocumentationOrderDto.total()
+  total: number;
   // @IsInt()
   // @DocumentationOrderDto.finalPrice()
   // finalPrice: number;
