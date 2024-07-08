@@ -1,6 +1,7 @@
 import {
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   ValidateNested,
@@ -17,7 +18,7 @@ class Location {
 
 export class CreateAddressDto {
   @IsNotEmpty()
-  @IsInt()
+  @IsNumber()
   id: number;
 
   @IsNotEmpty()
