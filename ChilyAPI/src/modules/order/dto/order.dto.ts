@@ -42,7 +42,7 @@ export class OrderDto {
   @IsNotEmpty()
   @IsNumber()
   @DocumentationOrderDto.addressId()
-  address: Address;
+  address: number;
 
   @IsArray()
   @ValidateNested({ each: true })
@@ -76,6 +76,7 @@ export class OrderDto {
   @IsNumber()
   @DocumentationOrderDto.total()
   total: number;
+
   // @IsInt()
   // @DocumentationOrderDto.finalPrice()
   // finalPrice: number;
