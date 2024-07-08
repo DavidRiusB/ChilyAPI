@@ -27,14 +27,14 @@ export class OrderDetail {
 
   @Column({ default: 1 })
   quantity: number;
-
-  @Column()
+  
+  @Column({ type: "float" })
   price: number;
 
   @Column({ nullable: true, default: 0 })
   discount: number;
 
-  @Column()
+  @Column({ type: "float" })
   total: number;
 
   @Column({

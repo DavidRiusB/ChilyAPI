@@ -71,7 +71,7 @@ export class OrderDto {
   coupoundDiscount?: number;
 
   @IsString()
-  formBuy: "efectivo" | "tarjeta";
+  formBuy: "efectivo" | "tarjeta" = "efectivo";
 
   @IsNumber()
   @DocumentationOrderDto.total()
