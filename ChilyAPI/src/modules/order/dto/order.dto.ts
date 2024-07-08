@@ -34,12 +34,12 @@ export class ProductsInOrder {
 
 export class OrderDto {
   @IsNotEmpty()
-  @IsInt()
+  @IsNumber()
   @DocumentationOrderDto.userId()
   userId: number;
 
   @IsNotEmpty()
-  @IsInt()
+  @IsNumber()
   @DocumentationOrderDto.addressId()
   address: number;
 
@@ -72,7 +72,7 @@ export class OrderDto {
   @IsString()
   formBuy: "efectivo" | "tarjeta" = "efectivo";
 
-  @IsInt()
+  @IsNumber()
   @DocumentationOrderDto.total()
   total: number;
   // @IsInt()
