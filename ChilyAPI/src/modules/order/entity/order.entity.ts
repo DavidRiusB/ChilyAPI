@@ -31,7 +31,7 @@ export class Order {
   // shipping: number;
 
   // price = sum of details prices
-  @Column({ default: 0 })
+  @Column({ default: 0, type: "float" })
   price: number;
 
   // @Column({ name: "discount", default: 0 })
@@ -43,9 +43,9 @@ export class Order {
   coupoundDiscount?: number;
 
   @Column()
-  formBuy: "efectivo" | "tarjeta";
+  formBuy: "efectivo" | "tarjeta" = "efectivo";
 
-  @Column({ default: 0 })
+  @Column({ default: 0, type: "float" })
   total: number;
 
   @Column({ type: "enum", enum: OrderStatus, default: OrderStatus.Pending })
