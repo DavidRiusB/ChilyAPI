@@ -10,6 +10,7 @@ import {
   ValidateNested,
 } from "class-validator";
 import { DocumentationOrderDto } from "src/docs/doc-orders-module/docs-order-dto";
+import { Address } from "src/modules/addresses/entities/addresses.entity";
 
 export class ProductsInOrder {
   @IsNumber()
@@ -41,7 +42,7 @@ export class OrderDto {
   @IsNotEmpty()
   @IsNumber()
   @DocumentationOrderDto.addressId()
-  address: number;
+  address: Address;
 
   @IsArray()
   @ValidateNested({ each: true })
