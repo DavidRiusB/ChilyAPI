@@ -60,8 +60,7 @@ export class UserRepository {
       return newUser;
     } catch (error) {
       if (error.code === "23505") {
-        throw new ConflictException(
-          "Datos de Registro invalidos",
+        throw new BadRequestException(
           error.detail,
         );
       }
