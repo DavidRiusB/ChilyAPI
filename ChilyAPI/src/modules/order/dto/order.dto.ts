@@ -68,7 +68,7 @@ export class OrderDto {
 
   @IsNumber()
   @IsOptional()
-  coupoundDiscount?: number;
+  couponDiscount?: number;
 
   @IsString()
   formBuy: "efectivo" | "tarjeta" = "efectivo";

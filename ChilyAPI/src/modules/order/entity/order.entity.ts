@@ -36,11 +36,11 @@ export class Order {
 
   // @Column({ name: "discount", default: 0 })
   // generalDiscount?: number;
-  @Column({ nullable: true }) // Allow null values for couponId
+  @Column({ nullable: true, type: "varchar" }) // Allow null values for couponId
   couponId?: string | null;
 
-  @Column({ nullable: true }) // Allow null values for coupoundDiscount
-  coupoundDiscount?: number;
+  @Column({ nullable: true, type: "int" }) // Allow null values for coupoundDiscount
+  couponDiscount?: number;
 
   @Column()
   formBuy: "efectivo" | "tarjeta" = "efectivo";
