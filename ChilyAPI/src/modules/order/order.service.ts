@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { OrderRepository } from "./order.repository";
-import { OrderDto } from "./dto/order.dto";
+import { OrderDto, ProductsInOrder } from "./dto/order.dto";
 import { DataSource } from "typeorm";
 import { ProductsService } from "../products/products.service";
 import { UserService } from "../user/user.service";
@@ -18,6 +18,7 @@ import { AddressesService } from "../addresses/addresses.service";
 import { GoogleMapsService } from "../google-maps/google-maps.service";
 import { TravelMode } from "@googlemaps/google-maps-services-js";
 import { EstimatedTime } from "../google-maps/dto/estimatedTime.dto";
+import { ResOrderDto } from "./dto/resOrder.dto";
 
 @Injectable()
 export class OrderService {
@@ -85,13 +86,32 @@ export class OrderService {
     }
   }
 
-  async findOrdersByUser(id: number) {
+  async findOrdersByUser(id: number): Promise<ResOrderDto[]> {
     try {
+      const resOrderArray: ResOrderDto[] = [];
       const orderUser = await this.orderRepository.findOrdersByUser(id);
       if (!orderUser || orderUser.length === 0) {
-        console.log("Este usuario no tiene orderes aún");
+
       }
-      return orderUser;
+      orderUser.forEach((order)=>{
+        const resOrder = new ResOrderDto();
+        resOrder.address = order.address,
+        resOrder.date = order.date,
+        resOrder.details = order.details.map((detail)=>{
+          const aux = new ProductsInOrder();
+          aux.name = detail.product.name;
+          aux.quantity = detail.quantity;
+          aux.price = detail.price
+          return aux;
+        })
+        resOrder.formBuy = order.formBuy,
+        resOrder.id = order.id,
+        resOrder.status = order.status,
+        resOrder.total = order.total,
+        resOrderArray.push(resOrder)
+      })
+
+      return resOrderArray;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -101,7 +121,7 @@ export class OrderService {
       );
     }
   }
-
+  
   async addOrder(orderData: OrderDto) {
     try {
       return await this.dataSource.transaction(async (manager) => {
