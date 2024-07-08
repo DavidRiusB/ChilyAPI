@@ -111,11 +111,12 @@ export class OrderService {
         const {
           userId,
           productsInOrder,
-          addressId,
+          address,
           total,
           couponId,
           coupoundDiscount,
           formBuy,
+          orderInstructions,
           // generalDiscount,
           // shipping,
           // finalPrice,
@@ -124,9 +125,9 @@ export class OrderService {
 
         // Fetch User
         const user = await this.userService.findUserById(userId);
-        const address = await this.addressService.getUserAddress(addressId);
+        const addressUser = await this.addressService.getUserAddress(address);
         console.log("User fetched successfully:", user);
-        console.log("Address fetched successfully:", address);
+        console.log("Address fetched successfully:", addressUser);
 
         // Get ids from dto
         const productIds = productsInOrder.map((product) => product.productId);
@@ -142,22 +143,19 @@ export class OrderService {
         }
 
         // Calculate shipping cost (hardcoded for now)
-
-        const order = {
-          // discount,
-          user,
-          // shipping,
-          address,
-          total,
-          // finalPrice,
-          couponId,
-          coupoundDiscount,
-          formBuy,
-        };
-
+        const newOrder = new Order();
+        newOrder.user = user;
+        newOrder.address = addressUser; // Ensure addressUser is correctly set
+        newOrder.total = total;
+        newOrder.couponId = couponId;
+        newOrder.coupoundDiscount = coupoundDiscount;
+        newOrder.formBuy = formBuy;
+        newOrder.orderInstructions = orderInstructions;
+        newOrder.date = new Date();
         // Create Order
-        const newOrder = await this.orderRepository.create(order);
-        console.log("Order created successfully:", newOrder);
+
+        const createdOrder = await manager.save(newOrder);
+        console.log("Order created successfully:", createdOrder);
 
         await manager.save(newOrder);
 
@@ -173,7 +171,7 @@ export class OrderService {
         await manager.save(OrderDetail, orderDetails);
         console.log("Order details saved successfully");
 
-        return { newOrder, orderDetails };
+        return { newOrder: createdOrder, orderDetails };
       });
     } catch (error) {
       console.error("Error in transaction:", error);

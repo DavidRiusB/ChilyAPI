@@ -55,6 +55,9 @@ export class Order {
   @JoinColumn({ name: "address_id" }) // Nombre de la columna en la tabla orders
   address: Address;
 
+  @Column()
+  orderInstructions: string;
+
   @DeleteDateColumn({ type: "timestamp", nullable: true })
   deletedAt: Date;
 }
