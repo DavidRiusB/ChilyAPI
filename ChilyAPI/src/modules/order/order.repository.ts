@@ -113,7 +113,7 @@ export class OrderRepository {
       address,
       total,
       couponId,
-      coupoundDiscount,
+      couponDiscount,
       formBuy,
       orderInstructions,
     } = orderDto;
@@ -124,7 +124,7 @@ export class OrderRepository {
     newOrder.user = userId;
     newOrder.date = new Date();
     newOrder.couponId = couponId;
-    newOrder.coupoundDiscount = coupoundDiscount;
+    newOrder.couponDiscount = couponDiscount;
     newOrder.orderInstructions = orderInstructions;
     newOrder.address.id = address.id;
     newOrder.formBuy = formBuy;

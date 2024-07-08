@@ -91,25 +91,24 @@ export class OrderService {
       const resOrderArray: ResOrderDto[] = [];
       const orderUser = await this.orderRepository.findOrdersByUser(id);
       if (!orderUser || orderUser.length === 0) {
-
       }
-      orderUser.forEach((order)=>{
+      orderUser.forEach((order) => {
         const resOrder = new ResOrderDto();
-        resOrder.address = order.address,
-        resOrder.date = order.date,
-        resOrder.details = order.details.map((detail)=>{
-          const aux = new ProductsInOrder();
-          aux.name = detail.product.name;
-          aux.quantity = detail.quantity;
-          aux.price = detail.price
-          return aux;
-        })
-        resOrder.formBuy = order.formBuy,
-        resOrder.id = order.id,
-        resOrder.status = order.status,
-        resOrder.total = order.total,
-        resOrderArray.push(resOrder)
-      })
+        (resOrder.address = order.address),
+          (resOrder.date = order.date),
+          (resOrder.details = order.details.map((detail) => {
+            const aux = new ProductsInOrder();
+            aux.name = detail.product.name;
+            aux.quantity = detail.quantity;
+            aux.price = detail.price;
+            return aux;
+          }));
+        (resOrder.formBuy = order.formBuy),
+          (resOrder.id = order.id),
+          (resOrder.status = order.status),
+          (resOrder.total = order.total),
+          resOrderArray.push(resOrder);
+      });
 
       return resOrderArray;
     } catch (error) {
@@ -121,7 +120,7 @@ export class OrderService {
       );
     }
   }
-  
+
   async addOrder(orderData: OrderDto) {
     try {
       return await this.dataSource.transaction(async (manager) => {
@@ -131,7 +130,7 @@ export class OrderService {
           address,
           total,
           couponId,
-          coupoundDiscount,
+          couponDiscount,
           formBuy,
           orderInstructions,
           // generalDiscount,
@@ -165,7 +164,7 @@ export class OrderService {
         newOrder.address = addressUser; // Ensure addressUser is correctly set
         newOrder.total = total;
         newOrder.couponId = couponId;
-        newOrder.coupoundDiscount = coupoundDiscount;
+        newOrder.couponDiscount = couponDiscount;
         newOrder.formBuy = formBuy;
         newOrder.orderInstructions = orderInstructions;
         newOrder.date = new Date();
