@@ -12,6 +12,7 @@ import {
   DiscountMailTemplate,
   UsedDiscountMailTemplate,
   passwordChangeSuccessTemplate,
+  OrderStatusUpdateTemplate,
 } from "./texts";
 
 @Injectable()
@@ -98,7 +99,10 @@ export class NotificationEmailsService {
     await this.sendEmail(mailOptions);
   }
 
-   async sendPasswordChangeSuccessEmail(email: string, username: string): Promise<void> {
+  async sendPasswordChangeSuccessEmail(
+    email: string,
+    username: string,
+  ): Promise<void> {
     const mailOptions = {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
@@ -108,6 +112,25 @@ export class NotificationEmailsService {
     await this.sendEmail(mailOptions);
   }
 
+  async sendStatusUpdateEmail(
+    to: string,
+    username: string,
+    orderId: number,
+    newStatus: string,
+  ): Promise<void> {
+    const emailContent = OrderStatusUpdateTemplate(
+      username,
+      orderId,
+      newStatus,
+    );
+
+    const mailOptions = {
+      from: process.env.NOTIFICATIONS_EMAIL_USER,
+      to,
+      subject: "Actualización de estado de tu orden",
+      html: emailContent,
+    };
+
+    await this.sendEmail(mailOptions);
+  }
 }
-
-

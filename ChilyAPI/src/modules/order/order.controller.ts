@@ -74,24 +74,6 @@ export class OrderController {
     return await this.orderService.updateStatus(update);
   }
 
-  // @Get("branch/:id")
-  // @DocumentationGetAllOrdersByBranchId()
-  // /**
-  //  * Retrieves all orders for a specific branch with pagination.
-  //  * Accessible only by users with SuperAdmin and admin roles.
-  //  *
-  //  * @param {number} id - Branch ID.
-  //  * @param {number} page - Page number for pagination (default is 1).
-  //  * @param {number} limit - Number of items per page (default is 5).
-  //  * @returns {Promise<Order[]>} - Array of orders.
-  //  */
-  // async getAllOrdersByBranchId(
-  //   @Param("id") id: number,
-  //   @Query("page") page: number = 1,
-  //   @Query("limit") limit: number = 5,
-  // ) {
-  //   return await this.orderService.findAllOrderByBranchId(id, { page, limit });
-  // }
 
   // @Get("/order/estimated")
   // @DocumentationObtainEstimatedTime()

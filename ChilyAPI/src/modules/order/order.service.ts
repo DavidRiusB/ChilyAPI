@@ -25,6 +25,7 @@ import { map } from "rxjs";
 import { User } from "../user/entity/user.entity";
 import { OrderStatus } from "src/common/enums";
 import { Product } from "../products/products.entity";
+import { NotificationEmailsService } from "../notifications/notificationEmails.service";
 
 @Injectable()
 export class OrderService {
@@ -36,7 +37,8 @@ export class OrderService {
     private readonly orderDetailService: OrderDetailsService,
     private readonly googleMapsService: GoogleMapsService,
     private dataSource: DataSource,
-  ) { }
+    private readonly notificationEmailsService: NotificationEmailsService,
+  ) {}
 
   async findAll(
     pagination: { page: number; limit: number },
@@ -83,8 +85,7 @@ export class OrderService {
 
         // Fetch products
         console.log("AA");
-        let products =
-          await this.productService.findProductsByIds(productIds);
+        let products = await this.productService.findProductsByIds(productIds);
         console.log("Products fetched successfully:", products);
 
         if (productsInOrder.length !== products.length) {
@@ -92,13 +93,14 @@ export class OrderService {
         }
 
         // Stock control
-        products.forEach((product) =>{
+        products.forEach((product) => {
           products = productsInOrder.map((element) => {
-            if(product.stock<element.quantity)throw new BadRequestException("No hay sufuciente stock")
-            product.stock= product.stock - element.quantity;
+            if (product.stock < element.quantity)
+              throw new BadRequestException("No hay sufuciente stock");
+            product.stock = product.stock - element.quantity;
             return product;
           });
-        })
+        });
 
         await this.orderRepository.updateStock(products);
 
@@ -212,7 +214,26 @@ export class OrderService {
     return resOrder;
   }
 
-  async updateStatus(update: UpdateOrderDto) {
+  // async updateStatus(update: UpdateOrderDto) {
+  //   const { status, id } = update;
+  //   try {
+  //     const order = await this.findOrderById(id);
+  //     const result = await this.orderRepository.updateStatus(order, status);
+  //     if (result.affected !== 1) {
+  //       throw new InternalServerErrorException(
+  //         "Error interno del servidor al actualizar el estado de la Order",
+  //       );
+  //     }
+  //     order.status = status;
+  //     return order;
+  //   } catch (error) {
+  //     if (error instanceof NotFoundException) {
+  //       throw error;
+  //     }
+  //   }
+  // }
+
+  async updateStatus(update: UpdateOrderDto): Promise<Order> {
     const { status, id } = update;
     try {
       const order = await this.findOrderById(id);
@@ -223,11 +244,22 @@ export class OrderService {
         );
       }
       order.status = status;
+
+      await this.notificationEmailsService.sendStatusUpdateEmail(
+        order.user.email,
+        order.user.name,
+        order.id,
+        order.status,
+      );
+
       return order;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
       }
+      throw new InternalServerErrorException(
+        "Error al actualizar el estado de la Order",
+      );
     }
   }
 
