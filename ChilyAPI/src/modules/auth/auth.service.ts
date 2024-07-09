@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from "@nestjs/common";
 import { RegisterUserDTO } from "./dto/register.dto";
 import { AuthRepository } from "./auth.repository";
@@ -111,9 +112,7 @@ export class AuthService {
       });
     } catch (error) {
       if (error.code === "23505") {
-        throw new BadRequestException(
-          error.detail,
-        );
+        throw new BadRequestException(error.detail);
       } else if (error instanceof InternalServerErrorException) {
         throw error;
       } else {
@@ -155,15 +154,16 @@ export class AuthService {
     const user = await this.userService.findByEmail(email);
     if (!user) {
       console.log("Email no encontrado");
+      throw new NotFoundException("Email no encontrado");
     }
 
     const payload = { userId: user.id };
     const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
+      expiresIn: "1h", // Asegúrate de que el token tiene un tiempo de expiración adecuado
     });
 
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
-
     await this.notificationEmailsService.sendPasswordResetEmail(
       email,
       resetLink,
@@ -178,8 +178,16 @@ export class AuthService {
         secret: process.env.JWT_SECRET,
       });
       const userId = payload.userId;
+      console.log(`User ID from token: ${userId}`);
+
       const hashedPassword = await bcrypt.hash(newPassword, 10);
-      await this.authRepository.updatePassword(userId, hashedPassword);
+      console.log(`Hashed password: ${hashedPassword}`);
+
+      const updateResult = await this.authRepository.updatePassword(
+        userId,
+        hashedPassword,
+      );
+      console.log(`Password update result: ${JSON.stringify(updateResult)}`);
 
       const user = await this.userService.findUserById(userId);
       if (user.email && user.name) {
@@ -192,6 +200,7 @@ export class AuthService {
       }
       return { message: "Contraseña restablecida exitosamente" };
     } catch (error) {
+      console.error(`Error during password reset: ${error.message}`);
       throw new BadRequestException("Token invalido o expirado");
     }
   }
