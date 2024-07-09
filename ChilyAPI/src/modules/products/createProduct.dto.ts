@@ -33,6 +33,10 @@ export class createProductDto {
   stock : number;
 
   @IsNotEmpty()
+  @IsUrl()
+  @DocumentationCreateProductDto.image_url()
+  imageURL: string;
+  @IsNotEmpty()
   @IsArray()
   @DocumentationCreateProductDto.category()
   category: number[];
