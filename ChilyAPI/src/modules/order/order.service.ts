@@ -24,6 +24,7 @@ import { OrderResponseDto } from "./dto/order-respose-admin.dto";
 import { map } from "rxjs";
 import { User } from "../user/entity/user.entity";
 import { OrderStatus } from "src/common/enums";
+import { Product } from "../products/products.entity";
 
 @Injectable()
 export class OrderService {
@@ -35,7 +36,7 @@ export class OrderService {
     private readonly orderDetailService: OrderDetailsService,
     private readonly googleMapsService: GoogleMapsService,
     private dataSource: DataSource,
-  ) {}
+  ) { }
 
   async findAll(
     pagination: { page: number; limit: number },
@@ -47,7 +48,7 @@ export class OrderService {
       price?: string;
       status?: OrderStatus;
     },
-  ){
+  ) {
     const orders = await this.orderRepository.findAll(pagination, filters);
     if (!orders || orders.length === 0) {
       console.error("No orders found");
@@ -82,13 +83,24 @@ export class OrderService {
 
         // Fetch products
         console.log("AA");
-        const products =
+        let products =
           await this.productService.findProductsByIds(productIds);
         console.log("Products fetched successfully:", products);
 
         if (productsInOrder.length !== products.length) {
           throw new BadRequestException("Uno o más productos no disponibles.");
         }
+
+        // Stock control
+        products.forEach((product) =>{
+          products = productsInOrder.map((element) => {
+            if(product.stock<element.quantity)throw new BadRequestException("No hay sufuciente stock")
+            product.stock= product.stock - element.quantity;
+            return product;
+          });
+        })
+
+        await this.orderRepository.updateStock(products);
 
         // Calculate shipping cost (hardcoded for now)
         const newOrder = new Order();
@@ -121,10 +133,10 @@ export class OrderService {
         return { newOrder: createdOrder, orderDetails };
       });
     } catch (error) {
-      console.error("Error in transaction:", error);
       if (error instanceof NotFoundException) {
         throw error;
       }
+      if (error instanceof BadRequestException) throw error;
       throw new InternalServerErrorException("Unexpected error occurred");
     }
   }

@@ -1,15 +1,17 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { OrderDto } from "./dto/order.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Order } from "./entity/order.entity";
 import { OrderStatus } from "src/common/enums";
+import { Product } from "../products/products.entity";
 
 @Injectable()
 export class OrderRepository {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
+    @InjectRepository(Product) private readonly productRepository: Repository<Product>,
   ) {}
 
   async create(orderDto): Promise<Order> {
@@ -123,5 +125,19 @@ export class OrderRepository {
       status: newStatus,
     });
     return updatedOrder;
+  }
+
+  async updateStock(products:Product[]):Promise<void>{
+    try {
+      products.forEach(async product =>{
+        const updatedProduct = await this.productRepository.save(product);
+        if(!updatedProduct){
+          throw new NotFoundException(`No se pudo actualizar el stock del producto ${product.name}`);
+        }
+      })
+    } catch (error) {
+      if(error instanceof NotFoundException)throw error;
+      throw new InternalServerErrorException("Hubo un error al actualizar el stock");
+    }
   }
 }

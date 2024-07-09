@@ -9,10 +9,11 @@ import { UserModule } from "../user/user.module";
 import { OrderDetailsModule } from "../order-details/order-details.module";
 import { AddressesModule } from "../addresses/addresses.module";
 import { GoogleMapsModule } from "../google-maps/google-maps.module";
+import { Product } from "../products/products.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Order]),
+    TypeOrmModule.forFeature([Order,Product]),
     ProductsModule,
     UserModule,
     AddressesModule,
