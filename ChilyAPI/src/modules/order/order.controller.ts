@@ -28,6 +28,7 @@ import {
   DocumentationPostNewOrder,
   DocumentationUpdateOrderStatus,
 } from "src/docs";
+import { OrderStatus } from "src/common/enums";
 
 @Controller("orders")
 @DocumentationApiTagsModule.clasification("Rutas para: Ordenes")
@@ -46,8 +47,14 @@ export class OrderController {
   async getAllOrders(
     @Query("page") page: number = 1,
     @Query("limit") limit: number = 5,
+    @Query("email") email?: string,
+    @Query("id") id?: string,
+    @Query("date") date?: string,
+    @Query("productName") productName?: string,
+    @Query("status") status?: OrderStatus,
   ) {
-    return await this.orderService.findAll({ page, limit });
+    const filters = { email, id, date, productName, status };
+    return await this.orderService.findAll({ page, limit }, filters);
   }
 
   @Get("order/:id")

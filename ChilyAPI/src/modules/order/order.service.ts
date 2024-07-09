@@ -23,6 +23,7 @@ import { ResOrderDto } from "./dto/resOrder.dto";
 import { OrderResponseDto } from "./dto/order-respose-admin.dto";
 import { map } from "rxjs";
 import { User } from "../user/entity/user.entity";
+import { OrderStatus } from "src/common/enums";
 
 @Injectable()
 export class OrderService {
@@ -36,9 +37,18 @@ export class OrderService {
     private dataSource: DataSource,
   ) {}
 
-
-  async findAll(pagination: { page: number; limit: number }): Promise<Object> {
-    const orders = await this.orderRepository.findAll(pagination);
+  async findAll(
+    pagination: { page: number; limit: number },
+    filters: {
+      email?: string;
+      id?: string;
+      date?: string;
+      productName?: string;
+      price?: string;
+      status?: OrderStatus;
+    },
+  ){
+    const orders = await this.orderRepository.findAll(pagination, filters);
     if (!orders || orders.length === 0) {
       console.error("No orders found");
       return [];
