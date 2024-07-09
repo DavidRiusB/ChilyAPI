@@ -60,9 +60,14 @@ export class UserRepository {
       return newUser;
     } catch (error) {
       if (error.code === "23505") {
-        throw new BadRequestException(
-          error.detail,
-        );
+        const match = error.detail.match(/Key \(([^)]+)\)=\(([^)]+)\) already exists./);
+        let message = '';
+        if (match) {
+          const field = match[1];
+          const value = match[2];
+          message = `El valor '${value}' para el campo '${field}' ya está registrado.`;
+        }
+        throw new BadRequestException(message);
       }
       throw new InternalServerErrorException(
         "Error inesperado al registrar al usuario, por favor intentelo de nuevo",
