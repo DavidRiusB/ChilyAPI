@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Category } from "./category.entity";
 import { In, Repository } from "typeorm";
@@ -21,14 +21,29 @@ export class CategoryRepository {
     }
 
     //method with pagination to get categories with their products by id
-    async getCategoryById(id: number, page: number, limit: number): Promise<Category> {
+    async getCategoryById(id: number[], page: number = 1, limit: number = 10): Promise<Category[]> {
         try {
-            const category = await this.categoryRepository.findOne({ where: { id: id, isDeleted: false }, relations: ["products"] });
-            category.products = category.products.slice((page - 1) * limit, page * limit);
-            return category;
-        } catch (error) {
-            throw new NotFoundException("Error al obtener la categoria");
+   const categories = await this.categoryRepository.find({
+        where: { id: In(id), isDeleted: false },
+        relations: ["products"],
+      });
+
+      if (!categories || categories.length === 0) {
+        throw new NotFoundException('Una o más categorías no existen o están eliminadas');
+      }
+
+      categories.forEach(category => {
+        category.products = category.products.slice((page - 1) * limit, page * limit);
+      });
+
+      return categories;
+    } catch (error) {
+        if(error instanceof NotFoundException){
+            throw error;
         }
+
+        throw new InternalServerErrorException(error);
+    }
     }
 
     //method with pagination to get categories with their products by name

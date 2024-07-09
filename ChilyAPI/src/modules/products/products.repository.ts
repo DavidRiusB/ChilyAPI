@@ -1,9 +1,10 @@
-import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { Between, DataSource, In, Like, Raw, Repository } from "typeorm";
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { Between, DataSource, In, Raw, Repository } from "typeorm";
 import { Product } from "./products.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { createProductDto, UpdateProductDto } from "./createProduct.dto";
 import { Category } from "../category/category.entity";
+import { CategoryService } from "../category/category.service";
 
 @Injectable()
 export class ProductsRepository {
@@ -11,6 +12,7 @@ export class ProductsRepository {
     @InjectRepository(Product) private productsRepository: Repository<Product>,
     @InjectRepository(Category) private categoryRepository: Repository<Category>,
     private readonly dataSource: DataSource,
+    private readonly categoryService: CategoryService
   ) { }
   async getProducts(page: number, limit: number): Promise<Product[]> {
     try {
@@ -136,16 +138,11 @@ export class ProductsRepository {
     }
   }
 
-  async createProduct(createProduct: createProductDto, fileUrl: string): Promise<Product> {
+  async createProduct(createProduct: createProductDto): Promise<Product> {
     try {
 
       return this.dataSource.transaction(async(manager) => {       
         const product = new Product();
-        const categories: Category[] = await Promise.all(createProduct.category.map(async (categoryId) => {
-          return await this.categoryRepository.findOneBy({ id: categoryId, isDeleted: false });
-        }))
-  
-        if (!categories) throw new NotFoundException("La categoria no existe");
   
         product.name = createProduct.name;
   
@@ -155,14 +152,18 @@ export class ProductsRepository {
   
         product.stock = createProduct.stock;
   
-        product.img = fileUrl;
+        product.img = createProduct.imageURL;
   
+        product.isPopular = createProduct.isPopular;
+
+        const categories: Category[] = await this.categoryService.getCategoryById(createProduct.category);
         product.category = categories;
   
-        const createdProduct = await manager.save(product);
-        return createdProduct;
+        await manager.save(product);
+        return product;
       })
     } catch (error) {
+      if(error instanceof NotFoundException) throw error;
       if(error.code === '23505') throw new ConflictException("Error al crear el producto o posible nombre duplicado");
       throw new InternalServerErrorException("Error inesperado del servidor al crear el producto");
     }
@@ -171,29 +172,28 @@ export class ProductsRepository {
   async updateProduct(id: number, updateProduct: UpdateProductDto): Promise<Product> {
     try {
 
-      const product = await this.productsRepository.findOne({
-        where: { id: id, isDeleted: false }, relations: ["category"],
-      });
+      return this.dataSource.transaction(async(manager) => {
+        const product = await this.getProductById(id);
 
-      if (!product) throw new NotFoundException("Producto no encontrado");
+        product.name = updateProduct.name;
 
-      //const categories:Category[] = await Promise.all(updateProduct.category.map(async (categoryId) => {
-      //  return await this.categoryRepository.findOneBy({ id: categoryId, isDeleted: false });
-      //}))
-      product.name = updateProduct.name;
+        product.description = updateProduct.description;
+  
+        product.price = updateProduct.price;
 
-      product.description = updateProduct.description;
+        product.stock = Math.max(product.stock + updateProduct.stock, 0);
 
-      product.price = updateProduct.price;
-
-      if (updateProduct.category && updateProduct.category.length > 0) {
-        const categories = await this.categoryRepository.find({ where: { id: In(updateProduct.category), isDeleted: false } })
-        product.category = categories;
-      }
-
-      await this.productsRepository.save(product);
-
-      return await this.getProductById(id);
+        product.img = updateProduct.imageURL;
+  
+        if (updateProduct.category.length > 0) {
+          const categories = await this.categoryService.getCategoryById(updateProduct.category);
+          product.category = categories;
+        }
+  
+        await manager.save(product);
+  
+        return product;
+      })
     } catch (error) {
       if(error instanceof NotFoundException)throw error;
       throw new NotFoundException("Error al actualizar el producto con ID: " + id);
@@ -221,20 +221,6 @@ export class ProductsRepository {
 
     return products;
   }
-
-  async updateStock(id: number, stock: number): Promise<Product> {
-    try {
-      const product = await this.productsRepository.findOne({ where: { id: id } })
-      if (!product) throw new NotFoundException("Error al obtener el producto");
-      product.stock = stock;
-      const updatedProduct = await this.productsRepository.save(product);
-      return updatedProduct;
-    } catch (error) {
-      if(error instanceof NotFoundException) throw error;
-      throw new BadRequestException("Hubo un error al guardar el nuevo stock")
-    }
-  }
-
   /*async availableOrUnavaliableProduct(id: number, status: string): Promise<Product> {
 
     try {
@@ -260,24 +246,13 @@ export class ProductsRepository {
 
   async productIsPopular(id: number, status: string): Promise<Product> {
     try {
-      const product = await this.productsRepository.findOne({ where: { id: id, isDeleted: false }, relations: ["category"] });
-
-      if (!product) throw new NotFoundException("Error al obtener el producto");
-
-      if (status === "true") {
-        product.isPopular = true;
-      } else if (status === "false") {
-        product.isPopular = false;
-      } else {
-        throw new BadRequestException("El estado debe ser true o false")
-      };
-
+      const product = await this.getProductById(id);
+     status ? product.isPopular = true : product.isPopular = false;
       await this.productsRepository.save(product);
       return product;
-
     } catch (error) {
-      if(error instanceof BadRequestException) throw error;
-      throw new NotFoundException("Error al actualizar el producto con ID: " + id);
+      if(error instanceof NotFoundException) throw error;
+      throw new InternalServerErrorException("Error al actualizar el producto con ID: " + id);
     }
   }
 }

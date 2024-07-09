@@ -20,6 +20,6 @@ export class UploadController {
       img
     );
     console.log(upload.secure_url);
-    return 'Imagen subida con éxito: '+upload.secure_url
+    return {secure_url: upload.secure_url}
   }
 }

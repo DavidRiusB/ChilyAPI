@@ -78,18 +78,10 @@ export class ProductsController {
 
   @Post("create")
   @DocumentationAddProduct()
-  @UseInterceptors(FileInterceptor("image"))
   async createProduct(
     @Body() createProduct: createProductDto,
-    @UploadedFile() file: Express.Multer.File
   ): Promise<Product> {
-    console.log(createProduct)
-    console.log(file)
-    if(!file) throw new BadRequestException("Verifique los datos enviados, falta la imagen");
-    const fileUrl = await this.uploadService.update(
-      file
-    );
-    const newProduct = await this.productsService.createProduct(createProduct, fileUrl.secure_url);
+    const newProduct = await this.productsService.createProduct(createProduct);
     return newProduct;
   }
 
@@ -118,49 +110,6 @@ export class ProductsController {
     );
     return disabledProduct;
   }*/
-
-  @Put("stock")
-  @DocumentationUpdateStock()
-  updateStock(@Query("id") id: string, @Query("stock") stock: string) {
-    const updatedProduct = this.productsService.updateStock(Number(id), Number(stock));
-    return updatedProduct;
-  }
-
-  @Put("popular")
-  @DocumentationProductIsPopular()
-  productIsPopular(
-    @Query("id") id: number,
-    @Query("status") status: string
-  ): Promise<Product> {
-    const updatedProduct = this.productsService.productIsPopular(id, status);
-    return updatedProduct;
-  }
-
-  @Put("img/:id")
-  @DocumentationUpdateImg()
-  @UseInterceptors(FileInterceptor("img"))
-  async updateImg(
-    @Param("id") id: number,
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5 MB file size limit
-          new FileTypeValidator({ fileType: "image/jpeg|image/png|image/jpg" }),
-        ],
-      })
-    )
-    img: Express.Multer.File
-  ) {
-    const contenType = img.mimetype;
-    const updateProduct = await this.productsService.updateImg(
-      id,
-      img.originalname,
-      img.buffer,
-      contenType
-    );
-    console.log("content type:", contenType);
-    return await updateProduct;
-  }
 
   @Delete("delete/:id")
   @DocumentationDeleteProduct()

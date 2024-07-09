@@ -33,6 +33,14 @@ export class createProductDto {
   stock : number;
 
   @IsNotEmpty()
+  @IsUrl()
+  @DocumentationCreateProductDto.image_url()
+  imageURL: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isPopular: boolean = false;
+  @IsNotEmpty()
   @IsArray()
   @DocumentationCreateProductDto.category()
   category: number[];
@@ -47,22 +55,29 @@ export class createProductDto {
     */
 }
 export class UpdateProductDto{
-  @IsNotEmpty()
-  @MaxLength(50)
+  @IsOptional()
   @IsString()
   @DocumentationCreateProductDto.names()
   name: string;
 
-  @IsNotEmpty()
-  @MaxLength(255)
+  @IsOptional()
   @IsString()
   @DocumentationCreateProductDto.description()
   description: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   @DocumentationCreateProductDto.price()
   price: number;
+
+  @IsOptional()
+  @IsNumber()
+  stock : number;
+
+  @IsOptional()
+  @IsUrl()
+  @DocumentationCreateProductDto.image_url()
+  imageURL: string;
 
   @IsOptional()
   @IsArray()
