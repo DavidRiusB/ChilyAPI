@@ -24,7 +24,7 @@ export class User {
   @Column({ length: 50 })
   name: string;
 
-  @Column({ unique: true, length: 20, default: "google_account"})
+  @Column({ unique: true, length: 20, nullable: true })
   //national identification number
   NIN?: string;
 
@@ -39,7 +39,7 @@ export class User {
   
   @OneToMany(() => Address, (address) => address.user, {})
   addresses: Address[];
-  @Column({ unique: true, nullable: false, default: "google_account"})
+  @Column({ unique: true, nullable: true, default: "google_account"})
   phone?: string;
 
   @OneToMany(() => Order, (order) => order.user, {})
