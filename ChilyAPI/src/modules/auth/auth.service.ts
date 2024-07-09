@@ -111,7 +111,8 @@ export class AuthService {
         return user;
       });
     } catch (error) {
-      if(error instanceof BadRequestException)  throw error;
+      if(error instanceof BadRequestException)  throw new BadRequestException(error);
+      console.log(error)
       throw new InternalServerErrorException("Error inesperado al registrar usuario");
     }
   }
