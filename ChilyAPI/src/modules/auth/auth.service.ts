@@ -111,15 +111,8 @@ export class AuthService {
         return user;
       });
     } catch (error) {
-      if (error.code === "23505") {
-        throw new BadRequestException(error.detail);
-      } else if (error instanceof InternalServerErrorException) {
-        throw error;
-      } else {
-        throw new InternalServerErrorException(
-          "Error inesperado al generar credenciales",
-        );
-      }
+      if(error instanceof BadRequestException)  throw error;
+      throw new InternalServerErrorException("Error inesperado al registrar usuario");
     }
   }
 
