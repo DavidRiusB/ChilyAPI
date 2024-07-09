@@ -29,7 +29,7 @@ export class OrderRepository {
    * @param {number} pagination.limit - Number of items per page.
    * @returns {Promise<Order[]>} - A promise that resolves to an array of orders.
    */
-  async findAll(pagination: { page: number; limit: number }) {
+  async findAll(pagination: { page: number; limit: number }): Promise<Order[]> {
     const { page, limit } = pagination;
     const offset = (page - 1) * limit;
     return await this.orderRepository
@@ -69,22 +69,26 @@ export class OrderRepository {
    * @param {number} id - The ID of the order to retrieve.
    * @returns {Promise<Object|null>} - The order if found, or null if not found.
    */
-  async findById(id: number): Promise<Order | null> {
-    return await this.orderRepository.findOne({
+async findById(id: number): Promise<Order | null> {
+    const order = await this.orderRepository.findOne({
       where: { id },
       relations: ["user", "details"],
     });
+
+    return order || null; // Devuelve null si no se encuentra la orden
   }
+
+
 
   async findOrdersByUser(userId: number): Promise<Order[]> {
     return await this.orderRepository
       .createQueryBuilder("order")
       .leftJoinAndSelect("order.details", "details")
-      .leftJoinAndSelect("details.product", "product") // Asegúrate de tener la relación entre OrderDetail y Product
+      .leftJoinAndSelect("details.product", "product")
       .leftJoinAndSelect("order.address", "address")
       .where("order.userId = :userId", { userId })
       .select([
-        // "order.id",
+        "order.id",
         "order.date",
         "order.price",
         "order.couponId",
@@ -93,7 +97,7 @@ export class OrderRepository {
         "order.status",
         "order.orderInstructions",
         "order.formBuy",
-        "details.product", // Incluir los detalles de la orden
+        "details.product",
         "details.quantity",
         "details.price",
         "details.discount",

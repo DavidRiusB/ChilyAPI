@@ -19,6 +19,8 @@ import { GoogleMapsService } from "../google-maps/google-maps.service";
 import { TravelMode } from "@googlemaps/google-maps-services-js";
 import { EstimatedTime } from "../google-maps/dto/estimatedTime.dto";
 import { ResOrderDto } from "./dto/resOrder.dto";
+import { OrderResponseDto } from "./dto/order-respose-admin.dto";
+import { map } from "rxjs";
 
 @Injectable()
 export class OrderService {
@@ -32,14 +34,38 @@ export class OrderService {
     private dataSource: DataSource,
   ) {}
 
-  /**
-   * Retrieves all orders with pagination.
-   *
-   * @param {Object} pagination - Pagination options including page number and limit.
-   * @returns {Promise<Object>} - Paginated list of orders.
-   */
   async findAll(pagination: { page: number; limit: number }): Promise<Object> {
-    return await this.orderRepository.findAll(pagination);
+    const orders = await this.orderRepository.findAll(pagination);
+    if (!orders || orders.length === 0) {
+      console.error("No orders found");
+      return [];
+    }
+    console.log("Orders fetched:", orders);
+    return orders.map((order) => this.transformOrder(order));
+  }
+
+  private transformOrder(order: any): OrderResponseDto {
+    return {
+      id: order.id.toString(),
+      price: `$${order.total.toFixed(2)}`,
+      date: order.date.toISOString(),
+      status: this.mapStatus(order.status),
+      products: order.details.map((detail: any) => ({
+        name: detail.product.name,
+        quantity: detail.quantity,
+        price: `$${detail.product.price.toFixed(2)}`,
+      })),
+    };
+  }
+
+  private mapStatus(status: string) {
+    const statusMap = {
+      Pending: "Pendiente",
+      InPreparation: "En preparación",
+      Shipped: "En camino",
+      Delivered: "Entregada",
+    };
+    return statusMap[status] || status;
   }
 
   /**
@@ -72,7 +98,7 @@ export class OrderService {
       const order = await this.orderRepository.findById(id);
       if (!order) {
         throw new NotFoundException(
-          `No se encontraron registros con el numero de Orden: ${id}`,
+          `No se encontraron registros con el número de Orden: ${id}`,
         );
       }
       return order;
@@ -81,7 +107,7 @@ export class OrderService {
         throw error;
       }
       throw new InternalServerErrorException(
-        "Error interno del servidor al buscar Orden",
+        "Error interno del servidor al buscar Orden de este usuario",
       );
     }
   }
@@ -92,33 +118,27 @@ export class OrderService {
       const orderUser = await this.orderRepository.findOrdersByUser(id);
       if (!orderUser || orderUser.length === 0) {
       }
-      orderUser.forEach((order) => {
+     orderUser.forEach((order)=>{
         const resOrder = new ResOrderDto();
-        (resOrder.address = order.address),
-          (resOrder.date = order.date),
-          (resOrder.details = order.details.map((detail) => {
-            const aux = new ProductsInOrder();
-            aux.name = detail.product.name;
-            aux.quantity = detail.quantity;
-            aux.price = detail.price;
-            return aux;
-          }));
-        (resOrder.formBuy = order.formBuy),
-          (resOrder.id = order.id),
-          (resOrder.status = order.status),
-          (resOrder.total = order.total),
-          resOrderArray.push(resOrder);
-      });
+        resOrder.address = order.address,
+        resOrder.date = order.date,
+        resOrder.details = order.details.map((detail)=>{
+          const aux = new ProductsInOrder();
+          aux.name = detail.product.name;
+          aux.quantity = detail.quantity;
+          aux.price = detail.price
+          return aux;
+        })
+        resOrder.formBuy = order.formBuy,
+        resOrder.id = order.id,
+        resOrder.status = order.status,
+        resOrder.total = order.total,
+        resOrderArray.push(resOrder)
+      })
 
       return resOrderArray;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new InternalServerErrorException(
-        "Error interno del servidor al buscar órdenes",
-      );
-    }
+
+    } catch (error) {}
   }
 
   async addOrder(orderData: OrderDto) {
