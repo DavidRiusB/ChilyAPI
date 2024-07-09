@@ -106,15 +106,6 @@ export class AuthRepository {
     return credential;
   }
 
-  // async updatePassword(id: string, newPassword: string) {
-  //   const updateResult = await this.credentialRepository.update(id, {
-  //     password: newPassword,
-  //   });
-  //   console.log(
-  //     `Update password result for ID ${id}: ${JSON.stringify(updateResult)}`,
-  //   );
-  // }
-
   async updatePassword(id: string, newPassword: string) {
     try {
       const hashedPassword = await hashPassword(newPassword);
@@ -124,6 +115,7 @@ export class AuthRepository {
       console.log(
         `Update password result for ID ${id}: ${JSON.stringify(updateResult)}`,
       );
+      return updateResult;
     } catch (error) {
       throw new InternalServerErrorException(
         "Error inesperado al actualizar la contraseña, por favor intentelo de nuevo",
