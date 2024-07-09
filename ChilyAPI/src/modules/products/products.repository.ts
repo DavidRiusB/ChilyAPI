@@ -136,7 +136,7 @@ export class ProductsRepository {
     }
   }
 
-  async createProduct(createProduct: createProductDto, fileUrl: string): Promise<Product> {
+  async createProduct(createProduct: createProductDto): Promise<Product> {
     try {
 
       return this.dataSource.transaction(async(manager) => {       
@@ -155,7 +155,7 @@ export class ProductsRepository {
   
         product.stock = createProduct.stock;
   
-        product.img = fileUrl;
+        product.img = createProduct.imageURL;
   
         product.category = categories;
   
