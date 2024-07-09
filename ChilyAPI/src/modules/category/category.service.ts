@@ -65,6 +65,10 @@ export class CategoryService {
     return this.categoryRepository.getCategoryById(id);
   }
 
+  
+  getCategoryById2(id: number, page:number,limit:number): Promise<Category> {
+    return this.categoryRepository.getCategoryById2(id, page, limit);
+  }
   createCategory(createCategory: createCategoryDto): Promise<Category> {
     return this.categoryRepository.createCategory(createCategory);
   }

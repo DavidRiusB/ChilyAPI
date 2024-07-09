@@ -46,6 +46,16 @@ export class CategoryRepository {
     }
     }
 
+    async getCategoryById2(id: number, page: number, limit: number): Promise<Category> {
+        try {
+            const category = await this.categoryRepository.findOne({ where: { id: id, isDeleted: false }, relations: ["products"] });
+            category.products = category.products.slice((page - 1) * limit, page * limit);
+            return category;
+        } catch (error) {
+            throw new NotFoundException("Error al obtener la categoria");
+        }
+    }
+
     //method with pagination to get categories with their products by name
     async getCategoryByName(name: string, page: number, limit: number): Promise<Category> {
         try {

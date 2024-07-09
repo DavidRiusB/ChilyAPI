@@ -47,6 +47,16 @@ export class CategoryController {
   }
 
 
+  @Get(":id")
+  @DocumentationGetCategoryById()
+  @UseInterceptors(QueryInterceptor)
+  getCategoryById(@Req() request: any, @Param("id") id: number) {
+    return this.categoryService.getCategoryById2(
+      id,
+      request.page,
+      request.limit,
+    );
+  }
 
   @Post("create")
   @DocumentationCreateCategory()
@@ -68,4 +78,6 @@ export class CategoryController {
   deleteCategory(@Param("id") id: number) {
     return this.categoryService.deleteCategory(id);
   }
+
+
 }
