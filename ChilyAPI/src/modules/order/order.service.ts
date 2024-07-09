@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -117,6 +118,7 @@ export class OrderService {
       const resOrderArray: ResOrderDto[] = [];
       const orderUser = await this.orderRepository.findOrdersByUser(id);
       if (!orderUser || orderUser.length === 0) {
+        throw new ForbiddenException('No se encontraron ordenes de este usuario');
       }
      orderUser.forEach((order)=>{
         const resOrder = new ResOrderDto();
@@ -138,7 +140,9 @@ export class OrderService {
 
       return resOrderArray;
 
-    } catch (error) {}
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   async addOrder(orderData: OrderDto) {
