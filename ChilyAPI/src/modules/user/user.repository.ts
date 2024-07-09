@@ -116,7 +116,7 @@ export class UserRepository {
       return await this.userRepository.save(newUser);
     } catch {
       throw new InternalServerErrorException(
-        "Error inesperado al registrar al usuario",
+        "Error inesperado al registrar| al usuario",
       );
     }
   }
