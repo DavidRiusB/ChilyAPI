@@ -82,10 +82,17 @@ export class AuthRepository {
   }
 
   async findByEmailInCredentials(email: string): Promise<Credential> {
-    return this.credentialRepository.findOneBy({ email });
+    const credential = await this.credentialRepository.findOneBy({ email });
+    console.log(`Found credential: ${JSON.stringify(credential)}`);
+    return credential;
   }
 
   async updatePassword(id: string, newPassword: string) {
-    await this.credentialRepository.update(id, { password: newPassword });
+    const updateResult = await this.credentialRepository.update(id, {
+      password: newPassword,
+    });
+    console.log(
+      `Update password result for ID ${id}: ${JSON.stringify(updateResult)}`,
+    );
   }
 }
