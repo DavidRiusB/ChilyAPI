@@ -157,6 +157,8 @@ export class ProductsRepository {
   
         product.img = createProduct.imageURL;
   
+        product.isPopular = createProduct.isPopular;
+        
         product.category = categories;
   
         const createdProduct = await manager.save(product);

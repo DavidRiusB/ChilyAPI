@@ -36,6 +36,10 @@ export class createProductDto {
   @IsUrl()
   @DocumentationCreateProductDto.image_url()
   imageURL: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isPopular: boolean = false;
   @IsNotEmpty()
   @IsArray()
   @DocumentationCreateProductDto.category()
