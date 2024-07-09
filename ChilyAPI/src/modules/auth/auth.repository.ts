@@ -76,7 +76,9 @@ export class AuthRepository {
       return newCredential;
     } catch (error) {
       if (error.code === "23505") {
-        const match = error.detail.match(/Key \(([^)]+)\)=\(([^)]+)\) already exists./);
+        const match = error.detail.match(
+          /Key \(([^)]+)\)=\(([^)]+)\) already exists./,
+        );
         let message = "";
         if (match) {
           const field = match[1];
@@ -104,12 +106,28 @@ export class AuthRepository {
     return credential;
   }
 
+  // async updatePassword(id: string, newPassword: string) {
+  //   const updateResult = await this.credentialRepository.update(id, {
+  //     password: newPassword,
+  //   });
+  //   console.log(
+  //     `Update password result for ID ${id}: ${JSON.stringify(updateResult)}`,
+  //   );
+  // }
+
   async updatePassword(id: string, newPassword: string) {
-    const updateResult = await this.credentialRepository.update(id, {
-      password: newPassword,
-    });
-    console.log(
-      `Update password result for ID ${id}: ${JSON.stringify(updateResult)}`,
-    );
+    try {
+      const hashedPassword = await hashPassword(newPassword);
+      const updateResult = await this.credentialRepository.update(id, {
+        password: hashedPassword,
+      });
+      console.log(
+        `Update password result for ID ${id}: ${JSON.stringify(updateResult)}`,
+      );
+    } catch (error) {
+      throw new InternalServerErrorException(
+        "Error inesperado al actualizar la contraseña, por favor intentelo de nuevo",
+      );
+    }
   }
 }
