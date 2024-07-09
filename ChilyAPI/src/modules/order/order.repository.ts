@@ -11,106 +11,7 @@ export class OrderRepository {
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
   ) {}
-  // Mock data (replace with actual database or service calls)
-  private orders = [
-    { id: 1, branchId: 1 /* other properties */ },
-    { id: 2, branchId: 2 /* other properties */ },
-    // Add more mock orders as needed
-  ];
 
-  // Mock ID (used for creating new orders)
-  private mockId: number = 3;
-
-  /**
-   * Retrieves all orders with pagination.
-   *
-   * @param {Object} pagination - Pagination details.
-   * @param {number} pagination.page - Page number.
-   * @param {number} pagination.limit - Number of items per page.
-   * @returns {Promise<Order[]>} - A promise that resolves to an array of orders.
-   */
-  async findAll(pagination: { page: number; limit: number }): Promise<Order[]> {
-    const { page, limit } = pagination;
-    const offset = (page - 1) * limit;
-    return await this.orderRepository
-      .createQueryBuilder("order")
-      .leftJoinAndSelect("order.details", "orderDetail")
-      .leftJoinAndSelect("orderDetail.product", "product")
-      .skip(offset)
-      .take(limit)
-      .getMany();
-  }
-
-  /**
-   * Retrieves all orders for a specific branch with pagination.
-   *
-   * @param {number} id - Branch ID.
-   * @param {Object} pagination - Pagination details.
-   * @param {number} pagination.page - Page number.
-   * @param {number} pagination.limit - Number of items per page.
-   * @returns {Promise<Order[]>} - A promise that resolves to an array of orders for the branch.
-   */
-  async findAllOrderByBranchId(
-    id: number,
-    pagination: { page: number; limit: number },
-  ) {
-    const { page, limit } = pagination;
-    const offset = (page - 1) * limit;
-
-    // Placeholder logic: Filter orders by branch ID (assuming id matches branchId in mock data)
-    const branchOrders = this.orders.filter((order) => order.branchId === id);
-
-    return await branchOrders.slice(offset, offset + limit);
-  }
-
-  /**
-   * Retrieves an order by its ID.
-   *
-   * @param {number} id - The ID of the order to retrieve.
-   * @returns {Promise<Object|null>} - The order if found, or null if not found.
-   */
-async findById(id: number): Promise<Order | null> {
-    const order = await this.orderRepository.findOne({
-      where: { id },
-      relations: ["user", "details"],
-    });
-
-    return order || null; // Devuelve null si no se encuentra la orden
-  }
-
-
-
-  async findOrdersByUser(userId: number): Promise<Order[]> {
-    return await this.orderRepository
-      .createQueryBuilder("order")
-      .leftJoinAndSelect("order.details", "details")
-      .leftJoinAndSelect("details.product", "product")
-      .leftJoinAndSelect("order.address", "address")
-      .where("order.userId = :userId", { userId })
-      .select([
-        "order.id",
-        "order.date",
-        "order.price",
-        "order.couponId",
-        "order.coupoundDiscount",
-        "order.total",
-        "order.status",
-        "order.orderInstructions",
-        "order.formBuy",
-        "details.product",
-        "details.quantity",
-        "details.price",
-        "details.discount",
-        "details.quantity",
-        // "product.id",
-        "product.name",
-        "product.price",
-        "address",
-      ])
-      .getMany();
-  }
-
-  // Assuming Order class has an 'id' property
   async create(orderDto): Promise<Order> {
     const {
       userId,
@@ -139,6 +40,77 @@ async findById(id: number): Promise<Order | null> {
     return await this.orderRepository.save(newOrder); // Save the new order
   }
 
+  async findAll(pagination: { page: number; limit: number }) {
+    const { page, limit } = pagination;
+    const offset = (page - 1) * limit;
+    return await this.orderRepository
+      .createQueryBuilder("order")
+      .leftJoinAndSelect("order.user", "user") // Incluir la relación con el usuario
+      .leftJoinAndSelect("order.details", "orderDetail")
+      .leftJoinAndSelect("orderDetail.product", "product")
+      .skip(offset)
+      .take(limit)
+      .getMany();
+  }
+
+  async findById(id: number): Promise<Order | null> {
+    return await this.orderRepository.findOne({
+      where: { id },
+      relations: ["user", "details"], // Asegúrate de incluir las relaciones necesarias
+    });
+  }
+
+  // async findOrdersByUser(userId: number): Promise<Order[]> {
+  //   return await this.orderRepository
+  //     .createQueryBuilder("order")
+  //     .leftJoinAndSelect("order.details", "details")
+  //     .leftJoinAndSelect("details.product", "product")
+  //     .leftJoinAndSelect("order.address", "address")
+  //     .where("order.userId = :userId", { userId })
+  //     .select([
+  //       "order.id",
+  //       "order.date",
+  //       "order.price",
+  //       "order.couponId",
+  //       "order.coupoundDiscount",
+  //       "order.total",
+  //       "order.status",
+  //       "order.orderInstructions",
+  //       "order.formBuy",
+  //       "details.product",
+  //       "details.quantity",
+  //       "details.price",
+  //       "details.discount",
+  //       "details.quantity",
+  //       // "product.id",
+  //       "product.name",
+  //       "product.price",
+  //       "address",
+  //     ])
+  //     .getMany();
+  // }
+  async findOrdersByUser(userId: number): Promise<Order[]> {
+    return await this.orderRepository
+      .createQueryBuilder("order")
+      .leftJoinAndSelect("order.details", "details")
+      .leftJoinAndSelect("details.product", "product")
+      .leftJoinAndSelect("order.address", "address")
+      .where("order.userId = :userId", { userId })
+      .select([
+        "order.id",
+        "order.date",
+        "order.price",
+        "order.total",
+        "order.status",
+        "order.formBuy",
+        "product.name",
+        "details.quantity",
+        "details.price",
+        "address",
+      ])
+      .getMany();
+  }
+
   async updateStatus(order: Order, newStatus: OrderStatus) {
     order.status = newStatus;
     const updatedOrder = await this.orderRepository.update(order.id, {
@@ -146,4 +118,26 @@ async findById(id: number): Promise<Order | null> {
     });
     return updatedOrder;
   }
+
+  // Mock data (replace with actual database or service calls)
+  private orders = [
+    { id: 1, branchId: 1 /* other properties */ },
+    { id: 2, branchId: 2 /* other properties */ },
+    // Add more mock orders as needed
+  ];
+
+  // // Mock ID (used for creating new orders)
+  // private mockId: number = 3;
+  // async findAllOrderByBranchId(
+  //   id: number,
+  //   pagination: { page: number; limit: number },
+  // ) {
+  //   const { page, limit } = pagination;
+  //   const offset = (page - 1) * limit;
+
+  //   // Placeholder logic: Filter orders by branch ID (assuming id matches branchId in mock data)
+  //   const branchOrders = this.orders.filter((order) => order.branchId === id);
+
+  //   return await branchOrders.slice(offset, offset + limit);
+  // }
 }
