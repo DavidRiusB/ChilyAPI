@@ -111,9 +111,12 @@ export class AuthService {
         return user;
       });
     } catch (error) {
-      if(error instanceof BadRequestException)  throw new BadRequestException(error);
-      console.log(error)
-      throw new InternalServerErrorException("Error inesperado al registrar usuario");
+      if (error instanceof BadRequestException)
+        throw new BadRequestException(error);
+      console.log(error);
+      throw new InternalServerErrorException(
+        "Error inesperado al registrar usuario",
+      );
     }
   }
 
@@ -174,12 +177,9 @@ export class AuthService {
       const userId = payload.userId;
       console.log(`User ID from token: ${userId}`);
 
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      console.log(`Hashed password: ${hashedPassword}`);
-
       const updateResult = await this.authRepository.updatePassword(
         userId,
-        hashedPassword,
+        newPassword,
       );
       console.log(`Password update result: ${JSON.stringify(updateResult)}`);
 
