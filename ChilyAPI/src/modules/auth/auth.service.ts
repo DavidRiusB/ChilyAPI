@@ -134,7 +134,7 @@ export class AuthService {
         // Traduce la clave si existe en el objeto de traducción
         key = translations[key] || key;
     
-        throw new BadRequestException(`Duplicate key: ${key} with value: ${value}`);
+        throw new BadRequestException(`el ${key} ${value} ya fue usado anteriormente`);
       } else {
         throw error;
       }
