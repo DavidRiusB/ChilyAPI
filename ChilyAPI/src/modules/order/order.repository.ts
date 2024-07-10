@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@nestjs/common";
 import { OrderDto } from "./dto/order.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -11,7 +16,8 @@ export class OrderRepository {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
-    @InjectRepository(Product) private readonly productRepository: Repository<Product>,
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
   ) {}
 
   async create(orderDto): Promise<Order> {
@@ -35,11 +41,11 @@ export class OrderRepository {
     newOrder.orderInstructions = orderInstructions;
     newOrder.address.id = address.id;
     newOrder.formBuy = formBuy;
-    newOrder.price = total;
-    // Calculate total based on price, discounts, etc.
-    newOrder.total = total; // Or set total after calculation
+    newOrder.price = parseFloat(total.toFixed(2));
 
-    return await this.orderRepository.save(newOrder); // Save the new order
+    // Calculate total based on price, discounts, etc.
+    newOrder.total = parseFloat(total.toFixed(2));
+    return await this.orderRepository.save(newOrder);
   }
 
   async findAll(
