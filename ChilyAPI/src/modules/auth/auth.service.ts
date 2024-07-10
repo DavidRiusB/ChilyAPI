@@ -112,7 +112,7 @@ export class AuthService {
       console.log(error.detail);
     
       const match1 = error.detail.match(/Ya existe la llave \((.+?)\)=\((.+?)\)/);
-      const match2 = error.detail.match(/Key \("(.+?)"\)=\((.+?)\) already exists/);
+      const match2 = error.detail.match(/Key \((.+?)\)=\((.+?)\) already exists/);
       
       console.log("error service");
       console.log(match1, match2);
