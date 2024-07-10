@@ -12,6 +12,7 @@ import { categorySeed } from "./categories/category-seed";
 import { AddressesService } from "../addresses/addresses.service";
 import { AddressRepository } from "../addresses/addresses.repository";
 import { Address } from "../addresses/entities/addresses.entity";
+import { User } from "../user/entity/user.entity";
 
 dotenvConfig({
   path: ".env.development",
@@ -26,6 +27,8 @@ export class SeedersService implements OnModuleInit {
     private readonly productService: ProductsService,
     private readonly addressService: AddressesService,
     private readonly addressRepository: AddressRepository,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async onModuleInit() {
@@ -86,21 +89,21 @@ export class SeedersService implements OnModuleInit {
   }
 
   async seedAddresses() {
-    const addresses = await this.addressRepository.findAllAddresses();
-    if (addresses.length !== 0) {
-      console.log("[SEEDERS] Addresses already seeded");
-      return;
-    }
-
-    await this.dataSource.transaction(async (manager) => {
+    return this.dataSource.transaction(async (manager) => {
       for (const addressData of addressesData) {
-        const newAddress = new Address();
-        newAddress.id = addressData.id;
-        newAddress.address = addressData.address;
-        newAddress.location = addressData.location;
-        newAddress.note = addressData.note;
+        const user = await this.userRepository.findOne({
+          where: { id: addressData.userId },
+        });
 
-        await manager.save(newAddress);
+        if (user) {
+          const newAddress = new Address();
+          newAddress.address = addressData.address;
+          newAddress.location = addressData.location;
+          newAddress.note = addressData.note;
+          newAddress.user = user;
+
+          await manager.save(newAddress);
+        }
       }
 
       console.log("[SEEDERS] Addresses seeded Successfully.");
