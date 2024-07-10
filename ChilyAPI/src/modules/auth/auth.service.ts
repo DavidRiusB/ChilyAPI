@@ -55,8 +55,6 @@ export class AuthService {
         const newUser = new User();
         newUser.name = userData.name;
         newUser.email = userData.email;
-        newUser.NIN = userData.NIN;
-        newUser.phone = userData.phone;
         newUser.role = userData.role;
         newUser.credential = newCredential;
         await manager.save(User, newUser);
@@ -111,12 +109,20 @@ export class AuthService {
         return user;
       });
     } catch (error) {
-      if (error instanceof BadRequestException)
-        throw new BadRequestException(error);
-      console.log(error);
-      throw new InternalServerErrorException(
-        "Error inesperado al registrar usuario",
-      );
+      console.log(error.detail); // Imprimir el detalle del error exacto
+      const match = error.detail.match(/Ya existe la llave \((.+?)\)=\((.+?)\)/);
+      console.log("error service");
+      if (match) {
+        let [_, key, value] = match;
+        const translation = {
+          phone: 'télefono',
+          email: 'correo electrónico',
+        }
+        key = translation[key] || key;
+        throw new BadRequestException(`el ${key} (${value}) ya existe`);
+      } else {
+        throw error;
+      }
     }
   }
 
