@@ -23,6 +23,7 @@ import {
 import { Roles } from "src/common/decorators/roles.decorator";
 import { Role } from "src/common/enums";
 import { RolesGuard } from "src/common/guards/roles.guard";
+import { Address } from "./entities/addresses.entity";
 
 @Controller("addresses")
 @DocumentationApiTagsModule.clasification("Rutas para: Domicilios")
@@ -42,6 +43,11 @@ export class AddressesController {
   @DocumentacionObtainAddresse()
   async getUserAddress(@Query("id") id: number) {
     return await this.addressService.getUserAddress(id);
+  }
+
+  @Get("all")
+  async findAll(): Promise<Address[]> {
+    return this.addressService.findAll();
   }
 
   @Post("/add")
