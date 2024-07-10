@@ -34,5 +34,6 @@ import { CategoryService } from "../category/category.service";
     CategoryService,
   ],
   controllers: [OrderController],
+  exports: [OrderService],
 })
 export class OrderModule {}

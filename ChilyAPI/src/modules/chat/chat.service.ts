@@ -14,8 +14,10 @@ import { OrderService } from "../order/order.service";
 @Injectable()
 export class ChatService {
   constructor(
-    @InjectRepository(Chat) private chatRepository: Repository<Chat>,
-    @InjectRepository(ChatLog) private chatLogRepository: Repository<ChatLog>,
+    @InjectRepository(Chat)
+    private chatRepository: Repository<Chat>,
+    @InjectRepository(ChatLog)
+    private chatLogRepository: Repository<ChatLog>,
     private readonly orderService: OrderService,
     private readonly userService: UserService,
     private readonly dataSource: DataSource
@@ -37,7 +39,6 @@ export class ChatService {
       if (error instanceof NotFoundException) {
         throw error;
       }
-      throw new InternalServerErrorException("Failed to create chat log");
     }
   }
 
@@ -74,5 +75,25 @@ export class ChatService {
       }
       throw new InternalServerErrorException("Failed to create chat");
     }
+  }
+
+  async getChatLogByOrderId(orderId) {
+    const chatLog = await this.chatLogRepository.findOne({
+      where: { order: { id: orderId } },
+    });
+    if (!chatLog) {
+      throw new NotFoundException(
+        "`Chat Log Not Found with order id: ${orderId}`"
+      );
+    }
+    return chatLog;
+  }
+
+  async getMessages(chatLogId: number): Promise<Chat[]> {
+    const messages = await this.chatRepository
+      .createQueryBuilder("chat")
+      .where("chat.chatLogId = :chatLogId", { chatLogId })
+      .getMany();
+    return messages;
   }
 }

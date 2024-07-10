@@ -1,4 +1,4 @@
-import { Logger } from "@nestjs/common";
+import { Logger, NotFoundException } from "@nestjs/common";
 import {
   ConnectedSocket,
   MessageBody,
@@ -9,8 +9,9 @@ import {
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { ChatService } from "./chat.service";
-import { CreateMessageDto } from "./dto/message.dto";
 import { NewMessageDto } from "./dto/newMessage.dto";
+import { CreateMessageDto } from "./dto/message.dto";
+import { ChatLog } from "./entities/chatLog.entity";
 
 @WebSocketGateway({
   cors: {
@@ -34,15 +35,37 @@ export class ChatGateway implements OnGatewayInit {
 
   @SubscribeMessage("createRoom")
   async createRoom(
-    @MessageBody() orderId: number,
+    @MessageBody() chatData: CreateMessageDto,
     @ConnectedSocket() client: Socket
   ) {
-    const roomId = orderId.toString();
-    client.join(roomId);
-    this.logger.log(`Client ${client.id} created room ${roomId}`);
+    try {
+      const { orderId } = chatData;
+      let chatLog: ChatLog;
+      // Check if a ChatLog already exists for the orderId
+      try {
+        chatLog = await this.chatService.getChatLogByOrderId(orderId);
+        console.log(chatLog);
+        this.logger.log(`Existing ChatLog found for orderId ${orderId}`);
+      } catch (error) {
+        if (error instanceof NotFoundException) {
+          // Create a new ChatLog if not found
+          chatLog = await this.chatService.createChatLog(chatData);
+          console.log(chatLog);
+          this.logger.log(`New ChatLog created for orderId ${orderId}`);
+        } else {
+          throw error;
+        }
+      }
+      const roomId = orderId.toString();
+      client.join(roomId);
+      this.logger.log(`Client ${client.id} created/joined room ${roomId}`);
 
-    // Notify all clients (including admin) about the new room
-    this.server.emit("newRoom", roomId);
+      // Notify all clients (including admin) about the new room
+      this.server.emit("newRoom", roomId);
+    } catch (error) {
+      this.logger.error(`Error creating/joining room for orderId`, error);
+      throw error;
+    }
   }
 
   @SubscribeMessage("joinRoom")
