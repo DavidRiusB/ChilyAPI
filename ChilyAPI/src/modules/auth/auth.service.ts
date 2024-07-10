@@ -17,6 +17,8 @@ import { JwtService } from "@nestjs/jwt";
 import { NotificationEmailsService } from "../notifications/notificationEmails.service";
 import * as bcrypt from "bcryptjs";
 import { config as dotenvConfig } from "dotenv";
+import { RegisterAdminDTO } from "./dto/registerAdmin.dto";
+import { Role } from "src/common/enums";
 dotenvConfig({
   path: ".env.development",
 });
@@ -102,6 +104,56 @@ export class AuthService {
         await manager.save(credential);
 
         const user = await this.userService.createUser(newUserData, credential);
+        await manager.save(user);
+
+        await this.notificationEmailsService.sendRegistrationEmail(email, name);
+
+        return user;
+      });
+    }catch (error) {
+      console.log(error.detail);
+    
+      const match1 = error.detail.match(/Ya existe la llave \((.+?)\)=\((.+?)\)/);
+      const match2 = error.detail.match(/Key \((.+?)\)=\((.+?)\) already exists/);
+      
+      console.log("error service");
+      console.log(match1, match2);
+    
+      const translations = {
+        phone: 'teléfono',
+        email: 'correo electrónico',
+        NIN: 'Número de Identificación Nacional',
+      };
+    
+      const match = match1 || match2;
+    
+      if (match) {
+        console.log("Match");
+        let [_, key, value] = match;
+    
+        key = translations[key] || key;
+    
+        throw new BadRequestException(`el ${key} ${value} ya fue usado anteriormente`);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  async registerAdmin(newAdminData: RegisterAdminDTO): Promise<User> {
+    try {
+      return await this.dataSource.transaction(async (manager) => {
+        const { email, password, NIN, phone, name } = newAdminData;
+
+        const credential = await this.authRepository.createCredentials(
+          email,
+          password,
+          NIN,
+          phone,
+        );
+        await manager.save(credential);
+
+        const user = await this.userService.createUser({role: Role.Admin,...newAdminData}, credential);
         await manager.save(user);
 
         await this.notificationEmailsService.sendRegistrationEmail(email, name);

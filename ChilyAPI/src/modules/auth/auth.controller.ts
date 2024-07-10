@@ -23,6 +23,10 @@ import { LocalAuthGuard } from "./guards/local-auth.guards";
 import { Request, Response } from "express";
 import { ResetPasswordDto } from "./dto/resetPassword.dto";
 import { RequestPasswordResetDto } from "./dto/requestPasswordReset.dto";
+import { RegisterAdminDTO } from "./dto/registerAdmin.dto";
+import { RolesGuard } from "src/common/guards/roles.guard";
+import { Role } from "src/common/enums";
+import { Roles } from "src/common/decorators/roles.decorator";
 @Controller("auth")
 @DocumentationApiTagsModule.clasification("Rutas para: Autentificación")
 export class AuthController {
@@ -41,6 +45,14 @@ export class AuthController {
   @DocumentationRegister()
   async register(@Body() userData: RegisterUserDTO) {
     return await this.authService.register(userData);
+  }
+
+  @Post("admin/register")
+  @Roles(Role.SuperAdmin)
+  @UseGuards(JwtAuthGuard,RolesGuard)
+  @DocumentationLogin()
+  async registerNewAdmin(@Body() adminData: RegisterAdminDTO) {
+    return await this.authService.registerAdmin(adminData);
   }
 
   @Get("google/login")
