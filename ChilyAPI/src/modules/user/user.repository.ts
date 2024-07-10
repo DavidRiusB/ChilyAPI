@@ -49,29 +49,15 @@ export class UserRepository {
     try {
       const { email, name, phone, role = Role.User, NIN } = newUserData;
       const newUser = new User();
-      newUser.NIN = NIN;
       newUser.email = email;
       newUser.name = name;
       // newUser.address = address;
       newUser.credential = credential;
-      newUser.phone = phone;
       newUser.role = role;
       await this.userRepository.create(newUser);
       return newUser;
     } catch (error) {
-      if (error.code === "23505") {
-        const match = error.detail.match(/Key \(([^)]+)\)=\(([^)]+)\) already exists./);
-        let message = '';
-        if (match) {
-          const field = match[1];
-          const value = match[2];
-          message = `El valor '${value}' para el campo '${field}' ya está registrado.`;
-        }
-        throw new BadRequestException(message);
-      }
-      throw new InternalServerErrorException(
-        "Error inesperado al registrar al usuario, por favor intentelo de nuevo",
-      );
+      throw new BadRequestException(error);
     }
   }
 

@@ -36,9 +36,7 @@ export class UserService {
     try {
       return await this.userRepository.create(newUserData, credential);
     } catch (error) {
-      if (error instanceof BadRequestException) {
-        throw error;
-      }
+      throw error;
     }
   }
   async createUserGoogle(newUserData: UserLoginGoogleDto): Promise<User>{
