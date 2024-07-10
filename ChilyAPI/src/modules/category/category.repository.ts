@@ -23,27 +23,24 @@ export class CategoryRepository {
     //method with pagination to get categories with their products by id
     async getCategoryById(id: number[], page: number = 1, limit: number = 10): Promise<Category[]> {
         try {
-   const categories = await this.categoryRepository.find({
-        where: { id: In(id), isDeleted: false },
-        relations: ["products"],
-      });
+            const categories = await this.categoryRepository.find({
+                where: { id: In(id), isDeleted: false },
+                relations: ["products"],
+            });
 
-      if (!categories || categories.length === 0) {
-        throw new NotFoundException('Una o más categorías no existen o están eliminadas');
-      }
+            if (!categories || categories.length === 0) {
+                throw new NotFoundException('Una o más categorías no existen o están eliminadas');
+            }
 
-      categories.forEach(category => {
-        category.products = category.products.slice((page - 1) * limit, page * limit);
-      });
+            categories.forEach(category => {
+                category.products = category.products.slice((page - 1) * limit, page * limit);
+            });
 
-      return categories;
-    } catch (error) {
-        if(error instanceof NotFoundException){
-            throw error;
+            return categories;
+        } catch (error) {
+            if (error instanceof NotFoundException) throw error;
+            throw new InternalServerErrorException(error);
         }
-
-        throw new InternalServerErrorException(error);
-    }
     }
 
     async getCategoryById2(id: number, page: number, limit: number): Promise<Category> {
@@ -86,19 +83,16 @@ export class CategoryRepository {
 
     async updateCategory(id: number, updateCategory: createCategoryDto): Promise<Category> {
         try {
-            const category = new Category();
 
             const existeCategory = await this.categoryRepository.findOne({ where: { id: id, isDeleted: false } });
 
-            if (!existeCategory) throw new NotFoundException("No existe categoria con ID: " + id);
+            existeCategory.name = updateCategory.name.toUpperCase();
 
-            category.name = updateCategory.name.toUpperCase();
+            existeCategory.icon = updateCategory.icon;
 
-            category.icon = updateCategory.icon;
+            const updatedCategory = await this.categoryRepository.save(existeCategory);
 
-            const updatedCategory = await this.categoryRepository.update(id, category);
-
-            return this.categoryRepository.findOne({ where: { id: id } });
+            return updatedCategory;
         } catch (error) {
             throw new BadRequestException("Error al actualizar la categoria o la Categoria no Existe con ID: " + id);
         }
@@ -106,9 +100,8 @@ export class CategoryRepository {
 
     async deleteCategory(id: number): Promise<string> {
         try {
-            const category = await this.categoryRepository.findOne({ where: { id: id } });
             const updatedCategory = await this.categoryRepository.update(id, { isDeleted: true });
-            return updatedCategory.affected > 0 ? "Categoría eliminada" : "Categoría no encontrada"
+            return updatedCategory.affected > 0 ? "Categoría con ID:"+id+" eliminada" : "Categoría no encontrada"
         } catch (error) {
             throw new BadRequestException("Error al eliminar la categoria con ID: " + id);
         }

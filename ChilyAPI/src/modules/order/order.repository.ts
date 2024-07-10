@@ -133,21 +133,4 @@ export class OrderRepository {
     return updatedOrder;
   }
 
-  async updateStock(products: Product[]): Promise<void> {
-    try {
-      products.forEach(async (product) => {
-        const updatedProduct = await this.productRepository.save(product);
-        if (!updatedProduct) {
-          throw new NotFoundException(
-            `No se pudo actualizar el stock del producto ${product.name}`,
-          );
-        }
-      });
-    } catch (error) {
-      if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException(
-        "Hubo un error al actualizar el stock",
-      );
-    }
-  }
 }

@@ -14,7 +14,7 @@ export class ProductsRepository {
     private categoryRepository: Repository<Category>,
     private readonly dataSource: DataSource,
     private readonly categoryService: CategoryService,
-  ) {}
+  ) { }
   async getProducts(page: number, limit: number): Promise<Product[]> {
     try {
       let products = await this.productsRepository.find({
@@ -225,7 +225,7 @@ export class ProductsRepository {
       product.isDeleted = true;
       const updatedProduct = await this.productsRepository.update(id, product);
       return updatedProduct.affected > 0
-        ? "Producto dado de baja"
+        ? "Producto con ID: "+id+" dado de baja"
         : "Producto no encontrado";
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
@@ -273,7 +273,6 @@ export class ProductsRepository {
       await this.productsRepository.save(product);
       return product;
     } catch (error) {
-      if (error instanceof NotFoundException) throw error;
       throw new InternalServerErrorException(
         "Error al actualizar el producto con ID: " + id,
       );
