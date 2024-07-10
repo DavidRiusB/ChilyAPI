@@ -160,7 +160,9 @@ export class AuthService {
         user: user,
       };
     } catch (error) {
-      throw new BadRequestException(error);
+      return {
+        user: null
+      }
     }
   }
 
