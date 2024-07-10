@@ -160,7 +160,7 @@ export class AuthService {
         user: user,
       };
     } catch (error) {
-      throw new BadRequestException(error); // El correo ya fue usado anteriormente
+      throw new BadRequestException(error);
     }
   }
 

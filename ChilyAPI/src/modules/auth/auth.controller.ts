@@ -53,6 +53,10 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   @DocumentationLoginGoogle()
   loginGoogle(@Req() req: Request, @Res() res: Response) {
+    if(req.user === null) {
+      let encodedMessage = encodeURIComponent("No se pudo iniciar sesión");
+      return res.redirect(`${process.env.FRONTEND_URL}/auth/google?state=${encodedMessage}`);
+      }
     const encodedData = encodeURIComponent(JSON.stringify(req.user));
     console.log(encodedData);
 
