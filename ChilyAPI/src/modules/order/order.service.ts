@@ -40,26 +40,6 @@ export class OrderService {
     private readonly notificationEmailsService: NotificationEmailsService,
   ) {}
 
-  async findAll(
-    pagination: { page: number; limit: number },
-    filters: {
-      email?: string;
-      id?: string;
-      date?: string;
-      productName?: string;
-      price?: string;
-      status?: OrderStatus;
-    },
-  ) {
-    const orders = await this.orderRepository.findAll(pagination, filters);
-    if (!orders || orders.length === 0) {
-      console.error("No orders found");
-      return [];
-    }
-    console.log("Orders fetched:", orders);
-    return orders.map((order) => this.transformOrder(order));
-  }
-
   async addOrder(orderData: OrderDto) {
     try {
       return await this.dataSource.transaction(async (manager) => {
@@ -143,6 +123,34 @@ export class OrderService {
     }
   }
 
+  async findAll(
+    pagination: { page: number; limit: number },
+    filters: {
+      email?: string;
+      id?: string;
+      date?: string;
+      productName?: string;
+      price?: string;
+      status?: OrderStatus;
+    },
+  ) {
+    const orders = await this.orderRepository.findAll(pagination, filters);
+
+    if (!orders || orders.length === 0) {
+      console.error("No orders found");
+      return [];
+    }
+    console.log("Orders fetched:", orders);
+
+    const ordersQuantity = {
+      orders: orders.map((order) => this.transformOrder(order)),
+      total: orders.length,
+    };
+
+    // return orders.map((order) => this.transformOrder(order));
+    return ordersQuantity;
+  }
+
   private transformOrder(order: any): OrderResponseDto {
     const orderResponseDto = new OrderResponseDto();
 
@@ -213,25 +221,6 @@ export class OrderService {
     }));
     return resOrder;
   }
-
-  // async updateStatus(update: UpdateOrderDto) {
-  //   const { status, id } = update;
-  //   try {
-  //     const order = await this.findOrderById(id);
-  //     const result = await this.orderRepository.updateStatus(order, status);
-  //     if (result.affected !== 1) {
-  //       throw new InternalServerErrorException(
-  //         "Error interno del servidor al actualizar el estado de la Order",
-  //       );
-  //     }
-  //     order.status = status;
-  //     return order;
-  //   } catch (error) {
-  //     if (error instanceof NotFoundException) {
-  //       throw error;
-  //     }
-  //   }
-  // }
 
   async updateStatus(update: UpdateOrderDto): Promise<Order> {
     const { status, id } = update;
