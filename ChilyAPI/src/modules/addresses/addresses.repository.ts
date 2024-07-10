@@ -20,6 +20,10 @@ export class AddressRepository {
     private readonly dataSource: DataSource,
   ) {}
 
+  async findAllAddresses(): Promise<Address[]> {
+    return this.addressRepository.find();
+  }
+
   async getUserAddresses(id: number): Promise<Address[] | Error> {
     try {
       const address = await this.addressRepository.find({

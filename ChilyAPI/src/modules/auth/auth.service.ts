@@ -55,8 +55,6 @@ export class AuthService {
         const newUser = new User();
         newUser.name = userData.name;
         newUser.email = userData.email;
-        newUser.NIN = userData.NIN;
-        newUser.phone = userData.phone;
         newUser.role = userData.role;
         newUser.credential = newCredential;
         await manager.save(User, newUser);
@@ -110,13 +108,33 @@ export class AuthService {
 
         return user;
       });
-    } catch (error) {
-      if (error instanceof BadRequestException)
-        throw new BadRequestException(error);
-      console.log(error);
-      throw new InternalServerErrorException(
-        "Error inesperado al registrar usuario",
-      );
+    }catch (error) {
+      console.log(error.detail);
+    
+      const match1 = error.detail.match(/Ya existe la llave \((.+?)\)=\((.+?)\)/);
+      const match2 = error.detail.match(/Key \((.+?)\)=\((.+?)\) already exists/);
+      
+      console.log("error service");
+      console.log(match1, match2);
+    
+      const translations = {
+        phone: 'teléfono',
+        email: 'correo electrónico',
+        NIN: 'Número de Identificación Nacional',
+      };
+    
+      const match = match1 || match2;
+    
+      if (match) {
+        console.log("Match");
+        let [_, key, value] = match;
+    
+        key = translations[key] || key;
+    
+        throw new BadRequestException(`el ${key} ${value} ya fue usado anteriormente`);
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -142,8 +160,9 @@ export class AuthService {
         user: user,
       };
     } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(error);
+      return {
+        user: null
+      }
     }
   }
 
