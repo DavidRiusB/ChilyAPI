@@ -26,12 +26,15 @@ import { User } from "../user/entity/user.entity";
 import { OrderStatus } from "src/common/enums";
 import { Product } from "../products/products.entity";
 import { NotificationEmailsService } from "../notifications/notificationEmails.service";
+import { ProductsRepository } from "../products/products.repository";
 
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly productService: ProductsService,
+    private readonly productRepository: ProductsRepository,
+
     private readonly userService: UserService,
     private readonly addressService: AddressesService,
     private readonly orderDetailService: OrderDetailsService,
@@ -39,6 +42,89 @@ export class OrderService {
     private dataSource: DataSource,
     private readonly notificationEmailsService: NotificationEmailsService,
   ) {}
+
+  // async addOrder(orderData: OrderDto) {
+  //   try {
+  //     return await this.dataSource.transaction(async (manager) => {
+  //       const {
+  //         userId,
+  //         productsInOrder,
+  //         address,
+  //         total,
+  //         couponId,
+  //         couponDiscount,
+  //         formBuy,
+  //         orderInstructions,
+  //       } = orderData;
+
+  //       // Fetch User
+  //       const user = await this.userService.findUserById(userId);
+  //       const addressUser = await this.addressService.getUserAddress(address);
+  //       console.log("User fetched successfully:", user);
+  //       console.log("Address fetched successfully:", addressUser);
+
+  //       // Get ids from dto
+  //       const productIds = productsInOrder.map((product) => product.productId);
+
+  //       // Fetch products
+  //       console.log("AA");
+  //       let products = await this.productService.findProductsByIds(productIds);
+  //       console.log("Products fetched successfully:", products);
+
+  //       if (productsInOrder.length !== products.length) {
+  //         throw new BadRequestException("Uno o más productos no disponibles.");
+  //       }
+
+  //       // Stock control
+  //       products.forEach((product) => {
+  //         products = productsInOrder.map((element) => {
+  //           if (product.stock < element.quantity)
+  //             throw new BadRequestException("No hay sufuciente stock");
+  //           product.stock = product.stock - element.quantity;
+  //           return product;
+  //         });
+  //       });
+
+  //       await this.orderRepository.updateStock(products);
+
+  //       // Calculate shipping cost (hardcoded for now)
+  //       const newOrder = new Order();
+  //       newOrder.user = user;
+  //       newOrder.address = addressUser; // Ensure addressUser is correctly set
+  //       newOrder.total = total;
+  //       newOrder.couponId = couponId;
+  //       newOrder.couponDiscount = couponDiscount;
+  //       newOrder.formBuy = formBuy;
+  //       newOrder.orderInstructions = orderInstructions;
+  //       newOrder.date = new Date();
+
+  //       // Create Order
+  //       const createdOrder = await manager.save(newOrder);
+  //       console.log("Order created successfully:", createdOrder);
+  //       await manager.save(newOrder);
+
+  //       // Create OrderDetail entities in bulk
+  //       const orderDetails = await this.orderDetailService.createOrderDetail(
+  //         products,
+  //         newOrder,
+  //         productsInOrder,
+  //       );
+  //       console.log("Order details created successfully:", orderDetails);
+
+  //       // Save order details and order
+  //       await manager.save(OrderDetail, orderDetails);
+  //       console.log("Order details saved successfully");
+
+  //       return { newOrder: createdOrder, orderDetails };
+  //     });
+  //   } catch (error) {
+  //     if (error instanceof NotFoundException) {
+  //       throw error;
+  //     }
+  //     if (error instanceof BadRequestException) throw error;
+  //     throw new InternalServerErrorException("Unexpected error occurred");
+  //   }
+  // }
 
   async addOrder(orderData: OrderDto) {
     try {
@@ -64,7 +150,6 @@ export class OrderService {
         const productIds = productsInOrder.map((product) => product.productId);
 
         // Fetch products
-        console.log("AA");
         let products = await this.productService.findProductsByIds(productIds);
         console.log("Products fetched successfully:", products);
 
@@ -73,21 +158,23 @@ export class OrderService {
         }
 
         // Stock control
-        products.forEach((product) => {
-          products = productsInOrder.map((element) => {
-            if (product.stock < element.quantity)
-              throw new BadRequestException("No hay sufuciente stock");
-            product.stock = product.stock - element.quantity;
-            return product;
-          });
+        products = products.map((product) => {
+          const productInOrder = productsInOrder.find(
+            (p) => p.productId === product.id,
+          );
+          if (product.stock < productInOrder.quantity) {
+            throw new BadRequestException("No hay suficiente stock");
+          }
+          product.stock -= productInOrder.quantity;
+          return product;
         });
 
-        await this.orderRepository.updateStock(products);
+        await this.productRepository.updateStock(products);
 
         // Calculate shipping cost (hardcoded for now)
         const newOrder = new Order();
         newOrder.user = user;
-        newOrder.address = addressUser; // Ensure addressUser is correctly set
+        newOrder.address = addressUser;
         newOrder.total = total;
         newOrder.couponId = couponId;
         newOrder.couponDiscount = couponDiscount;
@@ -98,14 +185,21 @@ export class OrderService {
         // Create Order
         const createdOrder = await manager.save(newOrder);
         console.log("Order created successfully:", createdOrder);
-        await manager.save(newOrder);
 
         // Create OrderDetail entities in bulk
-        const orderDetails = await this.orderDetailService.createOrderDetail(
-          products,
-          newOrder,
-          productsInOrder,
-        );
+        const orderDetails = productsInOrder.map((productInOrder) => {
+          const product = products.find(
+            (p) => p.id === productInOrder.productId,
+          );
+          const orderDetail = new OrderDetail();
+          orderDetail.product = product;
+          orderDetail.order = createdOrder;
+          orderDetail.quantity = productInOrder.quantity;
+          orderDetail.price = productInOrder.price;
+          orderDetail.total = productInOrder.price * productInOrder.quantity;
+          return orderDetail;
+        });
+
         console.log("Order details created successfully:", orderDetails);
 
         // Save order details and order

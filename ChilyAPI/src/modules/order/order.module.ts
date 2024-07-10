@@ -11,17 +11,28 @@ import { AddressesModule } from "../addresses/addresses.module";
 import { GoogleMapsModule } from "../google-maps/google-maps.module";
 import { Product } from "../products/products.entity";
 import { NotificationEmailsService } from "../notifications/notificationEmails.service";
+import { ProductsRepository } from "../products/products.repository";
+import { CategoryRepository } from "../category/category.repository";
+import { Category } from "../category/category.entity";
+import { CategoryService } from "../category/category.service";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Order, Product]),
+    TypeOrmModule.forFeature([Order, Product, Category]),
     ProductsModule,
     UserModule,
     AddressesModule,
     OrderDetailsModule,
     GoogleMapsModule,
   ],
-  providers: [OrderService, OrderRepository, NotificationEmailsService],
+  providers: [
+    OrderService,
+    OrderRepository,
+    NotificationEmailsService,
+    ProductsRepository,
+    CategoryRepository,
+    CategoryService,
+  ],
   controllers: [OrderController],
 })
 export class OrderModule {}
