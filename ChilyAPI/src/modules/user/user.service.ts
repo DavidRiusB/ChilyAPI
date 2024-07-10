@@ -40,9 +40,17 @@ export class UserService {
     }
   }
   async createUserGoogle(newUserData: UserLoginGoogleDto): Promise<User>{
-    const user = await this.userRepository.findByEmail(newUserData.email);
-    if(user) return user
-    return await this.userRepository.createGoogle(newUserData);
+    try {
+      const user = await this.userRepository.findByEmail(newUserData.email);
+      if(user && user.googleAuth){ 
+        return user
+      } else if(user && !user.googleAuth){
+        throw new BadRequestException(`Ya existe un usuario con este correo`)
+      }
+      return await this.userRepository.createGoogle(newUserData);
+    } catch (error) {
+      throw error
+    }
   }
 
   async findAll(pagination: { page: number; limit: number }) {
