@@ -109,20 +109,18 @@ export class AuthService {
         return user;
       });
     }catch (error) {
-      console.log(error.detail); // Imprimir el detalle del error exacto
+      console.log(error.detail);
     
-      // Expresiones regulares para diferentes formatos de error
       const match1 = error.detail.match(/Ya existe la llave \((.+?)\)=\((.+?)\)/);
       const match2 = error.detail.match(/Key \("(.+?)"\)=\((.+?)\) already exists/);
       
       console.log("error service");
-      console.log(match1, match2); // Imprimir el resultado del match
+      console.log(match1, match2);
     
       const translations = {
         phone: 'teléfono',
         email: 'correo electrónico',
         NIN: 'Número de Identificación Nacional',
-        // Agrega más traducciones aquí si es necesario
       };
     
       const match = match1 || match2;
@@ -131,10 +129,9 @@ export class AuthService {
         console.log("Match");
         let [_, key, value] = match;
     
-        // Traduce la clave si existe en el objeto de traducción
         key = translations[key] || key;
     
-        throw new BadRequestException(`Duplicate key: ${key} with value: ${value}`);
+        throw new BadRequestException(`el ${key} ${value} ya fue usado anteriormente`);
       } else {
         throw error;
       }
