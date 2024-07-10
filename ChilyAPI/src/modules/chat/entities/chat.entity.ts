@@ -5,23 +5,25 @@ import {
   CreateDateColumn,
   ManyToOne,
 } from "typeorm";
-import { Conversations } from "./conversation.entity";
 import { User } from "src/modules/user/entity/user.entity";
+import { ChatLog } from "./chatLog.entity";
 
-@Entity()
-export class ChatMessage {
+@Entity({ name: "chats" })
+export class Chat {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  content: string;
+  @ManyToOne(() => ChatLog, (chatLog) => chatLog.chats, {
+    onDelete: "CASCADE",
+  })
+  chatLog: ChatLog;
+
+  @Column({ type: "text" })
+  text: string;
+
+  @ManyToOne(() => User, (user) => user.id, { onDelete: "SET NULL" })
+  sender: User;
 
   @CreateDateColumn()
   createdAt: Date;
-
-  @ManyToOne(() => Conversations, conversation => conversation.id, { onDelete: 'CASCADE'})
-  conversation: Conversations;
-
-  @ManyToOne(()=> User, user => user.id, { onDelete: 'SET NULL' })
-  sender: User;
 }
