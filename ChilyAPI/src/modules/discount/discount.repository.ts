@@ -94,7 +94,7 @@ export class DiscountRepository {
             return existingDiscount;
         } catch (error) {
             if(error instanceof BadRequestException) throw error
-            throw new BadRequestException("Error al agregar el descuento al usuario, este descuento se encuentra usado o eliminado")
+            throw new BadRequestException("Error al agregar el descuento al usuario, verifique los datos enviados")
         }
     }
 
@@ -117,10 +117,7 @@ export class DiscountRepository {
             if (!user) throw new BadRequestException("Error al encontrar el usuario");
             const discount = await this.discountRepository.findOne({ where: { code:code, isValid: DiscountState.CREATED },relations:["user"] })
             if (!discount) throw new BadRequestException("Error al utilizar el Descuento, Verifique los datos enviados, el descuento prodria estar usado")
-
             if (discount.user != null && discount.user.id != userId) throw new BadRequestException("Error al utilizar el descuento, este descuento ya esta registrado a nombre de otro usuario")
-
-
             discount.isValid = DiscountState.USED;
             discount.user = user;
             const updatedDiscount = await this.discountRepository.save(discount);
@@ -137,12 +134,10 @@ export class DiscountRepository {
     async deleteDiscount(id: number): Promise<String> {
         try {
             const discount = await this.discountRepository.findOne({ where: { id: id } });
-            if (!discount) throw new BadRequestException("Error al eliminar el Descuento, Verifique los datos enviados")
             discount.isValid = DiscountState.ANNULLED;
             const deletedDiscount = await this.discountRepository.update(id, discount);
-            return deletedDiscount.affected > 0 ? "Descuento dado de baja" : "Descuento no encontrado";
+            return deletedDiscount.affected > 0 ? "Descuento "+discount.code+" ha sido dado de baja" : "Descuento no encontrado";
         } catch (error) {
-            if(error instanceof BadRequestException) throw error
             throw new BadRequestException("Error al eliminar el Descuento, Verifique los datos enviados")
         }
     }
