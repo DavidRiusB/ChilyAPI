@@ -13,6 +13,10 @@ import { AddressesService } from "../addresses/addresses.service";
 import { AddressRepository } from "../addresses/addresses.repository";
 import { Address } from "../addresses/entities/addresses.entity";
 import { User } from "../user/entity/user.entity";
+import { Order } from "../order/entity/order.entity";
+import { ordersSeed } from "./orders/orders-seed";
+import { OrderDetail } from "../order-details/entity/order-details.entity";
+import { ProductsRepository } from "../products/products.repository";
 
 dotenvConfig({
   path: ".env.development",
@@ -26,9 +30,14 @@ export class SeedersService implements OnModuleInit {
     private readonly dataSource: DataSource,
     private readonly productService: ProductsService,
     private readonly addressService: AddressesService,
-    private readonly addressRepository: AddressRepository,
+    @InjectRepository(Address)
+    private readonly addressRepository: Repository<Address>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Order)
+    private orderRepository: Repository<Order>,
+    @InjectRepository(Product)
+    private productsRepository: Repository<Product>,
   ) {}
 
   async onModuleInit() {
@@ -37,6 +46,7 @@ export class SeedersService implements OnModuleInit {
 
     await this.seedProducts();
     await this.seedAddresses();
+    await this.seedOrders();
   }
 
   async seedProducts() {
@@ -108,5 +118,56 @@ export class SeedersService implements OnModuleInit {
 
       console.log("[SEEDERS] Addresses seeded Successfully.");
     });
+  }
+
+  async seedOrders() {
+    return this.dataSource
+      .transaction(async (manager) => {
+        for (const orderData of ordersSeed) {
+          const user = await this.userRepository.findOne({
+            where: { id: orderData.userId },
+          });
+
+          if (user) {
+            const newOrder = new Order();
+            newOrder.total = orderData.total;
+            newOrder.user = user;
+            newOrder.address = await this.addressRepository.findOne({
+              where: { id: orderData.addressId },
+            });
+            newOrder.couponId = orderData.couponId;
+            newOrder.couponDiscount = orderData.couponDiscount;
+            newOrder.formBuy = "efectivo";
+            newOrder.orderInstructions = orderData.orderInstructions;
+            newOrder.date = new Date(); // Assign current date
+
+            const savedOrder = await manager.save(newOrder);
+
+            for (const productInOrder of orderData.productsInOrder) {
+              const newOrderDetail = new OrderDetail();
+              newOrderDetail.order = savedOrder;
+
+              const product = await this.productsRepository.findOne({
+                where: { id: productInOrder.productId },
+              });
+
+              if (product) {
+                newOrderDetail.product = product;
+                newOrderDetail.quantity = productInOrder.quantity;
+                newOrderDetail.price = productInOrder.price;
+                newOrderDetail.total =
+                  productInOrder.quantity * productInOrder.price; // Calculate the total for this order detail
+
+                await manager.save(newOrderDetail);
+              }
+            }
+          }
+        }
+
+        console.log("[SEEDERS] Orders seeded Successfully.");
+      })
+      .catch((error) => {
+        console.error("[SEEDERS] Error seeding orders:", error);
+      });
   }
 }

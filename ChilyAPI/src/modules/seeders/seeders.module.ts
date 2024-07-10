@@ -11,12 +11,16 @@ import { AddressRepository } from "../addresses/addresses.repository";
 import { UserService } from "../user/user.service";
 import { UserRepository } from "../user/user.repository";
 import { User } from "../user/entity/user.entity";
+import { OrderRepository } from "../order/order.repository";
+import { OrderModule } from "../order/order.module";
+import { Order } from "../order/entity/order.entity";
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Product, Category, Address, User]),
+    TypeOrmModule.forFeature([Product, Category, Address, User, Order]),
     ProductsModule,
     AddressesModule,
+    OrderModule,
   ],
   providers: [
     SeedersService,
@@ -24,6 +28,7 @@ import { User } from "../user/entity/user.entity";
     AddressRepository,
     UserService,
     UserRepository,
+    OrderRepository,
   ],
 })
 export class SeedersModule {}
