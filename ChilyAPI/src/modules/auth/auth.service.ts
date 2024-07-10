@@ -148,8 +148,7 @@ export class AuthService {
         user: user,
       };
     } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(error);
+      throw new BadRequestException(error); // El correo ya fue usado anteriormente
     }
   }
 
