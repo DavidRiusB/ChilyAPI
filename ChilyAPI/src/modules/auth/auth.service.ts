@@ -10,7 +10,7 @@ import { UserService } from "../user/user.service";
 import { DataSource, EntityManager } from "typeorm";
 import { User } from "../user/entity/user.entity";
 import { usersSeed } from "./users-seed";
-import { hashPassword } from "src/utils/hashing/bcrypt.utils";
+import { hashPassword, validateUserPasword } from "src/utils/hashing/bcrypt.utils";
 import { Credential } from "./entities/auth.entity";
 import { UserLoginGoogleDto } from "./dto/loginGoogle.dto";
 import { JwtService } from "@nestjs/jwt";
@@ -19,6 +19,7 @@ import * as bcrypt from "bcryptjs";
 import { config as dotenvConfig } from "dotenv";
 import { RegisterAdminDTO } from "./dto/registerAdmin.dto";
 import { Role } from "src/common/enums";
+import { PasswordDto } from "./dto/password.dto";
 dotenvConfig({
   path: ".env.development",
 });
@@ -267,6 +268,22 @@ export class AuthService {
     } catch (error) {
       console.error(`Error during password reset: ${error.message}`);
       throw new BadRequestException("Token invalido o expirado");
+    }
+  }
+  async changePassword(data: PasswordDto) {
+    try {
+      const user = await this.userService.findUserById(data.userId);
+      const validateUser = await this.validateUser(user.email, data.oldPassword);
+      if (!validateUser) {
+        throw new BadRequestException("La contraseña es incorrecta");
+      }
+      if(data.newPassword === data.oldPassword) {
+        throw new BadRequestException("La nueva contraseña no puede ser la misma que la anterior");
+      }
+      await this.authRepository.updatePassword(data.userId, data.newPassword);
+      return user;
+    } catch (error) {
+      throw error;
     }
   }
 }

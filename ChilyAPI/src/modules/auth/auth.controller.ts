@@ -28,6 +28,7 @@ import { RegisterAdminDTO } from "./dto/registerAdmin.dto";
 import { RolesGuard } from "src/common/guards/roles.guard";
 import { Role } from "src/common/enums";
 import { Roles } from "src/common/decorators/roles.decorator";
+import { PasswordDto } from "./dto/password.dto";
 @Controller("auth")
 @DocumentationApiTagsModule.clasification("Rutas para: Autentificación")
 export class AuthController {
@@ -94,5 +95,11 @@ export class AuthController {
   @DocumentationResetPassword()
   async resetPassword(@Body() { token, newPassword }: ResetPasswordDto) {
     return this.authService.resetPassword(token, newPassword);
+  }
+
+  @Post("password")
+  @UseGuards(JwtAuthGuard)
+  async changePassword(@Body() data: PasswordDto) {
+    return await this.authService.changePassword(data);
   }
 }
