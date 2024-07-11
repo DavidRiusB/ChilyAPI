@@ -9,10 +9,11 @@ import {
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "./guards/jwt.guard";
-import { UserLoginDTO } from "./dto/login.dto";
+
 import { RegisterUserDTO } from "./dto/register.dto";
 import {
   DocumentationApiTagsModule,
+  DocumentationExcludeController,
   DocumentationLoginGoogle,
   DocumentationRequestPasswordReset,
   DocumentationResetPassword,
@@ -49,7 +50,7 @@ export class AuthController {
 
   @Post("admin/register")
   @Roles(Role.SuperAdmin)
-  @UseGuards(JwtAuthGuard,RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @DocumentationLogin()
   async registerNewAdmin(@Body() adminData: RegisterAdminDTO) {
     return await this.authService.registerAdmin(adminData);
@@ -61,14 +62,17 @@ export class AuthController {
   googleLogin() {
     return { msg: "Redirigiendo" };
   }
+
   @Get("google/redirect")
   @UseGuards(GoogleAuthGuard)
-  @DocumentationLoginGoogle()
+  @DocumentationExcludeController()
   loginGoogle(@Req() req: Request, @Res() res: Response) {
-    if(req.user === null) {
+    if (req.user === null) {
       let encodedMessage = encodeURIComponent("No se pudo iniciar sesión");
-      return res.redirect(`${process.env.FRONTEND_URL}/auth/google?state=${encodedMessage}`);
-      }
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/auth/google?state=${encodedMessage}`,
+      );
+    }
     const encodedData = encodeURIComponent(JSON.stringify(req.user));
     console.log(encodedData);
 
@@ -81,14 +85,14 @@ export class AuthController {
   }
 
   @Post("request-password-reset")
+  @DocumentationRequestPasswordReset()
   async requestPasswordReset(@Body() { email }: RequestPasswordResetDto) {
     return this.authService.requestPasswordReset(email);
   }
 
   @Post("reset-password")
-  async resetPassword(
-    @Body() { token, newPassword }: ResetPasswordDto,
-  ) {
+  @DocumentationResetPassword()
+  async resetPassword(@Body() { token, newPassword }: ResetPasswordDto) {
     return this.authService.resetPassword(token, newPassword);
   }
 }
