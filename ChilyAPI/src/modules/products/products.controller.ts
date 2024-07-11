@@ -15,6 +15,7 @@ import {
   Query,
   Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { createProductDto, UpdateProductDto } from "./createProduct.dto";
@@ -34,6 +35,10 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { QueryFilterInterceptor } from "src/common/interceptors/queryFilter.interceptor";
 import { QueryProductInterceptor } from "src/common/interceptors/queryProduct.interceptor";
 import { UploadService } from "../upload/upload.service";
+import { Role } from "src/common/enums";
+import { Roles } from "src/common/decorators/roles.decorator";
+import { JwtAuthGuard } from "../auth/guards/jwt.guard";
+import { RolesGuard } from "src/common/guards/roles.guard";
 
 @Controller("products")
 @DocumentationApiTagsModule.clasification("Rutas para: Productos")
@@ -78,6 +83,8 @@ export class ProductsController {
 
   @Post("create")
   @DocumentationAddProduct()
+  //@Roles(Role.SuperAdmin)
+  //@UseGuards(JwtAuthGuard, RolesGuard)
   async createProduct(
     @Body() createProduct: createProductDto,
   ): Promise<Product> {
@@ -87,6 +94,8 @@ export class ProductsController {
 
   @Put("update/:id")
   @DocumentationUpdateProduct()
+  //@Roles(Role.SuperAdmin,Role.Admin)
+  //@UseGuards(JwtAuthGuard, RolesGuard)
   updateProduct(
     @Param("id") id: number,
     @Body() updateProduct: UpdateProductDto
@@ -99,6 +108,8 @@ export class ProductsController {
   }
 
   @Put("popular")
+  //@Roles(Role.SuperAdmin, Role.Admin)
+  //@UseGuards(JwtAuthGuard, RolesGuard)
   updateIsPopular(@Query("id") id:string, @Query("status") status:string){
     return this.productsService.productIsPopular(Number(id),status);
   }
@@ -118,6 +129,8 @@ export class ProductsController {
 
   @Delete("delete/:id")
   @DocumentationDeleteProduct()
+  //@Roles(Role.SuperAdmin)
+  //@UseGuards(JwtAuthGuard, RolesGuard)
   deleteProduct(@Param("id") id: number): Promise<string> {
     const deletedProduct = this.productsService.deleteProduct(id);
     return deletedProduct;

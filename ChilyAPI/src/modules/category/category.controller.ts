@@ -8,6 +8,7 @@ import {
   Put,
   Query,
   Req,
+  UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { CategoryService } from "./category.service";
@@ -23,6 +24,10 @@ import {
   DocumentationUpdateCategory,
 } from "src/docs";
 import { QueryInterceptor } from "src/common/interceptors/query.interceptor";
+import { Role } from "src/common/enums";
+import { Roles } from "src/common/decorators/roles.decorator";
+import { JwtAuthGuard } from "../auth/guards/jwt.guard";
+import { RolesGuard } from "src/common/guards/roles.guard";
 
 @Controller("category")
 @DocumentationApiTagsModule.clasification("Rutas para: Categorías")
@@ -60,12 +65,16 @@ export class CategoryController {
 
   @Post("create")
   @DocumentationCreateCategory()
+  //@Roles(Role.SuperAdmin)
+  //@UseGuards(JwtAuthGuard, RolesGuard)
   createCategory(@Body() createCategoryDto: createCategoryDto) {
     return this.categoryService.createCategory(createCategoryDto);
   }
 
   @Put("update/:id")
   @DocumentationUpdateCategory()
+  //@Roles(Role.SuperAdmin)
+  //@UseGuards(JwtAuthGuard, RolesGuard)
   updateCategory(
     @Param("id") id: number,
     @Body() updateCategoryDto: createCategoryDto,
@@ -75,6 +84,8 @@ export class CategoryController {
 
   @Delete("delete/:id")
   @DocumentationDeleteCategory()
+  //@Roles(Role.SuperAdmin)
+  //@UseGuards(JwtAuthGuard, RolesGuard)
   deleteCategory(@Param("id") id: number) {
     return this.categoryService.deleteCategory(id);
   }
