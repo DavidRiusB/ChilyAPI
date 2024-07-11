@@ -1,12 +1,11 @@
 // Global config
 export * from "./swagger.config";
 export * from "./docs-api-tags-module";
-
+export * from "./excludeController";
 // Auth
 export * from "./doc-auth-module/docs-endpoint-auth";
 export * from "./doc-auth-module/docs-user-login-dto";
 export * from "./doc-auth-module/docs-user-register-dto";
-
 // Products
 export * from "./doc-products-module/docs-endpoint-products";
 export * from "./doc-products-module/docs-products-create-dto";
