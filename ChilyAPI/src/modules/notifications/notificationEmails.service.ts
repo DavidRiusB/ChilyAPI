@@ -13,6 +13,7 @@ import {
   UsedDiscountMailTemplate,
   passwordChangeSuccessTemplate,
   OrderStatusUpdateTemplate,
+  orderConfirmationMailTemplate,
 } from "./texts";
 
 @Injectable()
@@ -131,6 +132,27 @@ export class NotificationEmailsService {
       html: emailContent,
     };
 
+    await this.sendEmail(mailOptions);
+  }
+
+  async sendOrderConfirmationEmail(
+    email: string,
+    username: string,
+    orderId: string,
+    orderDetails: any[],
+    total: number,
+  ): Promise<void> {
+    const mailOptions = {
+      from: process.env.NOTIFICATIONS_EMAIL_USER,
+      to: email,
+      subject: "Confirmación de tu orden en Chily",
+      html: orderConfirmationMailTemplate(
+        username,
+        orderId,
+        orderDetails,
+        total,
+      ),
+    };
     await this.sendEmail(mailOptions);
   }
 }

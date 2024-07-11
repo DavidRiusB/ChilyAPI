@@ -123,6 +123,14 @@ export class OrderService {
         await manager.save(OrderDetail, orderDetails);
         console.log("Order details saved successfully");
 
+       await this.notificationEmailsService.sendOrderConfirmationEmail(
+         user.email,
+         user.name,
+         createdOrder.id.toString(),
+         orderDetails,
+         total,
+       );
+
         return { newOrder: createdOrder, orderDetails };
       });
     } catch (error) {
