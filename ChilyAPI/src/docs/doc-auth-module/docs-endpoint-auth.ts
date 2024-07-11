@@ -1,14 +1,25 @@
-import { applyDecorators } from "@nestjs/common";
-import { ApiOperation, ApiProperty, ApiResponse } from "@nestjs/swagger";
+import { applyDecorators, UseGuards } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOAuth2,
+  ApiOperation,
+  ApiProperty,
+  ApiResponse,
+} from "@nestjs/swagger";
+import { UserLoginDTO } from "src/modules/auth/dto/login.dto";
 
 export function DocumentationLogin() {
   return applyDecorators(
     ApiOperation({ summary: "Iniciar sesión" }),
+    ApiBody({ type: UserLoginDTO }),
     ApiResponse({ status: 200, description: "Inicio de sesión exitoso." }),
     ApiResponse({
       status: 401,
       description: "Correo eletrónico o contraseña incorrectos",
     }),
+    // ApiBearerAuth(),
   );
 }
 
@@ -26,7 +37,7 @@ export function DocumentationRegister() {
 
 export function DocumentationLoginGoogle() {
   return applyDecorators(
-    ApiOperation({ summary: "Login con Google" }),
+    ApiOperation({ summary: "Iniciar sesión con Google" }),
     ApiResponse({
       status: 200,
       description: "Login exitoso",
@@ -40,26 +51,6 @@ export function DocumentationLoginGoogle() {
       description: "Datos de entrada inválidos",
     }),
   );
-}
-
-export class DocumentationUserLoginGoogleDto {
-  static email() {
-    return applyDecorators(
-      ApiProperty({
-        description: "Correo electrónico del usuario",
-        example: "googlegerente@dondechily.com",
-      }),
-    );
-  }
-
-  static names() {
-    return applyDecorators(
-      ApiProperty({
-        description: "Nombre del usuario",
-        example: "Gerente Juan",
-      }),
-    );
-  }
 }
 
 export function DocumentationRequestPasswordReset() {

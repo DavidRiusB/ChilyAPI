@@ -1,3 +1,4 @@
+// Vendors
 import {
   BadRequestException,
   ForbiddenException,
@@ -5,126 +6,47 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from "@nestjs/common";
-import { OrderRepository } from "./order.repository";
-import { OrderDto, ProductsInOrder } from "./dto/order.dto";
 import { DataSource } from "typeorm";
+
+// Services
 import { ProductsService } from "../products/products.service";
 import { UserService } from "../user/user.service";
-import { discountCalculator } from "src/common/middlewares/discountCalculator";
-import { Order } from "./entity/order.entity";
-import { OrderDetailsService } from "../order-details/order-details.service";
-import { OrderDetail } from "../order-details/entity/order-details.entity";
-import { UpdateOrderDto } from "./dto/update-order.dto";
 import { AddressesService } from "../addresses/addresses.service";
-import { GoogleMapsService } from "../google-maps/google-maps.service";
-import { TravelMode } from "@googlemaps/google-maps-services-js";
-import { EstimatedTime } from "../google-maps/dto/estimatedTime.dto";
-import { ResOrderDto } from "./dto/resOrder.dto";
-import { OrderResponseDto } from "./dto/order-respose-admin.dto";
-import { map } from "rxjs";
-import { User } from "../user/entity/user.entity";
-import { OrderStatus } from "src/common/enums";
-import { Product } from "../products/products.entity";
 import { NotificationEmailsService } from "../notifications/notificationEmails.service";
+
+// Reposities
+import { OrderRepository } from "./order.repository";
 import { ProductsRepository } from "../products/products.repository";
 
+// Dtos
+import { OrderDto, ProductsInOrder } from "./dto/order.dto";
+import { UpdateOrderDto } from "./dto/update-order.dto";
+import { ResOrderDto } from "./dto/resOrder.dto";
+import { OrderResponseDto } from "./dto/order-respose-admin.dto";
+
+// Entities
+import { Order } from "./entity/order.entity";
+import { OrderDetail } from "../order-details/entity/order-details.entity";
+
+// Enum
+import { OrderStatus } from "src/common/enums";
+
+import { Response } from "express";
+import { PdfService } from "src/common/helpers/pdf/pdf.service";
+import { RemovePropertiesInterceptor } from "src/common/interceptors";
+import { PdfDataDto } from "src/common/helpers/pdf/pdf.dto";
 @Injectable()
 export class OrderService {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly productService: ProductsService,
     private readonly productRepository: ProductsRepository,
-
     private readonly userService: UserService,
     private readonly addressService: AddressesService,
-    private readonly orderDetailService: OrderDetailsService,
-    private readonly googleMapsService: GoogleMapsService,
     private dataSource: DataSource,
     private readonly notificationEmailsService: NotificationEmailsService,
+    private readonly pdfService: PdfService
   ) {}
-
-  // async addOrder(orderData: OrderDto) {
-  //   try {
-  //     return await this.dataSource.transaction(async (manager) => {
-  //       const {
-  //         userId,
-  //         productsInOrder,
-  //         address,
-  //         total,
-  //         couponId,
-  //         couponDiscount,
-  //         formBuy,
-  //         orderInstructions,
-  //       } = orderData;
-
-  //       // Fetch User
-  //       const user = await this.userService.findUserById(userId);
-  //       const addressUser = await this.addressService.getUserAddress(address);
-  //       console.log("User fetched successfully:", user);
-  //       console.log("Address fetched successfully:", addressUser);
-
-  //       // Get ids from dto
-  //       const productIds = productsInOrder.map((product) => product.productId);
-
-  //       // Fetch products
-  //       console.log("AA");
-  //       let products = await this.productService.findProductsByIds(productIds);
-  //       console.log("Products fetched successfully:", products);
-
-  //       if (productsInOrder.length !== products.length) {
-  //         throw new BadRequestException("Uno o más productos no disponibles.");
-  //       }
-
-  //       // Stock control
-  //       products.forEach((product) => {
-  //         products = productsInOrder.map((element) => {
-  //           if (product.stock < element.quantity)
-  //             throw new BadRequestException("No hay sufuciente stock");
-  //           product.stock = product.stock - element.quantity;
-  //           return product;
-  //         });
-  //       });
-
-  //       await this.orderRepository.updateStock(products);
-
-  //       // Calculate shipping cost (hardcoded for now)
-  //       const newOrder = new Order();
-  //       newOrder.user = user;
-  //       newOrder.address = addressUser; // Ensure addressUser is correctly set
-  //       newOrder.total = total;
-  //       newOrder.couponId = couponId;
-  //       newOrder.couponDiscount = couponDiscount;
-  //       newOrder.formBuy = formBuy;
-  //       newOrder.orderInstructions = orderInstructions;
-  //       newOrder.date = new Date();
-
-  //       // Create Order
-  //       const createdOrder = await manager.save(newOrder);
-  //       console.log("Order created successfully:", createdOrder);
-  //       await manager.save(newOrder);
-
-  //       // Create OrderDetail entities in bulk
-  //       const orderDetails = await this.orderDetailService.createOrderDetail(
-  //         products,
-  //         newOrder,
-  //         productsInOrder,
-  //       );
-  //       console.log("Order details created successfully:", orderDetails);
-
-  //       // Save order details and order
-  //       await manager.save(OrderDetail, orderDetails);
-  //       console.log("Order details saved successfully");
-
-  //       return { newOrder: createdOrder, orderDetails };
-  //     });
-  //   } catch (error) {
-  //     if (error instanceof NotFoundException) {
-  //       throw error;
-  //     }
-  //     if (error instanceof BadRequestException) throw error;
-  //     throw new InternalServerErrorException("Unexpected error occurred");
-  //   }
-  // }
 
   async addOrder(orderData: OrderDto) {
     try {
@@ -171,7 +93,7 @@ export class OrderService {
 
         await this.productRepository.updateStock(products);
 
-        // Calculate shipping cost (hardcoded for now)
+        // Calculate shipping cost
         const newOrder = new Order();
         newOrder.user = user;
         newOrder.address = addressUser;
@@ -205,6 +127,14 @@ export class OrderService {
         // Save order details and order
         await manager.save(OrderDetail, orderDetails);
         console.log("Order details saved successfully");
+
+       await this.notificationEmailsService.sendOrderConfirmationEmail(
+         user.email,
+         user.name,
+         createdOrder.id.toString(),
+         orderDetails,
+         total,
+       );
 
         return { newOrder: createdOrder, orderDetails };
       });
@@ -241,7 +171,6 @@ export class OrderService {
       total: orders.length,
     };
 
-    // return orders.map((order) => this.transformOrder(order));
     return ordersQuantity;
   }
 
@@ -306,7 +235,7 @@ export class OrderService {
     resOrder.status = order.status;
     resOrder.total = order.total;
     resOrder.formBuy = order.formBuy;
-    resOrder.address = order.address; // Asumiendo que `order.address` ya es del tipo `Address`
+    resOrder.address = order.address;
     resOrder.details = order.details.map((detail) => ({
       productId: detail.product.id,
       name: detail.product.name,
@@ -345,36 +274,20 @@ export class OrderService {
       );
     }
   }
-
-  // async getEstimatedTimeFromOrder(id: number) {
-  //   const order = await this.findOrderById(id);
-  //   const address = await this.addressService.getUserAddress(order.user.id);
-  //   console.log(address);
-  //   const convertAddressToGeometrySource =
-  //     await this.googleMapsService.convertAddressToLatLng(process.env.ADDRESS);
-
-  //   const convertToGeometryDestination =
-  //     await this.googleMapsService.convertAddressToLatLng(
-  //       `${address.city}, ${address.address}`,
-  //     );
-
-  //   let request: EstimatedTime = {
-  //     origin: {
-  //       lat: convertAddressToGeometrySource.lat,
-  //       lng: convertAddressToGeometrySource.lng,
-  //     },
-  //     destination: {
-  //       lat: convertToGeometryDestination.lat,
-  //       lng: convertToGeometryDestination.lng,
-  //     },
-  //     mode: TravelMode.driving,
-  //   };
-  //   const estimatedTime =
-  //     await this.googleMapsService.getEstimatedTime(request);
-
-  //   return {
-  //     order,
-  //     estimatedTime,
-  //   };
-  // }
+  async generatePdf(id: number, res: Response) {
+    const order = await this.findOrderById(id);
+    console.log(order)
+    const data: PdfDataDto = {
+      order: order.details.map((detail) => ({
+        name: detail.product.name,
+        quantity: detail.quantity,
+        price: detail.price,
+      })),
+      totalPrice: order.total,
+      email: order.user.email,
+      username: order.user.name,
+    };
+    const pdf = await this.pdfService.generatePdf(data, res);
+    return pdf;
+  }
 }

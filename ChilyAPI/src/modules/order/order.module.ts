@@ -15,6 +15,7 @@ import { ProductsRepository } from "../products/products.repository";
 import { CategoryRepository } from "../category/category.repository";
 import { Category } from "../category/category.entity";
 import { CategoryService } from "../category/category.service";
+import { PdfService } from "src/common/helpers/pdf/pdf.service";
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CategoryService } from "../category/category.service";
     ProductsRepository,
     CategoryRepository,
     CategoryService,
+    PdfService
   ],
   controllers: [OrderController],
   exports: [OrderService],

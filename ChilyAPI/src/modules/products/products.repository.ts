@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, BadRequestException } from "@nestjs/common";
 import { Between, DataSource, In, Raw, Repository } from "typeorm";
 import { Product } from "./products.entity";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -14,7 +14,7 @@ export class ProductsRepository {
     private categoryRepository: Repository<Category>,
     private readonly dataSource: DataSource,
     private readonly categoryService: CategoryService,
-  ) {}
+  ) { }
   async getProducts(page: number, limit: number): Promise<Product[]> {
     try {
       let products = await this.productsRepository.find({
@@ -225,7 +225,7 @@ export class ProductsRepository {
       product.isDeleted = true;
       const updatedProduct = await this.productsRepository.update(id, product);
       return updatedProduct.affected > 0
-        ? "Producto dado de baja"
+        ? "Producto con ID: "+id+" dado de baja"
         : "Producto no encontrado";
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
@@ -268,12 +268,18 @@ export class ProductsRepository {
 
   async productIsPopular(id: number, status: string): Promise<Product> {
     try {
+      let aux:boolean;
       const product = await this.getProductById(id);
-      status ? (product.isPopular = true) : (product.isPopular = false);
+      switch(status.toLowerCase()){
+        case "true":aux =true;break;
+        case "false": aux=false;break;
+        default: throw new BadRequestException("Verifique los datos enviados");
+      }
+      aux ? (product.isPopular = true) : (product.isPopular = false);
       await this.productsRepository.save(product);
       return product;
     } catch (error) {
-      if (error instanceof NotFoundException) throw error;
+      if(error instanceof BadRequestException)throw error;
       throw new InternalServerErrorException(
         "Error al actualizar el producto con ID: " + id,
       );

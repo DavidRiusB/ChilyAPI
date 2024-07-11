@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UseGuards,
 } from "@nestjs/common";
 
@@ -19,7 +20,7 @@ import { JwtAuthGuard } from "../auth/guards/jwt.guard";
 // Dtos
 import { OrderDto } from "./dto/order.dto";
 import { UpdateOrderDto } from "./dto/update-order.dto";
-
+import { Response } from "express";
 // Documentation
 import {
   DocumentationApiTagsModule,
@@ -74,6 +75,15 @@ export class OrderController {
     return await this.orderService.updateStatus(update);
   }
 
+  @Get("/generate-pdf/:id")
+  async generatePdf(@Param("id") id: number, @Res() res: Response) {
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `inline; filename="order-${id}.pdf"`,
+    )
+    return await this.orderService.generatePdf(id, res);
+  }
 
   // @Get("/order/estimated")
   // @DocumentationObtainEstimatedTime()

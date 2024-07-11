@@ -20,6 +20,7 @@ import { DiscountModule } from "./modules/discount/discount.module";
 import { GoogleMapsModule } from "./modules/google-maps/google-maps.module";
 import { PaymentsModule } from "./modules/payments/payments.module";
 import { ChatModule } from "./modules/chat/chat.module";
+import { PdfService } from "./common/helpers/pdf/pdf.service";
 
 @Module({
   imports: [
@@ -51,6 +52,6 @@ import { ChatModule } from "./modules/chat/chat.module";
     ChatModule
   ],
   controllers: [],
-  providers: [NotificationEmailsService],
+  providers: [NotificationEmailsService, PdfService],
 })
 export class AppModule {}

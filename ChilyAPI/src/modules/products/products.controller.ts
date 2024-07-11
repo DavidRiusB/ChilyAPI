@@ -98,6 +98,11 @@ export class ProductsController {
     return updatedProduct;
   }
 
+  @Put("popular")
+  updateIsPopular(@Query("id") id:string, @Query("status") status:string){
+    return this.productsService.productIsPopular(Number(id),status);
+  }
+
   /*@Put("available")
   @DocumentationAvailableOrUnavaliableProduct()
   availableOrUnavaliableProduct(
