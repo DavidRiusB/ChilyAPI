@@ -270,13 +270,12 @@ export class AuthService {
       throw new BadRequestException("Token invalido o expirado");
     }
   }
+
   async changePassword(data: PasswordDto) {
     try {
       const user = await this.userService.findUserById(data.userId);
-      const validateUser = await this.validateUser(user.email, data.oldPassword);
-      if (!validateUser) {
-        throw new BadRequestException("La contraseña es incorrecta");
-      }
+      await this.validateUser(user.email, data.oldPassword);
+
       if(data.newPassword === data.oldPassword) {
         throw new BadRequestException("La nueva contraseña no puede ser la misma que la anterior");
       }
