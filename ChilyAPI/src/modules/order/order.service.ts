@@ -31,6 +31,10 @@ import { OrderDetail } from "../order-details/entity/order-details.entity";
 // Enum
 import { OrderStatus } from "src/common/enums";
 
+import { Response } from "express";
+import { PdfService } from "src/common/helpers/pdf/pdf.service";
+import { RemovePropertiesInterceptor } from "src/common/interceptors";
+import { PdfDataDto } from "src/common/helpers/pdf/pdf.dto";
 @Injectable()
 export class OrderService {
   constructor(
@@ -41,6 +45,7 @@ export class OrderService {
     private readonly addressService: AddressesService,
     private dataSource: DataSource,
     private readonly notificationEmailsService: NotificationEmailsService,
+    private readonly pdfService: PdfService
   ) {}
 
   async addOrder(orderData: OrderDto) {
@@ -268,5 +273,21 @@ export class OrderService {
         "Error al actualizar el estado de la Order",
       );
     }
+  }
+  async generatePdf(id: number, res: Response) {
+    const order = await this.findOrderById(id);
+    console.log(order)
+    const data: PdfDataDto = {
+      order: order.details.map((detail) => ({
+        name: detail.product.name,
+        quantity: detail.quantity,
+        price: detail.price,
+      })),
+      totalPrice: order.total,
+      email: order.user.email,
+      username: order.user.name,
+    };
+    const pdf = await this.pdfService.generatePdf(data, res);
+    return pdf;
   }
 }

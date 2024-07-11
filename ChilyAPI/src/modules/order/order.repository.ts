@@ -99,7 +99,7 @@ export class OrderRepository {
   async findById(id: number): Promise<Order | null> {
     return await this.orderRepository.findOne({
       where: { id },
-      relations: ["user", "details"],
+      relations: ["user", "details", "details.product"],
     });
   }
 
