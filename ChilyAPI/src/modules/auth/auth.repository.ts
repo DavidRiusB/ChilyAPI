@@ -93,7 +93,7 @@ export class AuthRepository {
     return credential;
   }
 
-  async updatePassword(id: string, newPassword: string) {
+  async updatePassword(id: number, newPassword: string) {
     try {
       const hashedPassword = await hashPassword(newPassword);
       const updateResult = await this.credentialRepository.update(id, {
