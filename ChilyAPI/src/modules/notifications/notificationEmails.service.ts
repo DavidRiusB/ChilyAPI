@@ -1,5 +1,5 @@
 // Vendors
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import * as nodemailer from "nodemailer";
 import { config as dotenvConfig } from "dotenv";
 dotenvConfig({ path: ".env.development" });

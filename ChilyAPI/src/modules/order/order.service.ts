@@ -1,7 +1,6 @@
 // Vendors
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -33,7 +32,6 @@ import { OrderStatus } from "src/common/enums";
 
 import { Response } from "express";
 import { PdfService } from "src/common/helpers/pdf/pdf.service";
-import { RemovePropertiesInterceptor } from "src/common/interceptors";
 import { PdfDataDto } from "src/common/helpers/pdf/pdf.dto";
 @Injectable()
 export class OrderService {
