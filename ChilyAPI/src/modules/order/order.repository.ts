@@ -11,6 +11,18 @@ import { Order } from "./entity/order.entity";
 import { OrderStatus } from "src/common/enums";
 import { Product } from "../products/products.entity";
 
+interface OrderPagination {
+  page: number;
+  limit: number;
+}
+
+interface OrderFilters {
+  email?: string;
+  id?: string;
+  date?: string;
+  productName?: string;
+  status?: OrderStatus;
+}
 @Injectable()
 export class OrderRepository {
   constructor(
@@ -48,6 +60,90 @@ export class OrderRepository {
     return await this.orderRepository.save(newOrder);
   }
 
+  // async findAll(
+  //   pagination: { page: number; limit: number },
+  //   filters: {
+  //     email?: string;
+  //     id?: string;
+  //     date?: string;
+  //     productName?: string;
+  //     status?: OrderStatus;
+  //   },
+  // ) {
+  //   const { page, limit } = pagination;
+
+  //   let query = this.orderRepository
+  //     .createQueryBuilder("order")
+  //     .leftJoinAndSelect("order.user", "user")
+  //     .leftJoinAndSelect("order.details", "orderDetail")
+  //     .leftJoinAndSelect("orderDetail.product", "product");
+
+  //   // Aplicar filtros
+  //   if (filters.email) {
+  //     query = query.andWhere("LOWER(user.email) LIKE LOWER(:email)", {
+  //       email: `%${filters.email}%`,
+  //     });
+  //   }
+  //   if (filters.id) {
+  //     query = query.andWhere("order.id = :id", { id: filters.id });
+  //   }
+  //   if (filters.date) {
+  //     query = query.andWhere("order.date = :date", { date: filters.date });
+  //   }
+  //   if (filters.productName) {
+  //     query = query.andWhere("LOWER(product.name) LIKE LOWER(:productName)", {
+  //       productName: `%${filters.productName}%`,
+  //     });
+  //   }
+  //   if (filters.status) {
+  //     query = query.andWhere("order.status = :status", {
+  //       status: filters.status,
+  //     });
+  //   }
+
+  //   // Aplicar paginación
+  //   query = query.skip((page - 1) * limit).take(limit);
+
+  //   const orders = await query.getMany();
+  //   return orders;
+  // }
+
+  // async countOrders(filters: {
+  //   email?: string;
+  //   id?: string;
+  //   date?: string;
+  //   productName?: string;
+  //   status?: OrderStatus;
+  // }) {
+  //   const { email, id, date, productName, status } = filters;
+
+  //   let query = this.orderRepository
+  //     .createQueryBuilder("order")
+  //     .leftJoin("order.user", "user")
+  //     .leftJoin("order.details", "orderDetail")
+  //     .leftJoin("orderDetail.product", "product");
+
+  //   if (email) {
+  //     query = query.andWhere("user.email = :email", { email });
+  //   }
+  //   if (id) {
+  //     query = query.andWhere("order.id = :id", { id });
+  //   }
+  //   if (date) {
+  //     query = query.andWhere("order.date = :date", { date });
+  //   }
+  //   if (productName) {
+  //     query = query.andWhere("product.name LIKE :productName", {
+  //       productName: `%${productName}%`,
+  //     });
+  //   }
+  //   if (status) {
+  //     query = query.andWhere("order.status = :status", { status });
+  //   }
+
+  //   return await query.getCount();
+  // }
+
   async findAll(
     pagination: { page: number; limit: number },
     filters: {
@@ -55,37 +151,59 @@ export class OrderRepository {
       id?: string;
       date?: string;
       productName?: string;
-      price?: string;
       status?: OrderStatus;
     },
   ) {
     const { page, limit } = pagination;
-    const offset = (page - 1) * limit;
 
     let query = this.orderRepository
       .createQueryBuilder("order")
       .leftJoinAndSelect("order.user", "user")
       .leftJoinAndSelect("order.details", "orderDetail")
       .leftJoinAndSelect("orderDetail.product", "product")
-      .skip(offset)
+      .skip((page - 1) * limit)
       .take(limit);
 
     if (filters.email) {
-      query = query.andWhere("user.email = :email", { email: filters.email });
+      query = query.andWhere("LOWER(user.email) LIKE LOWER(:email)", {
+        email: `%${filters.email}%`,
+      });
     }
     if (filters.id) {
       query = query.andWhere("order.id = :id", { id: filters.id });
     }
     if (filters.date) {
-      query = query.andWhere("order.date = :date", { date: filters.date });
+      const dateParts = filters.date.split("-");
+      if (dateParts.length === 1) {
+        // Only year is provided
+        query = query.andWhere('EXTRACT(YEAR FROM "order".date) = :year', {
+          year: dateParts[0],
+        });
+      } else if (dateParts.length === 2) {
+        // Year and month are provided
+        query = query.andWhere(
+          'EXTRACT(YEAR FROM "order".date) = :year AND EXTRACT(MONTH FROM "order".date) = :month',
+          {
+            year: dateParts[0],
+            month: dateParts[1],
+          },
+        );
+      } else if (dateParts.length === 3) {
+        // Year, month, and day are provided
+        query = query.andWhere(
+          'EXTRACT(YEAR FROM "order".date) = :year AND EXTRACT(MONTH FROM "order".date) = :month AND EXTRACT(DAY FROM "order".date) = :day',
+          {
+            year: dateParts[0],
+            month: dateParts[1],
+            day: dateParts[2],
+          },
+        );
+      }
     }
     if (filters.productName) {
-      query = query.andWhere("product.name = :productName", {
-        productName: filters.productName,
+      query = query.andWhere("LOWER(product.name) LIKE LOWER(:productName)", {
+        productName: `%${filters.productName}%`,
       });
-    }
-    if (filters.price) {
-      query = query.andWhere("order.price = :price", { price: filters.price });
     }
     if (filters.status) {
       query = query.andWhere("order.status = :status", {
@@ -93,7 +211,49 @@ export class OrderRepository {
       });
     }
 
-    return await query.getMany();
+    const orders = await query.getMany();
+    return orders;
+  }
+
+  async countOrders(filters: {
+    email?: string;
+    id?: string;
+    date?: string;
+    productName?: string;
+    status?: OrderStatus;
+  }): Promise<number> {
+    let query = this.orderRepository
+      .createQueryBuilder("order")
+      .leftJoin("order.user", "user")
+      .leftJoin("order.details", "orderDetail")
+      .leftJoin("orderDetail.product", "product");
+
+    if (filters.email) {
+      query = query.andWhere("LOWER(user.email) LIKE LOWER(:email)", {
+        email: `%${filters.email}%`,
+      });
+    }
+    if (filters.id) {
+      query = query.andWhere("order.id = :id", { id: filters.id });
+    }
+    if (filters.date) {
+      query = query.andWhere("DATE(order.date) = :date", {
+        date: filters.date,
+      });
+    }
+    if (filters.productName) {
+      query = query.andWhere("LOWER(product.name) LIKE LOWER(:productName)", {
+        productName: `%${filters.productName}%`,
+      });
+    }
+    if (filters.status) {
+      query = query.andWhere("order.status = :status", {
+        status: filters.status,
+      });
+    }
+
+    const totalOrders = await query.getCount();
+    return totalOrders;
   }
 
   async findById(id: number): Promise<Order | null> {
@@ -132,5 +292,4 @@ export class OrderRepository {
     });
     return updatedOrder;
   }
-
 }
