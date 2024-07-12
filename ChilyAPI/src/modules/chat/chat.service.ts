@@ -60,6 +60,8 @@ export class ChatService {
     try {
       const user = await this.userService.findUserById(userId);
       const chatLog = await this.findChatLogById(chatLogId);
+      console.log(user);
+      console.log(chatLog);
 
       const newChat = new Chat();
       newChat.chatLog = chatLog;
@@ -68,6 +70,7 @@ export class ChatService {
       newChat.createdAt = new Date();
 
       await this.chatRepository.save(newChat);
+      console.log(newChat);
       return newChat;
     } catch (error) {
       if (error instanceof NotFoundException) {

@@ -26,9 +26,9 @@ export class ChatGateway implements OnGatewayInit {
   afterInit(server: Server) {
     this.logger.log("Initialized ChatGateway");
     server.on("connection", (socket: Socket) => {
-      this.logger.log(`Conected:${socket.id}}`);
+      this.logger.log(`Conected:${socket.id}`);
       socket.on("disconnect", () => {
-        this.logger.log(`Disconnected: ${socket.id}}`);
+        this.logger.log(`Disconnected: ${socket.id}`);
       });
     });
   }
@@ -62,9 +62,14 @@ export class ChatGateway implements OnGatewayInit {
 
       // Notify all clients (including admin) about the new room
       this.server.emit("newRoom", roomId);
+      // Send a success response back to the client
+      client.emit("createRoomResponse", { success: true, roomId });
     } catch (error) {
       this.logger.error(`Error creating/joining room for orderId`, error);
-      throw error;
+      client.emit("creatRoomResponse", {
+        success: false,
+        error: error.message,
+      });
     }
   }
 
@@ -86,7 +91,7 @@ export class ChatGateway implements OnGatewayInit {
     }
   }
 
-  @SubscribeMessage("Send-message")
+  @SubscribeMessage("send-message")
   async handleMessage(
     @MessageBody() dataMessage: NewMessageDto,
     @ConnectedSocket() client: Socket
