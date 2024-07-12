@@ -45,6 +45,18 @@ export class OrderController {
 
   @Get("all-orders")
   @DocumentationGetAllOrders()
+  // async getAllOrders(
+  //   @Query("page") page: number = 1,
+  //   @Query("limit") limit: number = 5,
+  //   @Query("email") email?: string,
+  //   @Query("id") id?: string,
+  //   @Query("date") date?: string,
+  //   @Query("productName") productName?: string,
+  //   @Query("status") status?: OrderStatus,
+  // ) {
+  //   const filters = { email, id, date, productName, status };
+  //   return await this.orderService.findAll({ page, limit }, filters);
+  // }
   async getAllOrders(
     @Query("page") page: number = 1,
     @Query("limit") limit: number = 5,
@@ -54,7 +66,13 @@ export class OrderController {
     @Query("productName") productName?: string,
     @Query("status") status?: OrderStatus,
   ) {
-    const filters = { email, id, date, productName, status };
+    const filters = {
+      email,
+      id,
+      date,
+      productName: productName ? `%${productName}%` : undefined,
+      status,
+    };
     return await this.orderService.findAll({ page, limit }, filters);
   }
 
@@ -78,10 +96,7 @@ export class OrderController {
   @Get("/generate-pdf/:id")
   async generatePdf(@Param("id") id: number, @Res() res: Response) {
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      `inline; filename="order-${id}.pdf"`,
-    )
+    res.setHeader("Content-Disposition", `inline; filename="order-${id}.pdf"`);
     return await this.orderService.generatePdf(id, res);
   }
 
