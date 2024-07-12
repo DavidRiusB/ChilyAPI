@@ -16,8 +16,6 @@ import { CategoryService } from "../category/category.service";
 export class ProductsRepository {
   constructor(
     @InjectRepository(Product) private productsRepository: Repository<Product>,
-    @InjectRepository(Category)
-    private categoryRepository: Repository<Category>,
     private readonly dataSource: DataSource,
     private readonly categoryService: CategoryService
   ) {}
