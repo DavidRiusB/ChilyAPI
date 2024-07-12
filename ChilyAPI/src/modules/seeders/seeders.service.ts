@@ -25,14 +25,12 @@ dotenvConfig({
 @Injectable()
 export class SeedersService implements OnModuleInit {
   constructor(
-    @InjectRepository(Category)
     private readonly dataSource: DataSource,
     private readonly productService: ProductsService,
     @InjectRepository(Address)
     private readonly addressRepository: Repository<Address>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @InjectRepository(Order)
     @InjectRepository(Product)
     private productsRepository: Repository<Product>,
   ) {}
