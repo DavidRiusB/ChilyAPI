@@ -11,12 +11,12 @@ export class UserUpdateDto {
   @IsOptional()
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name?: string;
 
   @IsOptional()
   @IsNotEmpty()
   @IsPhoneNumber('CO', {
-    message: 'El formato de telefono es incorrecto, ejemplo: +577751488347',
+    message: 'El formato de telefono es incorrecto, ejemplo: +573001234560',
   })
   @DocumentationUserUpdateDto.phone()
   phone?: string;
