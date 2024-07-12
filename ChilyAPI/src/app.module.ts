@@ -4,7 +4,6 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import typeOrmConfig from "./config/database";
 import { JwtModule } from "@nestjs/jwt";
 import {
-  DeliveryModule,
   UserModule,
   AuthModule,
   OrderModule,
