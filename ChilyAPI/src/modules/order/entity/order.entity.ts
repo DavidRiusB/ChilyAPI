@@ -10,6 +10,7 @@ import {
 import { User } from "../../user/entity/user.entity";
 import { OrderDetail } from "../../order-details/entity/order-details.entity";
 import { OrderStatus } from "src/common/enums";
+import { Address } from "src/modules/addresses/entities/addresses.entity";
 
 @Entity({ name: "orders" })
 export class Order {
@@ -17,7 +18,7 @@ export class Order {
   id: number;
 
   @Column()
-  date: Date;
+  date?: Date;
 
   @ManyToOne(() => User, (user) => user.orders)
   user: User;
@@ -26,21 +27,36 @@ export class Order {
   @JoinColumn({ name: "order_details" })
   details: OrderDetail[];
 
-  @Column({ type: "int" })
-  shipping: number;
+  // @Column({ type: "int" })
+  // shipping: number;
 
   // price = sum of details prices
-  @Column({ type: "int", default: 0 })
+  @Column({ default: 0, type: "float" })
   price: number;
 
-  @Column({ name: "discount", default: 0 })
-  generalDiscount?: number;
+  // @Column({ name: "discount", default: 0 })
+  // generalDiscount?: number;
+  @Column({ nullable: true, type: "varchar" }) // Allow null values for couponId
+  couponId?: string | null;
 
-  @Column({ type: "int", default: 0 })
+  @Column({ nullable: true, type: "int" }) // Allow null values for coupoundDiscount
+  couponDiscount?: number;
+
+  @Column()
+  formBuy: "efectivo" | "tarjeta" = "efectivo";
+
+  @Column({ default: 0, type: "float" })
   total: number;
 
   @Column({ type: "enum", enum: OrderStatus, default: OrderStatus.Pending })
   status: OrderStatus;
+
+  @ManyToOne(() => Address)
+  @JoinColumn({ name: "address_id" }) // Nombre de la columna en la tabla orders
+  address: Address;
+
+  @Column()
+  orderInstructions: string;
 
   @DeleteDateColumn({ type: "timestamp", nullable: true })
   deletedAt: Date;

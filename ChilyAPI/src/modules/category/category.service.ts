@@ -10,8 +10,6 @@ import { Product } from "../products/products.entity";
 export class CategoryService {
   constructor(
     private readonly categoryRepository: CategoryRepository,
-    private readonly productService: ProductsService,
-    private readonly dataSource: DataSource
   ) { }
   /*async seedProducts(productsSeed) {
     const products = await this.productService.getProducts(1, 10);
@@ -63,10 +61,14 @@ export class CategoryService {
     return this.categoryRepository.getCategories();
   }
 
-  getCategoryById(id: number, page:number,limit:number): Promise<Category> {
-    return this.categoryRepository.getCategoryById(id, page, limit);
+  getCategoryById(id: number[]): Promise<Category[]> {
+    return this.categoryRepository.getCategoryById(id);
   }
 
+  
+  getCategoryById2(id: number, page:number,limit:number): Promise<Category> {
+    return this.categoryRepository.getCategoryById2(id, page, limit);
+  }
   createCategory(createCategory: createCategoryDto): Promise<Category> {
     return this.categoryRepository.createCategory(createCategory);
   }

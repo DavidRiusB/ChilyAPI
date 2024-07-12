@@ -1,97 +1,288 @@
-import { Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@nestjs/common";
 import { OrderDto } from "./dto/order.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Order } from "./entity/order.entity";
 import { OrderStatus } from "src/common/enums";
+import { Product } from "../products/products.entity";
 
+interface OrderPagination {
+  page: number;
+  limit: number;
+}
+
+interface OrderFilters {
+  email?: string;
+  id?: string;
+  date?: string;
+  productName?: string;
+  status?: OrderStatus;
+}
 @Injectable()
 export class OrderRepository {
   constructor(
     @InjectRepository(Order)
-    private readonly orderRepository: Repository<Order>
+    private readonly orderRepository: Repository<Order>,
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
   ) {}
-  // Mock data (replace with actual database or service calls)
-  private orders = [
-    { id: 1, branchId: 1 /* other properties */ },
-    { id: 2, branchId: 2 /* other properties */ },
-    // Add more mock orders as needed
-  ];
 
-  // Mock ID (used for creating new orders)
-  private mockId: number = 3;
+  async create(orderDto): Promise<Order> {
+    const {
+      userId,
+      address,
+      total,
+      couponId,
+      couponDiscount,
+      formBuy,
+      orderInstructions,
+    } = orderDto;
 
-  /**
-   * Retrieves all orders with pagination.
-   *
-   * @param {Object} pagination - Pagination details.
-   * @param {number} pagination.page - Page number.
-   * @param {number} pagination.limit - Number of items per page.
-   * @returns {Promise<Order[]>} - A promise that resolves to an array of orders.
-   */
-  async findAll(pagination: { page: number; limit: number }) {
-    const { page, limit } = pagination;
-    const offset = (page - 1) * limit;
-    return await this.orderRepository
-      .createQueryBuilder("order")
-      .leftJoinAndSelect("order.details", "orderDetail")
-      .leftJoinAndSelect("orderDetail.product", "product")
-      .skip(offset)
-      .take(limit)
-      .getMany();
+    const newOrder = new Order(); // Ensure proper initialization of 'id'
+
+    // Set other properties
+    newOrder.user = userId;
+    newOrder.date = new Date();
+    newOrder.couponId = couponId;
+    newOrder.couponDiscount = couponDiscount;
+    newOrder.orderInstructions = orderInstructions;
+    newOrder.address.id = address.id;
+    newOrder.formBuy = formBuy;
+    newOrder.price = parseFloat(total.toFixed(2));
+
+    // Calculate total based on price, discounts, etc.
+    newOrder.total = parseFloat(total.toFixed(2));
+    return await this.orderRepository.save(newOrder);
   }
 
-  /**
-   * Retrieves all orders for a specific branch with pagination.
-   *
-   * @param {number} id - Branch ID.
-   * @param {Object} pagination - Pagination details.
-   * @param {number} pagination.page - Page number.
-   * @param {number} pagination.limit - Number of items per page.
-   * @returns {Promise<Order[]>} - A promise that resolves to an array of orders for the branch.
-   */
-  async findAllOrderByBranchId(
-    id: number,
-    pagination: { page: number; limit: number }
+  // async findAll(
+  //   pagination: { page: number; limit: number },
+  //   filters: {
+  //     email?: string;
+  //     id?: string;
+  //     date?: string;
+  //     productName?: string;
+  //     status?: OrderStatus;
+  //   },
+  // ) {
+  //   const { page, limit } = pagination;
+
+  //   let query = this.orderRepository
+  //     .createQueryBuilder("order")
+  //     .leftJoinAndSelect("order.user", "user")
+  //     .leftJoinAndSelect("order.details", "orderDetail")
+  //     .leftJoinAndSelect("orderDetail.product", "product");
+
+  //   // Aplicar filtros
+  //   if (filters.email) {
+  //     query = query.andWhere("LOWER(user.email) LIKE LOWER(:email)", {
+  //       email: `%${filters.email}%`,
+  //     });
+  //   }
+  //   if (filters.id) {
+  //     query = query.andWhere("order.id = :id", { id: filters.id });
+  //   }
+  //   if (filters.date) {
+  //     query = query.andWhere("order.date = :date", { date: filters.date });
+  //   }
+  //   if (filters.productName) {
+  //     query = query.andWhere("LOWER(product.name) LIKE LOWER(:productName)", {
+  //       productName: `%${filters.productName}%`,
+  //     });
+  //   }
+  //   if (filters.status) {
+  //     query = query.andWhere("order.status = :status", {
+  //       status: filters.status,
+  //     });
+  //   }
+
+  //   // Aplicar paginación
+  //   query = query.skip((page - 1) * limit).take(limit);
+
+  //   const orders = await query.getMany();
+  //   return orders;
+  // }
+
+  // async countOrders(filters: {
+  //   email?: string;
+  //   id?: string;
+  //   date?: string;
+  //   productName?: string;
+  //   status?: OrderStatus;
+  // }) {
+  //   const { email, id, date, productName, status } = filters;
+
+  //   let query = this.orderRepository
+  //     .createQueryBuilder("order")
+  //     .leftJoin("order.user", "user")
+  //     .leftJoin("order.details", "orderDetail")
+  //     .leftJoin("orderDetail.product", "product");
+
+  //   if (email) {
+  //     query = query.andWhere("user.email = :email", { email });
+  //   }
+  //   if (id) {
+  //     query = query.andWhere("order.id = :id", { id });
+  //   }
+  //   if (date) {
+  //     query = query.andWhere("order.date = :date", { date });
+  //   }
+  //   if (productName) {
+  //     query = query.andWhere("product.name LIKE :productName", {
+  //       productName: `%${productName}%`,
+  //     });
+  //   }
+  //   if (status) {
+  //     query = query.andWhere("order.status = :status", { status });
+  //   }
+
+  //   return await query.getCount();
+  // }
+
+  async findAll(
+    pagination: { page: number; limit: number },
+    filters: {
+      email?: string;
+      id?: string;
+      date?: string;
+      productName?: string;
+      status?: OrderStatus;
+    },
   ) {
     const { page, limit } = pagination;
-    const offset = (page - 1) * limit;
 
-    // Placeholder logic: Filter orders by branch ID (assuming id matches branchId in mock data)
-    const branchOrders = this.orders.filter((order) => order.branchId === id);
+    let query = this.orderRepository
+      .createQueryBuilder("order")
+      .leftJoinAndSelect("order.user", "user")
+      .leftJoinAndSelect("order.details", "orderDetail")
+      .leftJoinAndSelect("orderDetail.product", "product")
+      .skip((page - 1) * limit)
+      .take(limit);
 
-    return await branchOrders.slice(offset, offset + limit);
+    if (filters.email) {
+      query = query.andWhere("LOWER(user.email) LIKE LOWER(:email)", {
+        email: `%${filters.email}%`,
+      });
+    }
+    if (filters.id) {
+      query = query.andWhere("order.id = :id", { id: filters.id });
+    }
+    if (filters.date) {
+      const dateParts = filters.date.split("-");
+      if (dateParts.length === 1) {
+        // Only year is provided
+        query = query.andWhere('EXTRACT(YEAR FROM "order".date) = :year', {
+          year: dateParts[0],
+        });
+      } else if (dateParts.length === 2) {
+        // Year and month are provided
+        query = query.andWhere(
+          'EXTRACT(YEAR FROM "order".date) = :year AND EXTRACT(MONTH FROM "order".date) = :month',
+          {
+            year: dateParts[0],
+            month: dateParts[1],
+          },
+        );
+      } else if (dateParts.length === 3) {
+        // Year, month, and day are provided
+        query = query.andWhere(
+          'EXTRACT(YEAR FROM "order".date) = :year AND EXTRACT(MONTH FROM "order".date) = :month AND EXTRACT(DAY FROM "order".date) = :day',
+          {
+            year: dateParts[0],
+            month: dateParts[1],
+            day: dateParts[2],
+          },
+        );
+      }
+    }
+    if (filters.productName) {
+      query = query.andWhere("LOWER(product.name) LIKE LOWER(:productName)", {
+        productName: `%${filters.productName}%`,
+      });
+    }
+    if (filters.status) {
+      query = query.andWhere("order.status = :status", {
+        status: filters.status,
+      });
+    }
+
+    const orders = await query.getMany();
+    return orders;
   }
 
-  /**
-   * Retrieves an order by its ID.
-   *
-   * @param {number} id - The ID of the order to retrieve.
-   * @returns {Promise<Object|null>} - The order if found, or null if not found.
-   */
+  async countOrders(filters: {
+    email?: string;
+    id?: string;
+    date?: string;
+    productName?: string;
+    status?: OrderStatus;
+  }): Promise<number> {
+    let query = this.orderRepository
+      .createQueryBuilder("order")
+      .leftJoin("order.user", "user")
+      .leftJoin("order.details", "orderDetail")
+      .leftJoin("orderDetail.product", "product");
+
+    if (filters.email) {
+      query = query.andWhere("LOWER(user.email) LIKE LOWER(:email)", {
+        email: `%${filters.email}%`,
+      });
+    }
+    if (filters.id) {
+      query = query.andWhere("order.id = :id", { id: filters.id });
+    }
+    if (filters.date) {
+      query = query.andWhere("DATE(order.date) = :date", {
+        date: filters.date,
+      });
+    }
+    if (filters.productName) {
+      query = query.andWhere("LOWER(product.name) LIKE LOWER(:productName)", {
+        productName: `%${filters.productName}%`,
+      });
+    }
+    if (filters.status) {
+      query = query.andWhere("order.status = :status", {
+        status: filters.status,
+      });
+    }
+
+    const totalOrders = await query.getCount();
+    return totalOrders;
+  }
+
   async findById(id: number): Promise<Order | null> {
     return await this.orderRepository.findOne({
       where: { id },
-      relations: ["user", "details"],
+      relations: ["user", "details", "details.product"],
     });
   }
 
-  /**
-   * Creates a new order.
-   *
-   * @param {OrderDto} order - The order to create.
-   * @returns {Promise<Object>} - The created order.
-   */
-  async create(order) {
-    const { branchId, discount, user, shipping } = order;
-
-    const newOrder = new Order();
-
-    newOrder.generalDiscount = discount;
-    newOrder.shipping = shipping;
-    newOrder.user = user;
-    newOrder.date = new Date();
-    return await this.orderRepository.create(newOrder);
+  async findOrdersByUser(userId: number): Promise<Order[]> {
+    return await this.orderRepository
+      .createQueryBuilder("order")
+      .leftJoinAndSelect("order.details", "details")
+      .leftJoinAndSelect("details.product", "product")
+      .leftJoinAndSelect("order.address", "address")
+      .where("order.userId = :userId", { userId })
+      .select([
+        "order.id",
+        "order.date",
+        "order.price",
+        "order.total",
+        "order.status",
+        "order.formBuy",
+        "product.name",
+        "details.quantity",
+        "details.price",
+        "address",
+      ])
+      .getMany();
   }
 
   async updateStatus(order: Order, newStatus: OrderStatus) {

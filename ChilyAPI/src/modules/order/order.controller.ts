@@ -1,76 +1,108 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from "@nestjs/common";
+// Vendors
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Res,
+  UseGuards,
+} from "@nestjs/common";
+
+// Services
 import { OrderService } from "./order.service";
+
+// Guards
+import { JwtAuthGuard } from "../auth/guards/jwt.guard";
+
+// Dtos
 import { OrderDto } from "./dto/order.dto";
-import { DocumentationApiTagsModule } from "src/docs";
 import { UpdateOrderDto } from "./dto/update-order.dto";
+import { Response } from "express";
+// Documentation
+import {
+  DocumentationApiTagsModule,
+  DocumentationGetAllOrders,
+  DocumentationGetOrderById,
+  DocumentationPostNewOrder,
+  DocumentationUpdateOrderStatus,
+} from "src/docs";
+import { OrderStatus } from "src/common/enums";
 
 @Controller("orders")
-@DocumentationApiTagsModule.clasification("orders")
+@DocumentationApiTagsModule.clasification("Rutas para: Ordenes")
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get()
-  /**
-   * Retrieves all orders with pagination.
-   * Accessible only by users with SuperAdmin role.
-   *
-   * @param {number} page - Page number for pagination (default is 1).
-   * @param {number} limit - Number of items per page (default is 5).
-   * @returns {Promise<{ data: Order[], total: number, page: number, limit: number }>}
-   */
+  @Post()
+  @DocumentationPostNewOrder()
+  @UseGuards(JwtAuthGuard)
+  async postNewOrder(@Body() orderData: OrderDto) {
+    return await this.orderService.addOrder(orderData);
+  }
+
+  @Get("all-orders")
+  @DocumentationGetAllOrders()
+  // async getAllOrders(
+  //   @Query("page") page: number = 1,
+  //   @Query("limit") limit: number = 5,
+  //   @Query("email") email?: string,
+  //   @Query("id") id?: string,
+  //   @Query("date") date?: string,
+  //   @Query("productName") productName?: string,
+  //   @Query("status") status?: OrderStatus,
+  // ) {
+  //   const filters = { email, id, date, productName, status };
+  //   return await this.orderService.findAll({ page, limit }, filters);
+  // }
   async getAllOrders(
     @Query("page") page: number = 1,
-    @Query("limit") limit: number = 5
+    @Query("limit") limit: number = 5,
+    @Query("email") email?: string,
+    @Query("id") id?: string,
+    @Query("date") date?: string,
+    @Query("productName") productName?: string,
+    @Query("status") status?: OrderStatus,
   ) {
-    return await this.orderService.findAll({ page, limit });
+    const filters = {
+      email,
+      id,
+      date,
+      productName: productName ? `%${productName}%` : undefined,
+      status,
+    };
+    return await this.orderService.findAll({ page, limit }, filters);
   }
 
-  @Get("branch/:id")
-  /**
-   * Retrieves all orders for a specific branch with pagination.
-   * Accessible only by users with SuperAdmin and admin roles.
-   *
-   * @param {number} id - Branch ID.
-   * @param {number} page - Page number for pagination (default is 1).
-   * @param {number} limit - Number of items per page (default is 5).
-   * @returns {Promise<Order[]>} - Array of orders.
-   */
-  async getAllOrdersByBranchId(
-    @Param("id") id: number,
-    @Query("page") page: number = 1,
-    @Query("limit") limit: number = 5
-  ) {
-    return await this.orderService.findAllOrderByBranchId(id, { page, limit });
-  }
-
-  @Get(":id")
-  /**
- * Retrieves a order by Id.
- * Accessible only by users with SuperAdmin, admin, delivery and user roles.
-*
- * @param {number} id - Branch ID.
- 
- * @returns {Promise<Order>} - A order.
- */
+  @Get("order/:id")
+  @DocumentationGetOrderById()
   async getOrderById(@Param("id") id: number) {
     return await this.orderService.findOrderById(id);
   }
 
-  @Post(":id")
-  /**
-   * Post a new Order
-   * @body new order DTO
-   * @return {Promise<Order>}
-   */
-  async postNewOrder(@Param("id") id: number, @Body() orderData: OrderDto) {
-    return await this.orderService.addOrder(orderData, id);
+  @Get("user/:id")
+  async getOrdersByUser(@Param("id") id: number) {
+    return await this.orderService.findOrdersByUser(id);
   }
 
-  @Put(":id")
-  async updateOrderStatus(
-    @Param("id") id: number,
-    @Body() update: UpdateOrderDto
-  ) {
-    return await this.orderService.updateStatus(id, update);
+  @Put("/update")
+  @DocumentationUpdateOrderStatus()
+  async updateOrderStatus(@Body() update: UpdateOrderDto) {
+    return await this.orderService.updateStatus(update);
   }
+
+  @Get("/generate-pdf/:id")
+  async generatePdf(@Param("id") id: number, @Res() res: Response) {
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `inline; filename="order-${id}.pdf"`);
+    return await this.orderService.generatePdf(id, res);
+  }
+
+  // @Get("/order/estimated")
+  // @DocumentationObtainEstimatedTime()
+  // async getEstimatedTime(@Query("id") id: number) {
+  //   return await this.orderService.getEstimatedTimeFromOrder(id);
+  // }
 }

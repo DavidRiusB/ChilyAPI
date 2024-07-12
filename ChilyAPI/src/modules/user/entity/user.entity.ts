@@ -11,6 +11,7 @@ import {
 import { Credential } from "../../auth/entities/auth.entity";
 import { Order } from "../../order/entity/order.entity";
 import { Address } from "src/modules/addresses/entities/addresses.entity";
+import { Discount } from "src/modules/discount/discount.entity";
 
 @Entity({ name: "users" })
 export class User {
@@ -23,10 +24,6 @@ export class User {
   @Column({ length: 50 })
   name: string;
 
-  @Column({ unique: true, length: 20, default: "google_account"})
-  //national identification number
-  NIN?: string;
-
   @Column({ unique: true })
   email: string;
 
@@ -38,8 +35,6 @@ export class User {
   
   @OneToMany(() => Address, (address) => address.user, {})
   addresses: Address[];
-  @Column({ unique: true, nullable: false, default: "google_account"})
-  phone?: string;
 
   @OneToMany(() => Order, (order) => order.user, {})
   orders: Order[];
@@ -55,4 +50,7 @@ export class User {
 
   @DeleteDateColumn({ type: "timestamp", nullable: true })
   deletedAt?: Date;
+
+  @OneToMany(() => Discount, (discount)=> discount.user)
+  discounts: Discount[];
 }

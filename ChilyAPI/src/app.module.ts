@@ -1,21 +1,26 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import typeOrmConfig from './config/database';
-import { JwtModule } from '@nestjs/jwt';
+import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import typeOrmConfig from "./config/database";
+import { JwtModule } from "@nestjs/jwt";
 import {
-  AdminModule,
   DeliveryModule,
-  SuperAdminModule,
   UserModule,
   AuthModule,
   OrderModule,
   ProductsModule,
   CategoryModule,
-} from './modules';
-import { SeedersModule } from './modules/seeders/seeders.module';
-import { PassportModule } from '@nestjs/passport';
-import { AddressesModule } from './modules/addresses/addresses.module';
+} from "./modules";
+import { SeedersModule } from "./modules/seeders/seeders.module";
+import { PassportModule } from "@nestjs/passport";
+import { AddressesModule } from "./modules/addresses/addresses.module";
+import { UploadModule } from "./modules/upload/upload.module";
+import { NotificationEmailsService } from "./modules/notifications/notificationEmails.service";
+import { DiscountModule } from "./modules/discount/discount.module";
+import { GoogleMapsModule } from "./modules/google-maps/google-maps.module";
+import { PaymentsModule } from "./modules/payments/payments.module";
+import { ChatModule } from "./modules/chat/chat.module";
+import { PdfService } from "./common/helpers/pdf/pdf.service";
 
 @Module({
   imports: [
@@ -25,25 +30,28 @@ import { AddressesModule } from './modules/addresses/addresses.module';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => config.get('typeorm'),
+      useFactory: (config: ConfigService) => config.get("typeorm"),
     }),
-    UserModule,
-    AdminModule,
-    SuperAdminModule,
-    DeliveryModule,
-    ProductsModule,
     AuthModule,
+    UserModule,
+    ProductsModule,
     OrderModule,
     CategoryModule,
+    UploadModule,
+    DiscountModule,
+    PassportModule.register({ session: true }),
     JwtModule.register({
+      global: true,
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '1d' },
+      signOptions: { expiresIn: "7d" },
     }),
     SeedersModule,
-    PassportModule.register({ session: true }),
     AddressesModule,
+    GoogleMapsModule,
+    PaymentsModule,
+    ChatModule
   ],
   controllers: [],
-  providers: [],
+  providers: [NotificationEmailsService, PdfService],
 })
 export class AppModule {}

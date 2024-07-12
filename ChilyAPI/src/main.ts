@@ -1,30 +1,22 @@
-// Vendors
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { config as dotenvConfig } from 'dotenv';
-import * as session from 'express-session';
-import * as passport from 'passport';
-
+import { NestFactory } from "@nestjs/core";
+import { Logger, ValidationPipe } from "@nestjs/common";
+import { config as dotenvConfig } from "dotenv";
+import * as session from "express-session";
+import * as passport from "passport";
 // Modules
-import { AppModule } from './app.module';
+import { AppModule } from "./app.module";
 
 // Documentation
-import { DocumentationConfig } from './docs/';
+import { DocumentationConfig } from "./docs/";
 
 dotenvConfig({
-  path: '.env.development',
+  path: ".env.development",
 });
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
+  const app = await NestFactory.create(AppModule, { cors: true});
+  const logger = new Logger('SERVER_STATUS');
   DocumentationConfig(app);
-
-  app.enableCors({
-    origin: '*', // Modify when the front is deployed https://example1.com
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    allowedHeaders: '*', // Modify when the front is deployed 'Content-Type, Accept'
-  });
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -36,12 +28,9 @@ async function bootstrap() {
 
   app.use(
     session({
-      secret: 'adfsersdfeasfewasdaCEDSFAASDF',
-      saveUninitialized: false,
+      secret: process.env.SESSION_PASSPORT || 'secret',
       resave: false,
-      cookie: {
-        maxAge: 60000,
-      },
+      saveUninitialized: false,
     }),
   );
 
@@ -51,8 +40,8 @@ async function bootstrap() {
   const PORT = process.env.PORT || 3000;
 
   await app.listen(PORT);
-  console.log(`Server is running on http://localhost:${PORT}`);
-  console.log('Press CTRL+C to stop the server.');
+  logger.log(`Server is running on http://localhost:${PORT}`);
+  console.log("Press CTRL+C to stop the server.");
 }
 
 bootstrap();

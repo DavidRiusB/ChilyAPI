@@ -13,28 +13,30 @@ export class OrderDetailsService {
   async createOrderDetail(
     products: Product[],
     newOrder: Order,
-    productsInOrder: ProductsInOrder[]
+    productsInOrder: ProductsInOrder[],
   ) {
-    /* console.log("products in service", products);
-    console.log("productsInOrder in service", productsInOrder); */
     const orderDetailsData = [];
 
     for (let i = 0; i < products.length; i++) {
       const product = products[i];
-      const productsinOrderInfo = productsInOrder[i];
-      /* console.log(`Product ${i} details:`, productsinOrderInfo); */
+      const productsInOrderInfo = productsInOrder[i];
 
       const newOrderDetail = new OrderDetail();
       newOrderDetail.order = newOrder;
       newOrderDetail.product = product;
-      newOrderDetail.price = productsinOrderInfo.individualPrice;
-      newOrderDetail.quantity = productsinOrderInfo.quantity;
+      newOrderDetail.price = productsInOrderInfo.price;
+      newOrderDetail.quantity = productsInOrderInfo.quantity;
 
-      const discount = productsinOrderInfo.individualDiscount || 0;
+      // Calculate subtotal (price * quantity)
+      let subtotal = newOrderDetail.price * newOrderDetail.quantity;
 
-      newOrderDetail.total =
-        discountCalculator(discount, productsinOrderInfo.individualPrice) *
-        productsinOrderInfo.quantity;
+      // Apply discount if present
+      // if (productsInOrderInfo.individualDiscount) {
+      //   const discount = productsInOrderInfo.individualDiscount || 0;
+      //   subtotal = discountCalculator(subtotal, discount);
+      // }
+
+      newOrderDetail.total = subtotal;
 
       orderDetailsData.push(newOrderDetail);
     }
@@ -46,7 +48,7 @@ export class OrderDetailsService {
       return orderDetails;
     } catch (error) {
       console.error("Error creating order details:", error);
-      throw error; // Re-throw the error after logging it
+      throw error;
     }
   }
 }

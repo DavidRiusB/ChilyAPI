@@ -1,7 +1,9 @@
 import {
+  IsArray,
   IsBoolean,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   IsUrl,
   MaxLength,
@@ -26,17 +28,22 @@ export class createProductDto {
   @DocumentationCreateProductDto.price()
   price: number;
 
-  @IsNotEmpty()
-  @MaxLength(255)
-  @IsString()
-  @IsUrl()
-  @DocumentationCreateProductDto.image_url()
-  img: string;
+  @IsOptional()
+  @IsNumber()
+  stock : number;
 
   @IsNotEmpty()
-  @IsNumber()
+  @IsUrl()
+  @DocumentationCreateProductDto.image_url()
+  imageURL: string;
+
+  @IsOptional()
+  @IsBoolean()
+  isPopular: boolean = false;
+  @IsNotEmpty()
+  @IsArray()
   @DocumentationCreateProductDto.category()
-  category: number;
+  category: number[];
 
   /*
 =======
@@ -46,4 +53,34 @@ export class createProductDto {
     @IsNumber()
     sucursal: number;
     */
+}
+export class UpdateProductDto{
+  @IsOptional()
+  @IsString()
+  @DocumentationCreateProductDto.names()
+  name: string;
+
+  @IsOptional()
+  @IsString()
+  @DocumentationCreateProductDto.description()
+  description: string;
+
+  @IsOptional()
+  @IsNumber()
+  @DocumentationCreateProductDto.price()
+  price: number;
+
+  @IsOptional()
+  @IsNumber()
+  stock : number;
+
+  @IsOptional()
+  @IsUrl()
+  @DocumentationCreateProductDto.image_url()
+  imageURL: string;
+
+  @IsOptional()
+  @IsArray()
+  @DocumentationCreateProductDto.category()
+  category: number[];
 }

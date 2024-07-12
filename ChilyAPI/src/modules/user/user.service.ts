@@ -1,10 +1,11 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from "@nestjs/common";
-import { UserRepository } from "./user.repositiry";
+import { UserRepository } from "./user.repository";
 import { User } from "./entity/user.entity";
 import { RegisterUserDTO } from "../auth/dto/register.dto";
 import { Credential } from "../auth/entities/auth.entity";
@@ -33,22 +34,23 @@ export class UserService {
 
   async createUser(newUserData: RegisterUserDTO, credential?: Credential) {
     try {
-      
       return await this.userRepository.create(newUserData, credential);
     } catch (error) {
-      if (error instanceof ConflictException) {
-        throw error;
-      }
-      throw new InternalServerErrorException(
-        "Error al registrar al usuario",
-        error.detail
-      );
+      throw error;
     }
   }
   async createUserGoogle(newUserData: UserLoginGoogleDto): Promise<User>{
-    const user = await this.userRepository.findByEmail(newUserData.email);
-    if(user) return user
-    return await this.userRepository.createGoogle(newUserData);
+    try {
+      const user = await this.userRepository.findByEmail(newUserData.email);
+      if(user && user.googleAuth){ 
+        return user
+      } else if(user && !user.googleAuth){
+        throw new BadRequestException(`Ya existe un usuario con este correo`)
+      }
+      return await this.userRepository.createGoogle(newUserData);
+    } catch (error) {
+      throw error
+    }
   }
 
   async findAll(pagination: { page: number; limit: number }) {
