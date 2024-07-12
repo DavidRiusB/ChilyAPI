@@ -161,6 +161,7 @@ export class OrderRepository {
       .leftJoinAndSelect("order.user", "user")
       .leftJoinAndSelect("order.details", "orderDetail")
       .leftJoinAndSelect("orderDetail.product", "product")
+      .orderBy("order.date", "DESC")
       .skip((page - 1) * limit)
       .take(limit);
 
