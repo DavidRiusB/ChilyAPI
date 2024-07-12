@@ -1,5 +1,6 @@
 import {
   Column,
+  CreateDateColumn,
   DeleteDateColumn,
   Entity,
   JoinColumn,
@@ -17,7 +18,7 @@ export class Order {
   @PrimaryGeneratedColumn({ type: "bigint" })
   id: number;
 
-  @Column()
+  @CreateDateColumn()
   date?: Date;
 
   @ManyToOne(() => User, (user) => user.orders)
