@@ -1,5 +1,7 @@
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -57,18 +59,18 @@ export class Product {
   })
   stock: number;
 
-  @Column({
-    type: "boolean",
-    default: false,
-  })
-  isDeleted: boolean;
-
+  
   @ManyToMany(() => Category, (category) => category.products)
   category: Category[];
-
+  
   @ManyToMany(() => OrderDetail, (orderDetail) => orderDetail.product)
   orderDetail: OrderDetail[];
+  
+  @CreateDateColumn()
+   date: Date;
 
+  @DeleteDateColumn()
+  deletedAt?: Date;
   //@ManyToOne(() => Sucursal, (sucursal) => sucursal.products) //Agregar
   //sucursal:Sucursal;
 }
