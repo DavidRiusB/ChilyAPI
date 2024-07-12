@@ -58,8 +58,8 @@ export class OrderController {
   //   return await this.orderService.findAll({ page, limit }, filters);
   // }
   async getAllOrders(
-    @Query('page') page: string = '1',
-    @Query('limit') limit: string = '5',
+    @Query("page") page: string = "1",
+    @Query("limit") limit: string = "5",
     @Query("email") email?: string,
     @Query("id") id?: string,
     @Query("date") date?: string,
@@ -75,7 +75,10 @@ export class OrderController {
     };
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit, 10);
-    return await this.orderService.findAll({ page: pageNumber, limit: limitNumber }, filters);
+    return await this.orderService.findAll(
+      { page: pageNumber, limit: limitNumber },
+      filters,
+    );
   }
 
   @Get("order/:id")

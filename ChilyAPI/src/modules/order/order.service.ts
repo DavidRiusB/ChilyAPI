@@ -290,4 +290,5 @@ export class OrderService {
     const pdf = await this.pdfService.generatePdf(data, res);
     return pdf;
   }
+
 }

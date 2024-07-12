@@ -1,9 +1,16 @@
-import { Controller, Post, Body, BadRequestException } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  BadRequestException,
+  Get,
+} from "@nestjs/common";
 import { PaymentsService } from "./payments.service";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { DocumentationApiTagsModule } from "src/docs";
 import { ProcessPaymentDto } from "./processPayment.dto";
 import { CreatePaymentDto } from "./create-payment.dto";
+import { TransactionInfo } from "./interfaces/TransactionInfo";
 
 @Controller("payments")
 @DocumentationApiTagsModule.clasification("Rutas para: Pagos con tarjeta")
@@ -31,4 +38,11 @@ export class PaymentsController {
       throw new BadRequestException(error.message);
     }
   }
+
+  @Get("orders-info")
+  async getAllTransactionsByStripe() {
+    return this.paymentsService.geAllTransactions();
+  }
+
+
 }
