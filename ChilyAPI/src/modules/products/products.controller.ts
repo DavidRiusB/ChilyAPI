@@ -83,7 +83,7 @@ export class ProductsController {
 
   @Post("create")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Admin)
+  @Roles(Role.Admin || Role.SuperAdmin)
   @DocumentationAddProduct()
   async createProduct(
     @Body() createProduct: createProductDto,
@@ -94,7 +94,7 @@ export class ProductsController {
 
   @Put("update/:id")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Admin)
+  @Roles(Role.Admin || Role.SuperAdmin)
   @DocumentationUpdateProduct()
   updateProduct(
     @Param("id") id: number,
