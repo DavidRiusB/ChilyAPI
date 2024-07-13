@@ -88,3 +88,13 @@ export function DocumentationResetPassword() {
     }),
   );
 }
+
+export function DocumentationChangePassword() {
+  return applyDecorators(
+    ApiOperation({ summary: "Cambiar contraseña cuando la sesión está activa" }),
+    ApiResponse({ status: 200, description: "Contraseña cambiada exitosamente" }),
+    ApiResponse({ status: 400, description: "Datos de contraseña incorrectos" }),
+    ApiResponse({ status: 401, description: "No autorizado" }),
+    ApiResponse({ status: 500, description: "Error interno del servidor" }),
+  );
+}

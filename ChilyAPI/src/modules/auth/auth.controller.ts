@@ -5,7 +5,7 @@ import {
   Post,
   Req,
   Res,
-  UseGuards,
+  UseGuards
 } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "./guards/jwt.guard";
@@ -13,10 +13,11 @@ import { JwtAuthGuard } from "./guards/jwt.guard";
 import { RegisterUserDTO } from "./dto/register.dto";
 import {
   DocumentationApiTagsModule,
+  DocumentationChangePassword,
   DocumentationExcludeController,
   DocumentationLoginGoogle,
   DocumentationRequestPasswordReset,
-  DocumentationResetPassword,
+  DocumentationResetPassword
 } from "src/docs";
 import { DocumentationLogin, DocumentationRegister } from "src/docs";
 import { GoogleAuthGuard } from "./guards/google.guard";
@@ -71,17 +72,17 @@ export class AuthController {
     if (req.user === null) {
       let encodedMessage = encodeURIComponent("No se pudo iniciar sesión");
       return res.redirect(
-        `${process.env.FRONTEND_URL}/auth/google?state=${encodedMessage}`,
+        `${process.env.FRONTEND_URL}/auth/google?state=${encodedMessage}`
       );
     }
     const encodedData = encodeURIComponent(JSON.stringify(req.user));
     console.log(encodedData);
 
     res.redirect(
-      process.env.FRONTEND_URL + "/auth/google?state=" + encodedData,
+      process.env.FRONTEND_URL + "/auth/google?state=" + encodedData
     );
     return {
-      msg: "Login exitoso",
+      msg: "Login exitoso"
     };
   }
 
@@ -99,6 +100,7 @@ export class AuthController {
 
   @Post("password")
   @UseGuards(JwtAuthGuard)
+  @DocumentationChangePassword()
   async changePassword(@Body() data: PasswordDto) {
     return await this.authService.changePassword(data);
   }

@@ -5,7 +5,7 @@ import {
   ApiQuery,
   ApiParam,
   ApiConsumes,
-  ApiBody,
+  ApiBody
 } from "@nestjs/swagger";
 
 export function DocumentationGetProductsByFilter() {
@@ -15,56 +15,56 @@ export function DocumentationGetProductsByFilter() {
       name: "filter",
       required: false,
       description: "Filtro para los productos",
-      example: "category",
+      example: "1"
     }),
     ApiQuery({
       name: "search",
       required: false,
       description: "Cadena de búsqueda para los productos",
-      example: "smartphone",
+      example: "cerdo"
     }),
     ApiQuery({
       name: "min",
       required: false,
       description: "Precio mínimo de los productos",
-      example: 100,
+      example: 5
     }),
     ApiQuery({
       name: "max",
       required: false,
       description: "Precio máximo de los productos",
-      example: 1000,
+      example: 15
     }),
     ApiQuery({
       name: "start",
       required: false,
       description: "Fecha de inicio para filtrar productos",
-      example: "2024-01-01",
+      example: "2024-01-01"
     }),
     ApiQuery({
       name: "page",
       required: false,
       description: "Número de página para paginación",
-      example: 1,
+      example: 1
     }),
     ApiQuery({
       name: "limit",
       required: false,
       description: "Número de productos por página",
-      example: 10,
+      example: 10
     }),
     ApiResponse({
       status: 200,
-      description: "Lista de productos filtrados",
+      description: "Lista de productos filtrados"
     }),
     ApiResponse({
       status: 400,
-      description: "Parámetros de consulta inválidos",
+      description: "Parámetros de consulta inválidos"
     }),
     ApiResponse({
       status: 404,
-      description: "Productos no encontrados",
-    }),
+      description: "Productos no encontrados"
+    })
   );
 }
 
@@ -74,21 +74,21 @@ export function DocumentationGetProducts() {
     ApiQuery({
       name: "page",
       required: false,
-      description: "Número de página para recuperar",
+      description: "Número de página para recuperar"
     }),
     ApiQuery({
       name: "limit",
       required: false,
-      description: "Número de productos para recuperar por página",
+      description: "Número de productos para recuperar por página"
     }),
     ApiResponse({
       status: 200,
-      description: "Devuelve todos los productos",
+      description: "Devuelve todos los productos"
     }),
     ApiResponse({
       status: 400,
-      description: "Error en la solicitud",
-    }),
+      description: "Error en la solicitud"
+    })
   );
 }
 
@@ -99,20 +99,20 @@ export function DocumentationGetProductById() {
       name: "id",
       required: true,
       description: "ID del producto",
-      example: 1,
+      example: 1
     }),
     ApiResponse({
       status: 200,
-      description: "Producto obtenido exitosamente",
+      description: "Producto obtenido exitosamente"
     }),
     ApiResponse({
       status: 404,
-      description: "Producto no encontrado",
+      description: "Producto no encontrado"
     }),
     ApiResponse({
       status: 400,
-      description: "Parámetro de ID inválido",
-    }),
+      description: "Parámetro de ID inválido"
+    })
   );
 }
 
@@ -122,8 +122,8 @@ export function DocumentationAddProduct() {
     ApiResponse({ status: 201, description: "Producto añadido exitosamente" }),
     ApiResponse({
       status: 500,
-      description: "Error al añadir producto, verifique los datos",
-    }),
+      description: "Error al añadir producto, verifique los datos"
+    })
     // ApiResponse({ status: 400, description: 'El producto ya existe' }),
   );
 }
@@ -135,20 +135,20 @@ export function DocumentationUpdateProduct() {
       name: "id",
       required: true,
       description: "ID del producto",
-      example: 1,
+      example: 1
     }),
     ApiResponse({
       status: 200,
-      description: "Producto actualizado exitosamente",
+      description: "Producto actualizado exitosamente"
     }),
     ApiResponse({
       status: 404,
-      description: "Producto no encontrado",
+      description: "Producto no encontrado"
     }),
     ApiResponse({
       status: 400,
-      description: "Datos de entrada inválidos",
-    }),
+      description: "Datos de entrada inválidos"
+    })
   );
 }
 
@@ -159,58 +159,49 @@ export function DocumentationAvailableOrUnavaliableProduct() {
       name: "id",
       required: true,
       description: "ID del producto",
-      example: 1,
+      example: 1
     }),
     ApiQuery({
       name: "status",
       required: true,
       description: "Estado del producto (disponible o no disponible)",
-      enum: ["false", "true"],
+      enum: ["false", "true"]
     }),
     ApiResponse({
       status: 200,
-      description: "Estado del producto actualizado exitosamente",
+      description: "Estado del producto actualizado exitosamente"
     }),
     ApiResponse({
       status: 404,
-      description: "Producto no encontrado",
+      description: "Producto no encontrado"
     }),
     ApiResponse({
       status: 400,
-      description: "Datos de entrada inválidos",
-    }),
+      description: "Datos de entrada inválidos"
+    })
   );
 }
 
-export function DocumentationProductIsPopular() {
+export function DocumentationUpdateIsPopular() {
   return applyDecorators(
-    ApiOperation({
-      summary: "Marcar un producto como popular o no popular por su ID",
-    }),
+    ApiOperation({ summary: "Actualizar popularidad de un producto" }),
     ApiQuery({
       name: "id",
-      required: true,
-      description: "ID del producto",
-      example: 1,
+      type: String,
+      description: "ID del producto a actualizar"
     }),
     ApiQuery({
       name: "status",
-      required: true,
-      description: "Estado del producto (popular o no popular)",
-      enum: ["false", "true"],
+      type: String,
+      description: 'Nuevo estado de popularidad (ej. "true" o "false")'
     }),
     ApiResponse({
       status: 200,
-      description: "Estado del producto actualizado exitosamente",
+      description: "Estado de popularidad actualizado correctamente"
     }),
-    ApiResponse({
-      status: 404,
-      description: "Producto no encontrado",
-    }),
-    ApiResponse({
-      status: 400,
-      description: "Datos de entrada inválidos",
-    }),
+    ApiResponse({ status: 400, description: "ID o estado no proporcionados" }),
+    ApiResponse({ status: 401, description: "No autorizado" }),
+    ApiResponse({ status: 500, description: "Error interno del servidor" })
   );
 }
 
@@ -221,21 +212,21 @@ export function DocumentationDeleteProduct() {
       name: "id",
       required: true,
       description: "ID del producto",
-      example: 1,
+      example: 1
     }),
     ApiResponse({
       status: 200,
       description: "Producto eliminado exitosamente",
-      type: String,
+      type: String
     }),
     ApiResponse({
       status: 404,
-      description: "Producto no encontrado",
+      description: "Producto no encontrado"
     }),
     ApiResponse({
       status: 400,
-      description: "Error al intentar eliminar el producto",
-    }),
+      description: "Error al intentar eliminar el producto"
+    })
   );
 }
 
@@ -246,26 +237,26 @@ export function DocumentationUpdateStock() {
       name: "id",
       required: true,
       description: "ID del producto",
-      example: 1,
+      example: 1
     }),
     ApiQuery({
       name: "stock",
       required: true,
       description: "Nuevo valor de stock",
-      example: 100,
+      example: 100
     }),
     ApiResponse({
       status: 200,
-      description: "Stock actualizado exitosamente",
+      description: "Stock actualizado exitosamente"
     }),
     ApiResponse({
       status: 400,
-      description: "Parámetros de consulta inválidos",
+      description: "Parámetros de consulta inválidos"
     }),
     ApiResponse({
       status: 404,
-      description: "Producto no encontrado",
-    }),
+      description: "Producto no encontrado"
+    })
   );
 }
 
@@ -276,7 +267,7 @@ export function DocumentationUpdateImg() {
       name: "id",
       required: true,
       description: "ID del producto",
-      example: 1,
+      example: 1
     }),
     ApiConsumes("multipart/form-data"),
     ApiBody({
@@ -285,22 +276,22 @@ export function DocumentationUpdateImg() {
         properties: {
           img: {
             type: "string",
-            format: "binary",
-          },
-        },
-      },
+            format: "binary"
+          }
+        }
+      }
     }),
     ApiResponse({
       status: 200,
-      description: "Imagen actualizada exitosamente",
+      description: "Imagen actualizada exitosamente"
     }),
     ApiResponse({
       status: 400,
-      description: "Parámetros de consulta inválidos o archivo no válido",
+      description: "Parámetros de consulta inválidos o archivo no válido"
     }),
     ApiResponse({
       status: 404,
-      description: "Producto no encontrado",
-    }),
+      description: "Producto no encontrado"
+    })
   );
 }
