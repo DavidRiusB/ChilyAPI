@@ -27,7 +27,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ unique: true, nullable: true })
+  @Column({ unique: false, nullable: true, default: "Sin teleléfono" })
   phone?: string;
 
   @Column({ name: "google_account", nullable: true, default: false })
