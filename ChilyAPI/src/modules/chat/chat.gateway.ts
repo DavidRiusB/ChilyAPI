@@ -22,13 +22,24 @@ export class ChatGateway implements OnGatewayInit {
   constructor(private readonly chatService: ChatService) {}
   @WebSocketServer() public server: Server;
   private logger: Logger = new Logger("ChatGateway");
+  private adminSocketId: string | null = null;
 
   afterInit(server: Server) {
     this.logger.log("Initialized ChatGateway");
     server.on("connection", (socket: Socket) => {
-      this.logger.log(`Conected:${socket.id}`);
+      this.logger.log(`Socket Connected: ${socket.id}`);
+
+      socket.on("adminConnected", () => {
+        this.adminSocketId = socket.id;
+        this.logger.log(`Admin connected: ${socket.id}`);
+      });
+
       socket.on("disconnect", () => {
         this.logger.log(`Disconnected: ${socket.id}`);
+        if (this.adminSocketId === socket.id) {
+          this.adminSocketId = null;
+          this.logger.log(`Admin disconnected: ${socket.id}`);
+        }
       });
     });
   }
@@ -44,13 +55,11 @@ export class ChatGateway implements OnGatewayInit {
       // Check if a ChatLog already exists for the orderId
       try {
         chatLog = await this.chatService.getChatLogByOrderId(orderId);
-        console.log(chatLog);
         this.logger.log(`Existing ChatLog found for orderId ${orderId}`);
       } catch (error) {
         if (error instanceof NotFoundException) {
           // Create a new ChatLog if not found
           chatLog = await this.chatService.createChatLog(chatData);
-          console.log(chatLog);
           this.logger.log(`New ChatLog created for orderId ${orderId}`);
         } else {
           throw error;
@@ -60,13 +69,16 @@ export class ChatGateway implements OnGatewayInit {
       client.join(roomId);
       this.logger.log(`Client ${client.id} created/joined room ${roomId}`);
 
-      // Notify all clients (including admin) about the new room
-      this.server.emit("newRoom", roomId);
+      // Notify the admin about the new room
+      if (this.adminSocketId) {
+        this.server.to(this.adminSocketId).emit("newRoom", roomId, chatLog);
+      }
+
       // Send a success response back to the client
       client.emit("createRoomResponse", { success: true, roomId });
     } catch (error) {
       this.logger.error(`Error creating/joining room for orderId`, error);
-      client.emit("creatRoomResponse", {
+      client.emit("createRoomResponse", {
         success: false,
         error: error.message,
       });
@@ -87,7 +99,7 @@ export class ChatGateway implements OnGatewayInit {
       const usersInRoom = room.size;
       client.emit("usersInRoom", usersInRoom);
     } else {
-      client.emit("error", "Room dose not exist");
+      client.emit("error", "Room does not exist");
     }
   }
 
