@@ -14,16 +14,16 @@ export class PaymentsService {
     const stripeSecretKey = this.configService.get<string>("STRIPE_SECRET_KEY");
     if (!stripeSecretKey) {
       throw new Error(
-        "La clave secreta de Stripe no está definida en las variables de entorno",
+        "La clave secreta de Stripe no está definida en las variables de entorno"
       );
     }
     this.stripe = new Stripe(stripeSecretKey, {
-      apiVersion: "2024-06-20",
+      apiVersion: "2024-06-20"
     });
   }
 
   async createPaymentIntent(
-    processPaymentDto: CreatePaymentDto,
+    processPaymentDto: CreatePaymentDto
   ): Promise<string> {
     const { amount, currency } = processPaymentDto;
     const amountInCents = Math.round(amount * 100);
@@ -31,7 +31,7 @@ export class PaymentsService {
     try {
       const paymentIntent = await this.stripe.paymentIntents.create({
         amount: amountInCents,
-        currency,
+        currency
       });
       return paymentIntent.client_secret;
     } catch (error) {
@@ -40,7 +40,7 @@ export class PaymentsService {
   }
 
   async handleCardPayment(
-    processPaymentDto: ProcessPaymentDto,
+    processPaymentDto: ProcessPaymentDto
   ): Promise<Stripe.PaymentIntent> {
     const { paymentMethodId, amount, currency } = processPaymentDto;
     const amountInCents = Math.round(amount * 100);
@@ -50,7 +50,7 @@ export class PaymentsService {
         amount: amountInCents,
         currency,
         payment_method: paymentMethodId,
-        confirm: true,
+        confirm: true
       });
       return paymentIntent;
     } catch (error) {
@@ -58,11 +58,44 @@ export class PaymentsService {
     }
   }
 
-  async geAllTransactions() {
-    const dataCharges = this.stripe.charges.list();
-    return (await dataCharges).data.map((charge) =>
-      this.buildFormatTransaction(charge),
-    );
+  async getAllTransactions(
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{ orders: TransactionInfo[]; total: number }> {
+    const allCharges = await this.getAllCharges();
+
+    const total = allCharges.length;
+    const offset = (page - 1) * limit;
+    const paginatedCharges = allCharges.slice(offset, offset + limit);
+
+    return {
+      orders: paginatedCharges.map((charge) =>
+        this.buildFormatTransaction(charge)
+      ),
+      total
+    };
+  }
+
+  private async getAllCharges(): Promise<Stripe.Charge[]> {
+    let hasMore = true;
+    let lastChargeId = null;
+    const allCharges = [];
+
+    while (hasMore) {
+      const charges = await this.stripe.charges.list({
+        limit: 100,
+        starting_after: lastChargeId || undefined
+      });
+
+      allCharges.push(...charges.data);
+      hasMore = charges.has_more;
+      lastChargeId =
+        charges.data.length > 0
+          ? charges.data[charges.data.length - 1].id
+          : null;
+    }
+
+    return allCharges;
   }
 
   private formatTimestamp(timestamp: number): string {
@@ -77,13 +110,14 @@ export class PaymentsService {
   }
 
   private buildFormatTransaction(dataCharge: Stripe.Charge): TransactionInfo {
+    const amountInPesos = dataCharge.amount / 100000;
     return {
       id: dataCharge.id,
-      amount: dataCharge.amount,
+      amount: amountInPesos,
       currency: dataCharge.currency,
       status: dataCharge.status,
       created: this.formatTimestamp(dataCharge.created),
-      card_brand: dataCharge.payment_method_details.card.brand,
+      card_brand: dataCharge.payment_method_details.card.brand
     };
   }
 }
