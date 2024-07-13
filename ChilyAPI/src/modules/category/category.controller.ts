@@ -12,7 +12,7 @@ import {
 } from "@nestjs/common";
 import { CategoryService } from "./category.service";
 import { Category } from "./category.entity";
-import { createCategoryDto } from "./dto/createCategory.dto";
+import { createCategoryDto, UpdateCategoryDTO } from "./dto/createCategory.dto";
 import {
   DocumentationApiTagsModule,
   DocumentationCreateCategory,
@@ -68,7 +68,7 @@ export class CategoryController {
   @DocumentationUpdateCategory()
   updateCategory(
     @Param("id") id: number,
-    @Body() updateCategoryDto: createCategoryDto,
+    @Body() updateCategoryDto: UpdateCategoryDTO,
   ) {
     return this.categoryService.updateCategory(id, updateCategoryDto);
   }

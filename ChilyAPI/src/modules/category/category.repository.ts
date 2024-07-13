@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, InternalServerErrorException, NotFound
 import { InjectRepository } from "@nestjs/typeorm";
 import { Category } from "./category.entity";
 import { In, Repository } from "typeorm";
-import { createCategoryDto } from "./dto/createCategory.dto";
+import { createCategoryDto, UpdateCategoryDTO } from "./dto/createCategory.dto";
 import { Product } from "../products/products.entity";
 
 @Injectable()
@@ -81,7 +81,7 @@ export class CategoryRepository {
         }
     }
 
-    async updateCategory(id: number, updateCategory: createCategoryDto): Promise<Category> {
+    async updateCategory(id: number, updateCategory: UpdateCategoryDTO): Promise<Category> {
         try {
 
             const existeCategory = await this.categoryRepository.findOne({ where: { id: id, isDeleted: false } });
