@@ -1,7 +1,6 @@
 // Vendors
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -33,7 +32,6 @@ import { OrderStatus } from "src/common/enums";
 
 import { Response } from "express";
 import { PdfService } from "src/common/helpers/pdf/pdf.service";
-import { RemovePropertiesInterceptor } from "src/common/interceptors";
 import { PdfDataDto } from "src/common/helpers/pdf/pdf.dto";
 @Injectable()
 export class OrderService {
@@ -45,7 +43,7 @@ export class OrderService {
     private readonly addressService: AddressesService,
     private dataSource: DataSource,
     private readonly notificationEmailsService: NotificationEmailsService,
-    private readonly pdfService: PdfService
+    private readonly pdfService: PdfService,
   ) {}
 
   async addOrder(orderData: OrderDto) {
@@ -128,13 +126,13 @@ export class OrderService {
         await manager.save(OrderDetail, orderDetails);
         console.log("Order details saved successfully");
 
-       await this.notificationEmailsService.sendOrderConfirmationEmail(
-         user.email,
-         user.name,
-         createdOrder.id.toString(),
-         orderDetails,
-         total,
-       );
+        await this.notificationEmailsService.sendOrderConfirmationEmail(
+          user.email,
+          user.name,
+          createdOrder.id.toString(),
+          orderDetails,
+          total,
+        );
 
         return { newOrder: createdOrder, orderDetails };
       });
@@ -154,7 +152,6 @@ export class OrderService {
       id?: string;
       date?: string;
       productName?: string;
-      price?: string;
       status?: OrderStatus;
     },
   ) {
@@ -162,13 +159,15 @@ export class OrderService {
 
     if (!orders || orders.length === 0) {
       console.error("No orders found");
-      return [];
+      return { orders: [], total: 0 };
     }
-    console.log("Orders fetched:", orders);
+
+    // Count total orders matching filters
+    const total = await this.orderRepository.countOrders(filters);
 
     const ordersQuantity = {
       orders: orders.map((order) => this.transformOrder(order)),
-      total: orders.length,
+      total:total,
     };
 
     return ordersQuantity;
@@ -228,6 +227,7 @@ export class OrderService {
       );
     }
   }
+
   private mapOrderToResOrderDto(order: Order): ResOrderDto {
     const resOrder = new ResOrderDto();
     resOrder.id = order.id;
@@ -276,7 +276,7 @@ export class OrderService {
   }
   async generatePdf(id: number, res: Response) {
     const order = await this.findOrderById(id);
-    console.log(order)
+    console.log(order);
     const data: PdfDataDto = {
       order: order.details.map((detail) => ({
         name: detail.product.name,
@@ -290,4 +290,5 @@ export class OrderService {
     const pdf = await this.pdfService.generatePdf(data, res);
     return pdf;
   }
+
 }

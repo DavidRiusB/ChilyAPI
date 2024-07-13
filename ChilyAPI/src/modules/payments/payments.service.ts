@@ -3,6 +3,8 @@ import Stripe from "stripe";
 import { ConfigService } from "@nestjs/config";
 import { ProcessPaymentDto } from "./processPayment.dto";
 import { CreatePaymentDto } from "./create-payment.dto";
+import { Transaction } from "typeorm";
+import { TransactionInfo } from "./interfaces/TransactionInfo";
 
 @Injectable()
 export class PaymentsService {
@@ -54,5 +56,34 @@ export class PaymentsService {
     } catch (error) {
       throw new Error("Error al procesar el pago con tarjeta con Stripe");
     }
+  }
+
+  async geAllTransactions() {
+    const dataCharges = this.stripe.charges.list();
+    return (await dataCharges).data.map((charge) =>
+      this.buildFormatTransaction(charge),
+    );
+  }
+
+  private formatTimestamp(timestamp: number): string {
+    const date = new Date(timestamp * 1000);
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+    const hours = ("0" + date.getHours()).slice(-2);
+    const minutes = ("0" + date.getMinutes()).slice(-2);
+    const seconds = ("0" + date.getSeconds()).slice(-2);
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+
+  private buildFormatTransaction(dataCharge: Stripe.Charge): TransactionInfo {
+    return {
+      id: dataCharge.id,
+      amount: dataCharge.amount,
+      currency: dataCharge.currency,
+      status: dataCharge.status,
+      created: this.formatTimestamp(dataCharge.created),
+      card_brand: dataCharge.payment_method_details.card.brand,
+    };
   }
 }

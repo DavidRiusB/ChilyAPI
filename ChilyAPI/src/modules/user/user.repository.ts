@@ -51,6 +51,7 @@ export class UserRepository {
       const newUser = new User();
       newUser.email = email;
       newUser.name = name;
+      newUser.phone = phone;
       // newUser.address = address;
       newUser.credential = credential;
       newUser.role = role;

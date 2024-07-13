@@ -1,4 +1,10 @@
-import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, BadRequestException } from "@nestjs/common";
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
 import { Between, DataSource, In, Raw, Repository } from "typeorm";
 import { Product } from "./products.entity";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -10,15 +16,12 @@ import { CategoryService } from "../category/category.service";
 export class ProductsRepository {
   constructor(
     @InjectRepository(Product) private productsRepository: Repository<Product>,
-    @InjectRepository(Category)
-    private categoryRepository: Repository<Category>,
     private readonly dataSource: DataSource,
-    private readonly categoryService: CategoryService,
-  ) { }
+    private readonly categoryService: CategoryService
+  ) {}
   async getProducts(page: number, limit: number): Promise<Product[]> {
     try {
       let products = await this.productsRepository.find({
-        where: { isDeleted: false },
         relations: ["category"],
       });
 
@@ -37,9 +40,7 @@ export class ProductsRepository {
 
   async getAllProducts(): Promise<Product[]> {
     try {
-      const products = await this.productsRepository.find({
-        where: { isDeleted: false },
-      });
+      const products = await this.productsRepository.find();
       return products;
     } catch (error) {
       throw new NotFoundException("Error al obtener los productos");
@@ -49,7 +50,7 @@ export class ProductsRepository {
   async getProductById(id: number): Promise<Product> {
     try {
       const product = await this.productsRepository.findOne({
-        where: { id: id, isDeleted: false },
+        where: { id: id },
         relations: ["category"],
       });
       return product;
@@ -60,17 +61,12 @@ export class ProductsRepository {
 
   async getCategoryByFilter(filter: number[]): Promise<Product[]> {
     try {
-      const categories = await this.categoryRepository.find({
-        where: { id: In(filter), isDeleted: false },
-        relations: ["products"],
-      });
+      const categories = await this.categoryService.getCategoryById(filter);
 
       let products: Product[] = [];
       categories.forEach((category) => {
         category.products.forEach((product) => {
-          if (!product.isDeleted) {
-            products.push(product);
-          }
+          products.push(product);
         });
       });
 
@@ -93,7 +89,6 @@ export class ProductsRepository {
           name: Raw((alias) => `UPPER(${alias}) LIKE UPPER(:search)`, {
             search: `%${upperSearch}%`,
           }),
-          isDeleted: false,
         },
         relations: ["category"],
       });
@@ -103,7 +98,6 @@ export class ProductsRepository {
           description: Raw((alias) => `UPPER(${alias}) LIKE UPPER(:search)`, {
             search: `%${upperSearch}%`,
           }),
-          isDeleted: false,
         },
         relations: ["category"],
       });
@@ -134,7 +128,7 @@ export class ProductsRepository {
   async getProductsByPriceRange(min: number, max: number): Promise<Product[]> {
     try {
       const products = await this.productsRepository.find({
-        where: { isDeleted: false, price: Between(min, max) },
+        where: { price: Between(min, max) },
         relations: ["category"],
       });
       return products;
@@ -171,17 +165,17 @@ export class ProductsRepository {
       if (error instanceof NotFoundException) throw error;
       if (error.code === "23505")
         throw new ConflictException(
-          "Error al crear el producto o posible nombre duplicado",
+          "Error al crear el producto o posible nombre duplicado"
         );
       throw new InternalServerErrorException(
-        "Error inesperado del servidor al crear el producto",
+        "Error inesperado del servidor al crear el producto"
       );
     }
   }
 
   async updateProduct(
     id: number,
-    updateProduct: UpdateProductDto,
+    updateProduct: UpdateProductDto
   ): Promise<Product> {
     try {
       return this.dataSource.transaction(async (manager) => {
@@ -199,7 +193,7 @@ export class ProductsRepository {
 
         if (updateProduct.category.length > 0) {
           const categories = await this.categoryService.getCategoryById(
-            updateProduct.category,
+            updateProduct.category
           );
           product.category = categories;
         }
@@ -211,36 +205,25 @@ export class ProductsRepository {
     } catch (error) {
       if (error instanceof NotFoundException) throw error;
       throw new NotFoundException(
-        "Error al actualizar el producto con ID: " + id,
+        "Error al actualizar el producto con ID: " + id
       );
     }
   }
 
   async deleteProduct(id: number): Promise<string> {
     try {
-      const product = await this.productsRepository.findOne({
-        where: { id: id },
-      });
-      if (!product) throw new NotFoundException("Producto no encontrado");
-      product.isDeleted = true;
-      const updatedProduct = await this.productsRepository.update(id, product);
-      return updatedProduct.affected > 0
-        ? "Producto con ID: "+id+" dado de baja"
-        : "Producto no encontrado";
+      const product = await this.getProductById(id);
+      this.productsRepository.softDelete(product.id);
+      return "El producto ha sido dado de baja";
     } catch (error) {
-      if (error instanceof NotFoundException) throw error;
-      throw new InternalServerErrorException(
-        "Error al dar de baja el producto con ID: " + id,
-      );
+      throw error;
     }
   }
 
   async findByIds(ids: number[]): Promise<Product[]> {
-    const products = await this.productsRepository
-      .createQueryBuilder("product")
-      .where("product.id IN (:...ids)", { ids })
-      .getMany();
-
+    const products = await this.productsRepository.find({
+      where: { id: In(ids) },
+    });
     return products;
   }
   /*async availableOrUnavaliableProduct(id: number, status: string): Promise<Product> {
@@ -268,27 +251,35 @@ export class ProductsRepository {
 
   async productIsPopular(id: number, status: string): Promise<Product> {
     try {
-      let aux:boolean;
+      let aux: boolean;
       const product = await this.getProductById(id);
-      switch(status.toLowerCase()){
-        case "true":aux =true;break;
-        case "false": aux=false;break;
-        default: throw new BadRequestException("Verifique los datos enviados");
+      switch (status.toLowerCase()) {
+        case "true":
+          aux = true;
+          break;
+        case "false":
+          aux = false;
+          break;
+        default:
+          throw new BadRequestException("Verifique los datos enviados");
       }
       aux ? (product.isPopular = true) : (product.isPopular = false);
       await this.productsRepository.save(product);
       return product;
     } catch (error) {
-      if(error instanceof BadRequestException)throw error;
+      if (error instanceof BadRequestException) throw error;
       throw new InternalServerErrorException(
-        "Error al actualizar el producto con ID: " + id,
+        "Error al actualizar el producto con ID: " + id
       );
     }
   }
-
   async updateStock(products: Product[]) {
-    for (const product of products) {
-      await this.productsRepository.update(product.id, { stock: product.stock });
-    }
+    await this.dataSource.manager.transaction(async (manager) => {
+      for (const product of products) {
+        const existingProduct = await this.getProductById(product.id);
+        existingProduct.stock = product.stock;
+        await manager.save(Product, existingProduct);
+      }
+    })
   }
 }

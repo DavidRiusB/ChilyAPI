@@ -71,7 +71,6 @@ export class AuthRepository {
       newCredential.email = email;
       newCredential.password = hashedPassword;
       newCredential.NIN = NIN;
-      newCredential.phone = phone;
       this.credentialRepository.create(newCredential);
       return newCredential;
     } catch (error) {
@@ -93,7 +92,7 @@ export class AuthRepository {
     return credential;
   }
 
-  async updatePassword(id: string, newPassword: string) {
+  async updatePassword(id: number, newPassword: string) {
     try {
       const hashedPassword = await hashPassword(newPassword);
       const updateResult = await this.credentialRepository.update(id, {

@@ -1,25 +1,30 @@
 import {
-  IsEmail,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsPhoneNumber,
   IsString,
-  IsStrongPassword,
-  MaxLength,
-  MinLength,
 } from 'class-validator';
-import { Role } from 'src/common/enums/roles.enum';
+import { Role } from 'src/common/enums';
 import { DocumentationUserUpdateDto } from 'src/docs';
 
 export class UserUpdateDto {
+
+  @IsOptional()
   @IsNotEmpty()
   @IsString()
-  @DocumentationUserUpdateDto.address()
-  address?: string;
+  name?: string;
 
+  @IsOptional()
   @IsNotEmpty()
-  @IsPhoneNumber()
+  @IsPhoneNumber('CO', {
+    message: 'El formato de telefono es incorrecto, ejemplo: +573001234560',
+  })
   @DocumentationUserUpdateDto.phone()
   phone?: string;
+
+  @IsOptional()
+  @IsNotEmpty()
+  @IsEnum(Role)
+  role?: Role;
 }
