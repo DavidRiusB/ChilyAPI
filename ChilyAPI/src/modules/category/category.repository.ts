@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Category } from "./category.entity";
 import { In, Repository } from "typeorm";
 import { createCategoryDto, UpdateCategoryDTO } from "./dto/createCategory.dto";
-import { Product } from "../products/products.entity";
 
 @Injectable()
 export class CategoryRepository {
@@ -13,7 +12,7 @@ export class CategoryRepository {
 
     async getCategories(): Promise<Category[]> {
         try {
-            const categories = await this.categoryRepository.find({ where: { isDeleted: false }, relations: ["products"] });
+            const categories = await this.categoryRepository.find({ relations: ["products"] });
             return categories;
         } catch (error) {
             throw new NotFoundException("Error al obtener las categorias");
@@ -24,7 +23,7 @@ export class CategoryRepository {
     async getCategoryById(id: number[], page: number = 1, limit: number = 10): Promise<Category[]> {
         try {
             const categories = await this.categoryRepository.find({
-                where: { id: In(id), isDeleted: false },
+                where: { id: In(id) },
                 relations: ["products"],
             });
 
@@ -45,7 +44,7 @@ export class CategoryRepository {
 
     async getCategoryById2(id: number, page: number, limit: number): Promise<Category> {
         try {
-            const category = await this.categoryRepository.findOne({ where: { id: id, isDeleted: false }, relations: ["products"] });
+            const category = await this.categoryRepository.findOne({ where: { id: id }, relations: ["products"] });
             category.products = category.products.slice((page - 1) * limit, page * limit);
             return category;
         } catch (error) {
@@ -57,7 +56,7 @@ export class CategoryRepository {
     async getCategoryByName(name: string, page: number, limit: number): Promise<Category> {
         try {
             name = name.toUpperCase();
-            const category = await this.categoryRepository.findOne({ where: { name: name, isDeleted: false }, relations: ["products"] });
+            const category = await this.categoryRepository.findOne({ where: { name: name }, relations: ["products"] });
             category.products = category.products.slice((page - 1) * limit, page * limit);
             return category;
         } catch (error) {
@@ -84,7 +83,7 @@ export class CategoryRepository {
     async updateCategory(id: number, updateCategory: UpdateCategoryDTO): Promise<Category> {
         try {
 
-            const existeCategory = await this.categoryRepository.findOne({ where: { id: id, isDeleted: false } });
+            const existeCategory = await this.categoryRepository.findOne({ where: { id: id } });
 
             existeCategory.name = updateCategory.name.toUpperCase();
 
@@ -100,8 +99,9 @@ export class CategoryRepository {
 
     async deleteCategory(id: number): Promise<string> {
         try {
-            const updatedCategory = await this.categoryRepository.update(id, { isDeleted: true });
-            return updatedCategory.affected > 0 ? "Categoría con ID:"+id+" eliminada" : "Categoría no encontrada"
+            const category = await this.categoryRepository.findOne({ where: { id: id } });
+            this.categoryRepository.softDelete(category.id);
+            return `La categoria con ID: ${id} ha sido eliminada`;
         } catch (error) {
             throw new BadRequestException("Error al eliminar la categoria con ID: " + id);
         }
