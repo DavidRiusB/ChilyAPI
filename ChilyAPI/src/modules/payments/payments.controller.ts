@@ -4,6 +4,7 @@ import {
   Body,
   BadRequestException,
   Get,
+  Query
 } from "@nestjs/common";
 import { PaymentsService } from "./payments.service";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
@@ -40,9 +41,10 @@ export class PaymentsController {
   }
 
   @Get("orders-info")
-  async getAllTransactionsByStripe() {
-    return this.paymentsService.geAllTransactions();
+  async getAllTransactionsByStripe(
+    @Query("page") page: number = 1,
+    @Query("limit") limit: number = 10
+  ) {
+    return this.paymentsService.getAllTransactions(page,limit);
   }
-
-
 }
