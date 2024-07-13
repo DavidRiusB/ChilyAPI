@@ -49,10 +49,7 @@ export class UserController {
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   @DocumentationUpdateUser()
-  async updateUser(@Param('id') id: number, @Body() userData: UserUpdateDto, @Req() request) {
-   const userId = parseInt(request.user.id);
-   if(request.user.rol === Role.User && userId !== id) throw new UnauthorizedException('No tienes permisos para realizar esta accion')
-   if(request.user.rol === Role.User && userData.role !== Role.User) throw new UnauthorizedException('No tienes permisos para realizar esta accion')
+  async updateUser(@Param('id') id: number, @Body() userData: UserUpdateDto) {
     return await this.userService.update(userData, id);
   }
 
