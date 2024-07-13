@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Product } from "../products/products.entity";
 
 @Entity({
@@ -8,6 +8,9 @@ export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @CreateDateColumn()
+  createdAt: Date;
+  
   @Column({
     nullable: false,
     unique: true,
@@ -19,12 +22,6 @@ export class Category {
     type: "varchar",
   })
   icon: string;
-
-  @Column({
-    type: "boolean",
-    default: false,
-  })
-  isDeleted: boolean;
 
   @ManyToMany(() => Product, (product) => product.category)
   @JoinTable({
@@ -39,4 +36,7 @@ export class Category {
     }
   })
   products: Product[];
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }
