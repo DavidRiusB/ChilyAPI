@@ -52,7 +52,6 @@ export class AuthService {
         newCredential.email = userData.email;
         newCredential.password = hashedPassword;
         newCredential.NIN = userData.NIN;
-        newCredential.phone = userData.phone;
         await manager.save(Credential, newCredential);
 
         const newUser = new User();
@@ -73,7 +72,7 @@ export class AuthService {
     const user = await this.userService.findByCredentialsId(credential);
     return user;
   }
-
+//
   async generateToken(
     user: User,
   ): Promise<{ access_token: string; user: User }> {

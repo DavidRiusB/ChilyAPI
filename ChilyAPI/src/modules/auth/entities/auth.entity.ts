@@ -14,9 +14,6 @@ export class Credential {
   //national identification number
   NIN: string;
 
-  @Column({ unique: true, nullable: false })
-  phone: string;
-
   @Column({ unique: true, select: false })
   email: string;
 
