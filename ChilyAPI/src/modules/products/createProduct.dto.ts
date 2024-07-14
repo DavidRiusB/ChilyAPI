@@ -77,7 +77,7 @@ export class UpdateProductDto{
   @IsOptional()
   @IsUrl()
   @DocumentationCreateProductDto.image_url()
-  imageURL: string;
+  img: string;
 
   @IsOptional()
   @IsArray()
