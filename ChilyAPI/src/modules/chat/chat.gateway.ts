@@ -69,13 +69,22 @@ export class ChatGateway implements OnGatewayInit {
       client.join(roomId);
       this.logger.log(`Client ${client.id} created/joined room ${roomId}`);
 
+      // Fetch existing messages
+      const messages = await this.chatService.getMessages(chatLog.id);
+      this.logger.log("messeges in chat:", messages);
+
       // Notify the admin about the new room
       if (this.adminSocketId) {
         this.server.to(this.adminSocketId).emit("newRoom", roomId, chatLog);
       }
 
       // Send a success response back to the client
-      client.emit("createRoomResponse", { success: true, roomId });
+      client.emit("createRoomResponse", {
+        success: true,
+        roomId,
+        messages,
+        chatLog,
+      });
     } catch (error) {
       this.logger.error(`Error creating/joining room for orderId`, error);
       client.emit("createRoomResponse", {
@@ -95,7 +104,24 @@ export class ChatGateway implements OnGatewayInit {
     if (room) {
       client.join(roomId);
       this.logger.log(`Client ${client.id} joined room ${roomId}`);
-      client.emit("joinedRoom", roomId);
+      try {
+        const chatLog = await this.chatService.getChatLogByOrderId(orderId);
+        const messages = await this.chatService.getMessages(chatLog.id);
+        // Emit messages to the client after successfully joining the room
+        client.emit("joinedRoom", chatLog, roomId, messages);
+      } catch (error) {
+        if (error instanceof NotFoundException) {
+          this.logger.error(`Chat log not found for orderId ${orderId}`, error);
+          client.emit("error", "Chat log not found");
+        } else {
+          this.logger.error(
+            `Error fetching messages for orderId ${orderId}`,
+            error
+          );
+          client.emit("error", "Error fetching messages");
+        }
+        return; // Exit early if there's an error
+      }
       const usersInRoom = room.size;
       client.emit("usersInRoom", usersInRoom);
     } else {
@@ -118,6 +144,7 @@ export class ChatGateway implements OnGatewayInit {
         chatLogId
       );
       this.server.to(roomId).emit("on-message", message);
+      this.logger.log("on-message:", { message });
     }
   }
 }
