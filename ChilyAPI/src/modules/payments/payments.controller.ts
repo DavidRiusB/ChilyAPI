@@ -47,12 +47,15 @@ export class PaymentsController {
     }
   }
 
-  @Get("orders-info")
-  @DocumentationGetAllTransactionsByStripe()
-  async getAllTransactionsByStripe(
-    @Query("page") page: number = 1,
-    @Query("limit") limit: number = 10
-  ) {
-    return this.paymentsService.getAllTransactions(page, limit);
-  }
+ @Get("orders-info")
+@DocumentationGetAllTransactionsByStripe()
+async getAllTransactionsByStripe(
+  @Query("page") page: number = 1,
+  @Query("limit") limit: number = 10,
+  @Query("date") date?: string,
+  @Query("amount") amount?: number
+) {
+  return this.paymentsService.getAllTransactions(page, limit, date, amount);
+}
+
 }
