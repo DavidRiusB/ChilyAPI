@@ -6,59 +6,60 @@ import {
   ApiBody,
   ApiOperation,
   ApiQuery,
-  ApiResponse,
+  ApiResponse
 } from "@nestjs/swagger";
 import { CreateAddressDto } from "src/modules/addresses/dto/createAddress.dto";
 import { UpdateAddressDto } from "src/modules/addresses/dto/updateAddres.dto";
+import { Address } from "src/modules/addresses/entities/addresses.entity";
 import { JwtAuthGuard } from "src/modules/auth/guards/jwt.guard";
 
 export function DocumentationObtainUserAdress() {
   return applyDecorators(
-    ApiBearerAuth(), 
+    ApiBearerAuth(),
     ApiOperation({ summary: "Obtener direcciones de un usuario" }),
     ApiQuery({
       name: "id",
       required: true,
       description: "ID del usuario",
-      example: 1,
+      example: 1
     }),
     ApiResponse({
       status: 200,
-      description: "Direcciones del usuario",
+      description: "Direcciones del usuario"
     }),
     ApiResponse({
       status: 404,
-      description: "Usuario no encontrado",
+      description: "Usuario no encontrado"
     }),
     ApiResponse({
       status: 400,
-      description: "ID de usuario inválido",
-    }),
+      description: "ID de usuario inválido"
+    })
   );
 }
 
 export function DocumentacionObtainAddresse() {
   return applyDecorators(
-    ApiBearerAuth(), 
+    ApiBearerAuth(),
     ApiOperation({ summary: "Obtener una dirección de un usuario" }),
     ApiQuery({
       name: "id",
       required: true,
       description: "ID de la dirección",
-      example: 1,
+      example: 1
     }),
     ApiResponse({
       status: 200,
-      description: "Dirección del usuario",
+      description: "Dirección del usuario"
     }),
     ApiResponse({
       status: 404,
-      description: "Dirección no encontrada",
+      description: "Dirección no encontrada"
     }),
     ApiResponse({
       status: 400,
-      description: "ID de dirección inválido",
-    }),
+      description: "ID de dirección inválido"
+    })
   );
 }
 
@@ -68,7 +69,7 @@ export function DocumentationAddNewAddress() {
     ApiBody({ type: CreateAddressDto }),
     ApiResponse({ status: 201, description: "Address created successfully" }),
     ApiResponse({ status: 401, description: "Unauthorized" }),
-    UseGuards(JwtAuthGuard),
+    UseGuards(JwtAuthGuard)
   );
 }
 
@@ -78,7 +79,7 @@ export function DocumentationUpdateAddress() {
     ApiBody({ type: UpdateAddressDto }),
     ApiResponse({ status: 200, description: "Address updated successfully" }),
     ApiResponse({ status: 401, description: "Unauthorized" }),
-    UseGuards(JwtAuthGuard),
+    UseGuards(JwtAuthGuard)
   );
 }
 
@@ -88,11 +89,26 @@ export function DocumentationDeleteAddress() {
     ApiQuery({
       name: "id",
       type: Number,
-      description: "ID of the address to delete",
+      description: "ID of the address to delete"
     }),
     ApiResponse({ status: 200, description: "Address deleted successfully" }),
     ApiResponse({ status: 401, description: "Unauthorized" }),
     ApiResponse({ status: 404, description: "Address not found" }),
-    UseGuards(JwtAuthGuard),
+    UseGuards(JwtAuthGuard)
+  );
+}
+
+export function DocumentationFindAllAddresses() {
+  return applyDecorators(
+    ApiOperation({ summary: "Obtener todas las direcciones" }),
+    ApiResponse({
+      status: 200,
+      description: "Direcciones obtenidas exitosamente",
+      type: [Address]
+    }),
+    ApiResponse({
+      status: 500,
+      description: "Error interno del servidor"
+    })
   );
 }
