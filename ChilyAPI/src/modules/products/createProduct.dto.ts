@@ -58,29 +58,30 @@ export class UpdateProductDto{
   @IsOptional()
   @IsString()
   @DocumentationCreateProductDto.names()
-  name: string;
+  name?: string;
 
   @IsOptional()
   @IsString()
   @DocumentationCreateProductDto.description()
-  description: string;
+  description?: string;
 
   @IsOptional()
   @IsNumber()
   @DocumentationCreateProductDto.price()
-  price: number;
+  price?: number;
 
   @IsOptional()
   @IsNumber()
-  stock : number;
+  stock?: number;
 
   @IsOptional()
   @IsUrl()
   @DocumentationCreateProductDto.image_url()
-  img: string;
+  img?: string;
 
   @IsOptional()
   @IsArray()
+  @IsNumber({}, { each: true })
   @DocumentationCreateProductDto.category()
-  category: number[];
+  category?: number[];
 }
