@@ -189,7 +189,7 @@ export class ProductsRepository {
 
         product.stock = Math.max(product.stock + updateProduct.stock, 0);
 
-        product.img = updateProduct.imageURL;
+        product.img = updateProduct.img;
 
         if (updateProduct.category.length > 0) {
           const categories = await this.categoryService.getCategoryById(
