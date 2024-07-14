@@ -58,15 +58,49 @@ export class PaymentsService {
     }
   }
 
+  // async getAllTransactions(
+  //   page: number = 1,
+  //   limit: number = 10
+  // ): Promise<{ orders: TransactionInfo[]; total: number }> {
+  //   const allCharges = await this.getAllCharges();
+
+  //   const total = allCharges.length;
+  //   const offset = (page - 1) * limit;
+  //   const paginatedCharges = allCharges.slice(offset, offset + limit);
+
+  //   return {
+  //     orders: paginatedCharges.map((charge) =>
+  //       this.buildFormatTransaction(charge)
+  //     ),
+  //     total
+  //   };
+  // }
   async getAllTransactions(
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
+    date?: string,
+    amount?: number
   ): Promise<{ orders: TransactionInfo[]; total: number }> {
     const allCharges = await this.getAllCharges();
 
-    const total = allCharges.length;
+    // Aplicar filtros
+    const filteredCharges = allCharges.filter((charge) => {
+      const chargeDate = new Date(charge.created * 1000)
+        .toISOString()
+        .split("T")[0];
+      const amountInPesos = charge.amount / 100000;
+
+      const matchesDate = date ? new RegExp(date).test(chargeDate) : true;
+      const matchesAmount = amount
+        ? amountInPesos.toFixed(1).startsWith(amount.toFixed(1))
+        : true;
+
+      return matchesDate && matchesAmount;
+    });
+
+    const total = filteredCharges.length;
     const offset = (page - 1) * limit;
-    const paginatedCharges = allCharges.slice(offset, offset + limit);
+    const paginatedCharges = filteredCharges.slice(offset, offset + limit);
 
     return {
       orders: paginatedCharges.map((charge) =>
