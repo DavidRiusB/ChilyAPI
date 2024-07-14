@@ -36,5 +36,6 @@ import { PdfService } from "src/common/helpers/pdf/pdf.service";
     PdfService
   ],
   controllers: [OrderController],
+  exports: [OrderService],
 })
 export class OrderModule {}
