@@ -31,6 +31,7 @@ export class ChatGateway implements OnGatewayInit {
 
       socket.on("adminConnected", () => {
         this.adminSocketId = socket.id;
+        
         this.logger.log(`Admin connected: ${socket.id}`);
       });
 

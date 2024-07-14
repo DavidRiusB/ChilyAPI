@@ -48,9 +48,8 @@ import { PdfService } from "./common/helpers/pdf/pdf.service";
     AddressesModule,
     GoogleMapsModule,
     PaymentsModule,
-    ChatModule
+    ChatModule,
   ],
-  controllers: [],
   providers: [NotificationEmailsService, PdfService],
 })
 export class AppModule {}

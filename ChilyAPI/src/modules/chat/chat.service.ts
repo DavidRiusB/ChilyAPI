@@ -99,4 +99,18 @@ export class ChatService {
       .getMany();
     return messages;
   }
+
+  async findAllLogs(pagination: { page: number; limit: number }) {
+    const { page, limit } = pagination;
+    const [logs, total] = await this.chatLogRepository
+      .createQueryBuilder("logs")
+      .leftJoinAndSelect("logs.chats", "chats")
+      .leftJoinAndSelect("logs.order", "order")
+      .skip((page - 1) * limit)
+      .take(limit)
+      .select()
+      .getManyAndCount();
+
+    return { data: logs, page, limit, total };
+  }
 }
