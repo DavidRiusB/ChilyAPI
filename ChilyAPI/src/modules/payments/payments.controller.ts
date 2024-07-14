@@ -4,10 +4,16 @@ import {
   Body,
   BadRequestException,
   Get,
+  Query
 } from "@nestjs/common";
 import { PaymentsService } from "./payments.service";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { DocumentationApiTagsModule } from "src/docs";
+import {
+  DocumentationApiTagsModule,
+  DocumentationCreatePaymentIntent,
+  DocumentationGetAllTransactionsByStripe,
+  DocumentationHandleCardPayment
+} from "src/docs";
 import { ProcessPaymentDto } from "./processPayment.dto";
 import { CreatePaymentDto } from "./create-payment.dto";
 import { TransactionInfo } from "./interfaces/TransactionInfo";
@@ -18,6 +24,7 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post("payment-intent")
+  @DocumentationCreatePaymentIntent()
   async createPaymentIntent(@Body() createPaymentDto: CreatePaymentDto) {
     try {
       const clientSecret =
@@ -29,6 +36,7 @@ export class PaymentsController {
   }
 
   @Post("card-payment")
+  @DocumentationHandleCardPayment()
   async handleCardPayment(@Body() handleCardPaymentDto: ProcessPaymentDto) {
     try {
       const paymentIntent =
@@ -39,10 +47,15 @@ export class PaymentsController {
     }
   }
 
-  @Get("orders-info")
-  async getAllTransactionsByStripe() {
-    return this.paymentsService.geAllTransactions();
-  }
-
+ @Get("orders-info")
+@DocumentationGetAllTransactionsByStripe()
+async getAllTransactionsByStripe(
+  @Query("page") page: number = 1,
+  @Query("limit") limit: number = 10,
+  @Query("date") date?: string,
+  @Query("amount") amount?: number
+) {
+  return this.paymentsService.getAllTransactions(page, limit, date, amount);
+}
 
 }

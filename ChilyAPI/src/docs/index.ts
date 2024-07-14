@@ -29,3 +29,7 @@ export * from "./doc-googleMaps-module/docs-endpoint-maps";
 // Addresses
 export * from "./docs-addresses-module/docs-endpoints-addresses";
 export * from "./docs-addresses-module/doc-create-address-dto";
+
+// Paymetns
+export * from "./doc-payments-module/docs-endpoint-payments";
+export * from "./doc-payments-module/docs-createPayment-dto";

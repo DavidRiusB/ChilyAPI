@@ -6,7 +6,7 @@ import {
   Post,
   Put,
   Query,
-  UseGuards,
+  UseGuards
 } from "@nestjs/common";
 import { JwtAuthGuard } from "../auth/guards/jwt.guard";
 import { AddressesService } from "./addresses.service";
@@ -17,8 +17,9 @@ import {
   DocumentationAddNewAddress,
   DocumentationApiTagsModule,
   DocumentationDeleteAddress,
+  DocumentationFindAllAddresses,
   DocumentationObtainUserAdress,
-  DocumentationUpdateAddress,
+  DocumentationUpdateAddress
 } from "src/docs";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { Role } from "src/common/enums";
@@ -46,6 +47,7 @@ export class AddressesController {
   }
 
   @Get("all")
+  @DocumentationFindAllAddresses()
   async findAll(): Promise<Address[]> {
     return this.addressService.findAll();
   }
