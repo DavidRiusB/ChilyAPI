@@ -7,8 +7,9 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  ValidateNested,
+  ValidateNested
 } from "class-validator";
+import { DocumentationCreateOrderDto } from "src/docs/doc-orders-module/doc-create-order-dto";
 import { DocumentationOrderDto } from "src/docs/doc-orders-module/docs-order-dto";
 import { Address } from "src/modules/addresses/entities/addresses.entity";
 
@@ -36,21 +37,22 @@ export class ProductsInOrder {
 export class OrderDto {
   @IsNotEmpty()
   @IsNumber()
-  @DocumentationOrderDto.userId()
+  @DocumentationCreateOrderDto.userId()
   userId: number;
 
   @IsNotEmpty()
   @IsNumber()
-  @DocumentationOrderDto.addressId()
+  @DocumentationCreateOrderDto.addressId()
   address: number;
 
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ProductsInOrder)
-  @DocumentationOrderDto.productsInOrder()
+  @DocumentationCreateOrderDto.productsInOrder()
   productsInOrder: ProductsInOrder[];
 
   @IsString()
+  @DocumentationCreateOrderDto.orderInstructions()
   orderInstructions: string;
 
   // @IsNumber()
@@ -64,17 +66,20 @@ export class OrderDto {
 
   @IsString()
   @IsOptional()
+  @DocumentationCreateOrderDto.couponId()
   couponId?: string | null;
 
   @IsNumber()
   @IsOptional()
+  @DocumentationCreateOrderDto.couponDiscount()
   couponDiscount?: number;
 
   @IsString()
+  @DocumentationCreateOrderDto.formBuy()
   formBuy: "efectivo" | "tarjeta" = "efectivo";
 
   @IsNumber()
-  @DocumentationOrderDto.total()
+  @DocumentationCreateOrderDto.total()
   total: number;
 
   // @IsInt()
