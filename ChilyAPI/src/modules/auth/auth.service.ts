@@ -2,7 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
+  NotFoundException
 } from "@nestjs/common";
 import { RegisterUserDTO } from "./dto/register.dto";
 import { AuthRepository } from "./auth.repository";
@@ -10,7 +10,10 @@ import { UserService } from "../user/user.service";
 import { DataSource, EntityManager } from "typeorm";
 import { User } from "../user/entity/user.entity";
 import { usersSeed } from "./users-seed";
-import { hashPassword, validateUserPasword } from "src/utils/hashing/bcrypt.utils";
+import {
+  hashPassword,
+  validateUserPasword
+} from "src/utils/hashing/bcrypt.utils";
 import { Credential } from "./entities/auth.entity";
 import { UserLoginGoogleDto } from "./dto/loginGoogle.dto";
 import { JwtService } from "@nestjs/jwt";
@@ -21,7 +24,7 @@ import { RegisterAdminDTO } from "./dto/registerAdmin.dto";
 import { Role } from "src/common/enums";
 import { PasswordDto } from "./dto/password.dto";
 dotenvConfig({
-  path: ".env.development",
+  path: ".env.development"
 });
 
 @Injectable()
@@ -31,7 +34,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly dataSource: DataSource,
     private jwtService: JwtService,
-    private readonly notificationEmailsService: NotificationEmailsService,
+    private readonly notificationEmailsService: NotificationEmailsService
   ) {}
 
   async onModuleInit() {
@@ -72,21 +75,21 @@ export class AuthService {
     const user = await this.userService.findByCredentialsId(credential);
     return user;
   }
-//
+  //
   async generateToken(
-    user: User,
+    user: User
   ): Promise<{ access_token: string; user: User }> {
     const payload = {
       id: user.id,
       email: user.email,
-      rol: user.role,
+      rol: user.role
     };
     const access_token = this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
+      secret: process.env.JWT_SECRET
     });
     return {
       access_token: access_token,
-      user: user,
+      user: user
     };
   }
 
@@ -99,7 +102,7 @@ export class AuthService {
           email,
           password,
           NIN,
-          phone,
+          phone
         );
         await manager.save(credential);
 
@@ -110,30 +113,36 @@ export class AuthService {
 
         return user;
       });
-    }catch (error) {
+    } catch (error) {
       console.log(error.detail);
-    
-      const match1 = error.detail.match(/Ya existe la llave \((.+?)\)=\((.+?)\)/);
-      const match2 = error.detail.match(/Key \((.+?)\)=\((.+?)\) already exists/);
-      
+
+      const match1 = error.detail.match(
+        /Ya existe la llave \((.+?)\)=\((.+?)\)/
+      );
+      const match2 = error.detail.match(
+        /Key \((.+?)\)=\((.+?)\) already exists/
+      );
+
       console.log("error service");
       console.log(match1, match2);
-    
+
       const translations = {
-        phone: 'teléfono',
-        email: 'correo electrónico',
-        NIN: 'Número de Identificación Nacional',
+        phone: "teléfono",
+        email: "correo electrónico",
+        NIN: "Número de Identificación Nacional"
       };
-    
+
       const match = match1 || match2;
-    
+
       if (match) {
         console.log("Match");
         let [_, key, value] = match;
-    
+
         key = translations[key] || key;
-    
-        throw new BadRequestException(`el ${key} ${value} ya fue usado anteriormente`);
+
+        throw new BadRequestException(
+          `el ${key} ${value} ya fue usado anteriormente`
+        );
       } else {
         throw error;
       }
@@ -149,41 +158,50 @@ export class AuthService {
           email,
           password,
           NIN,
-          phone,
+          phone
         );
         await manager.save(credential);
 
-        const user = await this.userService.createUser({role: Role.Admin,...newAdminData}, credential);
+        const user = await this.userService.createUser(
+          { role: Role.Admin, ...newAdminData },
+          credential
+        );
         await manager.save(user);
 
         await this.notificationEmailsService.sendRegistrationEmail(email, name);
 
         return user;
       });
-    }catch (error) {
+    } catch (error) {
       console.log(error.detail);
-    
-      const match1 = error.detail.match(/Ya existe la llave \((.+?)\)=\((.+?)\)/);
-      const match2 = error.detail.match(/Key \((.+?)\)=\((.+?)\) already exists/);
-      
+
+      const match1 = error.detail.match(
+        /Ya existe la llave \((.+?)\)=\((.+?)\)/
+      );
+      const match2 = error.detail.match(
+        /Key \((.+?)\)=\((.+?)\) already exists/
+      );
+
       console.log("error service");
       console.log(match1, match2);
-    
+
       const translations = {
-        phone: 'teléfono',
-        email: 'correo electrónico',
-        NIN: 'Número de Identificación Nacional',
+        phone: "teléfono",
+        email: "correo electrónico",
+        NIN: "Número de Identificación Nacional"
       };
-    
+
       const match = match1 || match2;
-    
+
       if (match) {
         console.log("Match");
         let [_, key, value] = match;
-    
+
         key = translations[key] || key;
-    
-        throw new BadRequestException(`el ${key} ${value} ya fue usado anteriormente`);
+
+        throw new BadRequestException(
+          `el ${key} ${value} ya fue usado anteriormente`
+        );
       } else {
         throw error;
       }
@@ -198,23 +216,23 @@ export class AuthService {
         {
           id: user.id,
           email: user.email,
-          rol: "google",
+          rol: "google"
         },
         {
-          secret: process.env.JWT_SECRET,
-        },
+          secret: process.env.JWT_SECRET
+        }
       );
 
       console.log(access_token);
 
       return {
         access_token: access_token,
-        user: user,
+        user: user
       };
     } catch (error) {
       return {
         user: null
-      }
+      };
     }
   }
 
@@ -225,16 +243,22 @@ export class AuthService {
       throw new NotFoundException("Email no encontrado");
     }
 
+    // Validación adicional para usuarios registrados con Google
+    if (user.googleAuth) {
+      // console.log("Usuario registrado con Google, enviando correo alternativo");
+      await this.notificationEmailsService.sendGoogleAuthUserEmail(email);
+    }
+
     const payload = { userId: user.id };
     const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: "1h", // Asegúrate de que el token tiene un tiempo de expiración adecuado
+      expiresIn: "1h" // Asegúrate de que el token tiene un tiempo de expiración adecuado
     });
 
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
     await this.notificationEmailsService.sendPasswordResetEmail(
       email,
-      resetLink,
+      resetLink
     );
 
     return { message: "Link para cambiar contraseña enviado" };
@@ -243,14 +267,14 @@ export class AuthService {
   async resetPassword(token: string, newPassword: string) {
     try {
       const payload = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET,
+        secret: process.env.JWT_SECRET
       });
       const userId = payload.userId;
       console.log(`User ID from token: ${userId}`);
 
       const updateResult = await this.authRepository.updatePassword(
         userId,
-        newPassword,
+        newPassword
       );
       console.log(`Password update result: ${JSON.stringify(updateResult)}`);
 
@@ -258,7 +282,7 @@ export class AuthService {
       if (user.email && user.name) {
         await this.notificationEmailsService.sendPasswordChangeSuccessEmail(
           user.email,
-          user.name,
+          user.name
         );
       } else {
         console.error("Email or username is missing from user object");
@@ -269,16 +293,18 @@ export class AuthService {
       throw new BadRequestException("Token invalido o expirado");
     }
   }
-  async changePassword(data: PasswordDto): Promise<{message: string}> {
+  async changePassword(data: PasswordDto): Promise<{ message: string }> {
     try {
       const user = await this.userService.findUserById(data.userId);
       await this.validateUser(user.email, data.oldPassword);
-      if(data.newPassword === data.oldPassword) {
-        throw new BadRequestException("La nueva contraseña no puede ser la misma que la anterior");
+      if (data.newPassword === data.oldPassword) {
+        throw new BadRequestException(
+          "La nueva contraseña no puede ser la misma que la anterior"
+        );
       }
       await this.authRepository.updatePassword(data.userId, data.newPassword);
       return {
-        message: "Contraseña actualizada correctamente",
+        message: "Contraseña actualizada correctamente"
       };
     } catch (error) {
       throw error;
