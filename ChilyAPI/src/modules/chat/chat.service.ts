@@ -10,6 +10,7 @@ import { CreateMessageDto } from "./dto/message.dto";
 import { Chat } from "./entities/chat.entity";
 import { ChatLog } from "./entities/chatLog.entity";
 import { OrderService } from "../order/order.service";
+import { error } from "console";
 
 @Injectable()
 export class ChatService {
@@ -106,11 +107,31 @@ export class ChatService {
       .createQueryBuilder("logs")
       .leftJoinAndSelect("logs.chats", "chats")
       .leftJoinAndSelect("logs.order", "order")
+      .where("logs.pending = :pending", { pending: true })
       .skip((page - 1) * limit)
       .take(limit)
       .select()
       .getManyAndCount();
 
     return { data: logs, page, limit, total };
+  }
+
+  async updateStatus(id: number) {
+    try {
+      const result = await this.chatLogRepository.update(id, {
+        pending: false,
+      });
+      if (result.affected === 1) {
+        return result;
+      } else {
+        throw new InternalServerErrorException(
+          "Error updating chat log status"
+        );
+      }
+    } catch (error) {
+      if (error instanceof InternalServerErrorException) {
+        throw error;
+      }
+    }
   }
 }
