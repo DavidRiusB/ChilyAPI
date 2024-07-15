@@ -76,30 +76,23 @@ export function DocumentationGetAllTransactionsByStripe() {
       description: "Cantidad de resultados por página",
       example: 10
     }),
+    ApiQuery({
+      name: "date",
+      type: String,
+      required: false,
+      description: "Fecha de la transacción en formato YYYY-MM-DD",
+      example: "2024-07-11"
+    }),
+    ApiQuery({
+      name: "amount",
+      type: Number,
+      required: false,
+      description: "Monto de la transacción",
+      example: 13.8
+    }),
     ApiResponse({
       status: 200,
-      description: "Transacciones obtenidas exitosamente",
-      schema: {
-        example: {
-          orders: [
-            {
-              id: "txn_1J4mYf2eZvKYlo2C0e3s",
-              amount: 1099,
-              currency: "usd",
-              status: "succeeded",
-              created: "2023-07-13T12:34:56Z"
-            },
-            {
-              id: "txn_1J4mYf2eZvKYlo2C0e3t",
-              amount: 2099,
-              currency: "usd",
-              status: "failed",
-              created: "2023-07-14T14:56:34Z"
-            }
-          ],
-          total: 2
-        }
-      }
+      description: "Transacciones obtenidas exitosamente"
     })
   );
 }
