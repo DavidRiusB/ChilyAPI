@@ -67,7 +67,7 @@ export const UsedDiscountMailTemplate = (username: string, discount: number, cod
       <p>Tu cupon de descuento <strong>${code}</strong> ya no estara disponible para futuras compras,</p>
       <p>Ese cupon poseia un descuento del ${discount}%.</p>
       <br/>
-      <p> Si no fuiste tu quien uso el cupon, ponte en contacto con el soporte de chily!! \n es posible que tu cuenta haya sido vulnerada!</p>
+      <p> Si no fuiste tu quien uso el cupon, ponte en contacto con el soporte de chily <a href="https://lo.de-chily.info/contact">aqui</a> \n, es posible que tu cuenta haya sido vulnerada!</p>
     </div>
     <div class="footer">
       <p>Gracias por seguir eligiendonos.</p>

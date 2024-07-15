@@ -57,8 +57,7 @@ export class DiscountController {
   }
 
   @Put("invalid")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Admin || Role.SuperAdmin)
+  @UseGuards(JwtAuthGuard)
   InvalidDiscount(@Query("code") code: string, @Query("userId") userId: string) {
     return this.discountService.InvalidDiscount(code, userId);
   }
