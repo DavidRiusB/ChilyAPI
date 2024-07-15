@@ -13,8 +13,9 @@ import {
   UsedDiscountMailTemplate,
   passwordChangeSuccessTemplate,
   OrderStatusUpdateTemplate,
-  orderConfirmationMailTemplate,
+  orderConfirmationMailTemplate
 } from "./texts";
+import { googleAuthUserInvalidTemplate } from "./texts/mailAuthGooglePassword.template";
 
 @Injectable()
 export class NotificationEmailsService {
@@ -25,8 +26,8 @@ export class NotificationEmailsService {
       service: "gmail",
       auth: {
         user: process.env.NOTIFICATIONS_EMAIL_USER,
-        pass: process.env.NOTIFICATIONS_EMAIL_PASS,
-      },
+        pass: process.env.NOTIFICATIONS_EMAIL_PASS
+      }
     });
   }
 
@@ -35,8 +36,8 @@ export class NotificationEmailsService {
       service: "gmail",
       auth: {
         user: process.env.NOTIFICATIONS_EMAIL_USER,
-        pass: process.env.NOTIFICATIONS_EMAIL_PASS,
-      },
+        pass: process.env.NOTIFICATIONS_EMAIL_PASS
+      }
     });
   }
 
@@ -54,7 +55,7 @@ export class NotificationEmailsService {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
       subject: "Registro exitoso en Chily",
-      html: registrationMailTemplate(username),
+      html: registrationMailTemplate(username)
     };
     await this.sendEmail(mailOptions);
   }
@@ -65,7 +66,7 @@ export class NotificationEmailsService {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
       subject: "Restablecimiento de contraseña",
-      html: passwordReset(resetUrl),
+      html: passwordReset(resetUrl)
     };
     await this.sendEmail(mailOptions);
   }
@@ -74,13 +75,13 @@ export class NotificationEmailsService {
     email: string,
     username: string,
     discount: number,
-    code: string,
+    code: string
   ): Promise<void> {
     const mailOptions = {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
       subject: "Código de Descuento en Chily",
-      html: DiscountMailTemplate(username, discount, code),
+      html: DiscountMailTemplate(username, discount, code)
     };
     await this.sendEmail(mailOptions);
   }
@@ -89,26 +90,26 @@ export class NotificationEmailsService {
     email: string,
     username: string,
     discount: number,
-    code: string,
+    code: string
   ): Promise<void> {
     const mailOptions = {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
       subject: "Uso de tu Código de Descuento en Chily",
-      html: UsedDiscountMailTemplate(username, discount, code),
+      html: UsedDiscountMailTemplate(username, discount, code)
     };
     await this.sendEmail(mailOptions);
   }
 
   async sendPasswordChangeSuccessEmail(
     email: string,
-    username: string,
+    username: string
   ): Promise<void> {
     const mailOptions = {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to: email,
       subject: "Cambio de contraseña exitoso en Donde Chily",
-      html: passwordChangeSuccessTemplate(username),
+      html: passwordChangeSuccessTemplate(username)
     };
     await this.sendEmail(mailOptions);
   }
@@ -117,19 +118,19 @@ export class NotificationEmailsService {
     to: string,
     username: string,
     orderId: number,
-    newStatus: string,
+    newStatus: string
   ): Promise<void> {
     const emailContent = OrderStatusUpdateTemplate(
       username,
       orderId,
-      newStatus,
+      newStatus
     );
 
     const mailOptions = {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
       to,
       subject: "Actualización de estado de tu orden",
-      html: emailContent,
+      html: emailContent
     };
 
     await this.sendEmail(mailOptions);
@@ -140,7 +141,7 @@ export class NotificationEmailsService {
     username: string,
     orderId: string,
     orderDetails: any[],
-    total: number,
+    total: number
   ): Promise<void> {
     const mailOptions = {
       from: process.env.NOTIFICATIONS_EMAIL_USER,
@@ -150,8 +151,19 @@ export class NotificationEmailsService {
         username,
         orderId,
         orderDetails,
-        total,
-      ),
+        total
+      )
+    };
+    await this.sendEmail(mailOptions);
+  }
+
+  async sendGoogleAuthUserEmail(email: string): Promise<void> {
+    const mailOptions = {
+      from: process.env.NOTIFICATIONS_EMAIL_USER,
+      to: email,
+      subject:
+        "Restablecimiento de contraseña para usuarios registrados con Google",
+      html: googleAuthUserInvalidTemplate(email)
     };
     await this.sendEmail(mailOptions);
   }
