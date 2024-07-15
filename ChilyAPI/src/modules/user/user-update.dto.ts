@@ -2,7 +2,6 @@ import {
   IsEnum,
   IsNotEmpty,
   IsOptional,
-  IsPhoneNumber,
   IsString,
 } from 'class-validator';
 import { Role } from 'src/common/enums';
@@ -17,9 +16,7 @@ export class UserUpdateDto {
 
   @IsOptional()
   @IsNotEmpty()
-  @IsPhoneNumber('CO', {
-    message: 'El formato de telefono es incorrecto, ejemplo: +573001234560',
-  })
+  @IsString()
   @DocumentationUserUpdateDto.phone()
   phone?: string;
 
