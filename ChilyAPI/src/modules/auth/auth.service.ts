@@ -247,6 +247,7 @@ export class AuthService {
     if (user.googleAuth) {
       // console.log("Usuario registrado con Google, enviando correo alternativo");
       await this.notificationEmailsService.sendGoogleAuthUserEmail(email);
+      return
     }
 
     const payload = { userId: user.id };
