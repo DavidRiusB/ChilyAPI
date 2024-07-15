@@ -31,7 +31,7 @@ export class ChatGateway implements OnGatewayInit {
 
       socket.on("adminConnected", () => {
         this.adminSocketId = socket.id;
-        
+
         this.logger.log(`Admin connected: ${socket.id}`);
       });
 
@@ -77,6 +77,15 @@ export class ChatGateway implements OnGatewayInit {
       // Notify the admin about the new room
       if (this.adminSocketId) {
         this.server.to(this.adminSocketId).emit("newRoom", roomId, chatLog);
+      } else {
+        // Send a message to the user if admin is offline
+        client.emit("createRoomResponse", {
+          success: false,
+          roomId,
+          chatLog,
+          message:
+            "Sorry, no one is around. Customer service hours are 9 AM - 5 PM. We will reach out to you via phone call or email once someone can check your problem.",
+        });
       }
 
       // Send a success response back to the client
@@ -110,6 +119,8 @@ export class ChatGateway implements OnGatewayInit {
         const messages = await this.chatService.getMessages(chatLog.id);
         // Emit messages to the client after successfully joining the room
         client.emit("joinedRoom", chatLog, roomId, messages);
+        // Update chat log status
+        await this.chatService.updateStatus(chatLog.id);
       } catch (error) {
         if (error instanceof NotFoundException) {
           this.logger.error(`Chat log not found for orderId ${orderId}`, error);

@@ -26,4 +26,7 @@ export class ChatLog {
 
   @Column({ type: "text" })
   description: string;
+
+  @Column({ default: true })
+  pending: boolean;
 }
