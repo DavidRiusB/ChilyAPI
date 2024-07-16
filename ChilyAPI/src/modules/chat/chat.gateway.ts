@@ -78,13 +78,17 @@ export class ChatGateway implements OnGatewayInit {
       if (this.adminSocketId) {
         this.server.to(this.adminSocketId).emit("newRoom", roomId, chatLog);
       } else {
+        const errorMessage =
+          "Lo sentimos, pero actualmente no podemos brindar soporte a través de este chat. Envíe su consulta a la siguiente dirección de correo electrónico: support@DondeChily.com. Le responderemos lo antes posible.";
+
+        // Log the error message
+        this.logger.log(errorMessage);
         // Send a message to the user if admin is offline
         client.emit("createRoomResponse", {
           success: false,
           roomId,
           chatLog,
-          message:
-            "Sorry, no one is around. Customer service hours are 9 AM - 5 PM. We will reach out to you via phone call or email once someone can check your problem.",
+          errorMessage,
         });
       }
 
