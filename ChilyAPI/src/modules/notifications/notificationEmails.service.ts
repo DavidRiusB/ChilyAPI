@@ -23,17 +23,9 @@ export class NotificationEmailsService {
 
   constructor() {
     this.transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: process.env.NOTIFICATIONS_EMAIL_USER,
-        pass: process.env.NOTIFICATIONS_EMAIL_PASS
-      }
-    });
-  }
-
-  private createTransporter() {
-    return nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.ionos.com", // Servidor de salida (SMTP)
+      port: 587, // Puerto de salida con TLS
+      secure: false, // False para usar TLS (STARTTLS)
       auth: {
         user: process.env.NOTIFICATIONS_EMAIL_USER,
         pass: process.env.NOTIFICATIONS_EMAIL_PASS
