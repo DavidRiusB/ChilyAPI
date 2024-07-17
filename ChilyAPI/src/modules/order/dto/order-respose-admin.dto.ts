@@ -8,4 +8,6 @@ export class OrderResponseDto {
   status: OrderStatus;
   products: { name: string; quantity: number; price: string }[];
   email: string;
+  orderInstructions: string;
+  formBuy: string;
 }
