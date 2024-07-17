@@ -67,50 +67,50 @@ export const categorySeed: createCategoryDto[] = [
   },
   {
     name: "PESCADOS",
-    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    icon: "https://images.pexels.com/photos/8963384/pexels-photo-8963384.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     name: "VEGETARIANOS",
-    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    icon: "https://images.pexels.com/photos/286283/pexels-photo-286283.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     name: "ALCOHOLICAS",
-    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    icon: "https://images.pexels.com/photos/159291/beer-machine-alcohol-brewery-159291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     name: "NO ALCOHOLICAS",
-    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    icon: "https://images.pexels.com/photos/8679349/pexels-photo-8679349.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     name: "GASEOSAS",
-    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    icon: "https://images.pexels.com/photos/104509/pexels-photo-104509.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },  
   {
     name: "CERVEZAS",
-    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    icon: "https://images.pexels.com/photos/159291/beer-machine-alcohol-brewery-159291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     name: "LIMONADAS",
-    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    icon: "https://images.pexels.com/photos/2109099/pexels-photo-2109099.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     name: "VINOS",
-    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    icon: "https://images.pexels.com/photos/2909085/pexels-photo-2909085.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     name: "JUGOS",
-    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    icon: "https://images.pexels.com/photos/1233319/pexels-photo-1233319.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     name: "PASTAS",
-    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    icon: "https://images.pexels.com/photos/1438672/pexels-photo-1438672.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     name: "PAPAS",
-    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    icon: "https://images.pexels.com/photos/1893556/pexels-photo-1893556.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     name: "ENSALADAS",
-    icon: "https://images.pexels.com/photos/5112589/pexels-photo-5112589.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    icon: "https://images.pexels.com/photos/1059905/pexels-photo-1059905.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
 ];
