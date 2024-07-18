@@ -268,12 +268,15 @@ export class AuthService {
     return { message: "Link para cambiar contraseña enviado" };
   }
 
-  async resetPassword(newPassword: string, request) {
+  async resetPassword(token: string, newPassword: string) {
     try {
-      const userId = request.user.id;
+      const payload = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET
+      });
+      const userId = payload.userId;      
       console.log(`User ID from token: ${userId}`);
       const credential = await this.authRepository.findByEmailInCredentials(
-        request.user.email
+        payload.email
       )
       const updateResult = await this.authRepository.updatePassword(
         credential.id,
