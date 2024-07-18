@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, IsUrl, isURL } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, } from 'class-validator';
 
 
 export class UserLoginGoogleDto {

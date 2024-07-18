@@ -15,9 +15,10 @@ export class DocumentationUserUpdateDto {
   static phone() {
     return applyDecorators(
       ApiProperty({
-        description: 'Número de teléfono del usuario',
-        example: '+1234567890',
-      }),
+        description:
+          "Número de teléfono del usuario, Solo con lada de colombia.",
+        example: "+573001234560"
+      })
     );
   }
 }

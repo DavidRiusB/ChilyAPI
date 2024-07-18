@@ -59,7 +59,7 @@ export const UsedDiscountMailTemplate = (username: string, discount: number, cod
       <h2>¡Cupon de descuento en Donde Chily!</h2>
     </div>
     <div class="logo">
-      <img src="https://scontent.fmex30-1.fna.fbcdn.net/v/t39.30808-6/294605266_729767591661554_8943081080553740766_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQfsnzA7XBg4dow8-OEIfhV9_OOF-Ig9FX3844X4iD0dh0voqrjPq4TBVUKVjTWv-W-dl3T1WfvvkHhPEQDFfU&_nc_ohc=Kcg8Q9JQlbkQ7kNvgG1WJ3h&_nc_ht=scontent.fmex30-1.fna&oh=00_AYBN3AYE4LVmba1J4iDSop-GV8pZM3NL_7ExcuQkZeP4UA&oe=66841C46" alt="Chily Logo" style="max-width: 200px; height: auto;">
+      <img src="${process.env.LOGOURL}" alt="Chily Logo" style="max-width: 200px; height: auto;">
     </div>
     <div class="content">
       <p>Hola ${username},</p>
@@ -67,7 +67,7 @@ export const UsedDiscountMailTemplate = (username: string, discount: number, cod
       <p>Tu cupon de descuento <strong>${code}</strong> ya no estara disponible para futuras compras,</p>
       <p>Ese cupon poseia un descuento del ${discount}%.</p>
       <br/>
-      <p> Si no fuiste tu quien uso el cupon, ponte en contacto con el soporte de chily!! \n es posible que tu cuenta haya sido vulnerada!</p>
+      <p> Si no fuiste tu quien uso el cupon, ponte en contacto con el soporte de chily <a href="https://lo.de-chily.info/contact">aqui</a> \n, es posible que tu cuenta haya sido vulnerada!</p>
     </div>
     <div class="footer">
       <p>Gracias por seguir eligiendonos.</p>

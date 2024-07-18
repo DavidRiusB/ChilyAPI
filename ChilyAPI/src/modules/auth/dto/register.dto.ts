@@ -53,7 +53,9 @@ export class RegisterUserDTO {
   confirmPassword: string;
 
   @IsNotEmpty()
-  @IsPhoneNumber()
+  @IsString({
+    message: 'El número de teléfono es requerido'
+  })
   @DocumentationRegisterUserDto.phone()
   phone: string;
 

@@ -71,7 +71,6 @@ export class AuthRepository {
       newCredential.email = email;
       newCredential.password = hashedPassword;
       newCredential.NIN = NIN;
-      newCredential.phone = phone;
       this.credentialRepository.create(newCredential);
       return newCredential;
     } catch (error) {

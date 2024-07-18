@@ -25,8 +25,8 @@ import {
   DocumentationDeleteProduct,
   DocumentationGetProductById,
   DocumentationGetProductsByFilter,
-  DocumentationProductIsPopular,
   DocumentationUpdateImg,
+  DocumentationUpdateIsPopular,
   DocumentationUpdateProduct,
   DocumentationUpdateStock,
 } from "src/docs";
@@ -83,10 +83,10 @@ export class ProductsController {
 
   @Post("create")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Admin)
+  @Roles(Role.Admin || Role.SuperAdmin)
   @DocumentationAddProduct()
   async createProduct(
-    @Body() createProduct: createProductDto,
+    @Body() createProduct: createProductDto
   ): Promise<Product> {
     const newProduct = await this.productsService.createProduct(createProduct);
     return newProduct;
@@ -94,7 +94,7 @@ export class ProductsController {
 
   @Put("update/:id")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.Admin)
+  @Roles(Role.Admin || Role.SuperAdmin)
   @DocumentationUpdateProduct()
   updateProduct(
     @Param("id") id: number,
@@ -110,8 +110,9 @@ export class ProductsController {
   @Put("popular")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.Admin || Role.SuperAdmin)
-  updateIsPopular(@Query("id") id:string, @Query("status") status:string){
-    return this.productsService.productIsPopular(Number(id),status);
+  @DocumentationUpdateIsPopular()
+  updateIsPopular(@Query("id") id: string, @Query("status") status: string) {
+    return this.productsService.productIsPopular(Number(id), status);
   }
 
   /*@Put("available")

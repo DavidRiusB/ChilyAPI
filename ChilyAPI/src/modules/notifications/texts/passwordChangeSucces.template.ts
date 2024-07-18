@@ -58,7 +58,7 @@ export const passwordChangeSuccessTemplate = (username: string) => `
       <h2>¡Cambio de contraseña exitoso!</h2>
     </div>
     <div class="logo">
-      <img src="https://scontent.fmex30-1.fna.fbcdn.net/v/t39.30808-6/294605266_729767591661554_8943081080553740766_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHQfsnzA7XBg4dow8-OEIfhV9_OOF-Ig9FX3844X4iD0dh0voqrjPq4TBVUKVjTWv-W-dl3T1WfvvkHhPEQDFfU&_nc_ohc=Kcg8Q9JQlbkQ7kNvgG1WJ3h&_nc_ht=scontent.fmex30-1.fna&oh=00_AYBN3AYE4LVmba1J4iDSop-GV8pZM3NL_7ExcuQkZeP4UA&oe=66841C46" alt="Chily Logo" style="max-width: 200px; height: auto;">
+      <img src="${process.env.LOGOURL}" alt="Chily Logo" style="max-width: 200px; height: auto;">
     </div>
     <div class="content">
       <p>Hola ${username},</p>

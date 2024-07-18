@@ -8,7 +8,7 @@ import {
   Put,
   Query,
   Res,
-  UseGuards,
+  UseGuards
 } from "@nestjs/common";
 
 // Services
@@ -24,10 +24,12 @@ import { Response } from "express";
 // Documentation
 import {
   DocumentationApiTagsModule,
+  DocumentationGeneratePdf,
   DocumentationGetAllOrders,
   DocumentationGetOrderById,
+  DocumentationGetOrdersByUser,
   DocumentationPostNewOrder,
-  DocumentationUpdateOrderStatus,
+  DocumentationUpdateOrderStatus
 } from "src/docs";
 import { OrderStatus } from "src/common/enums";
 
@@ -45,35 +47,28 @@ export class OrderController {
 
   @Get("all-orders")
   @DocumentationGetAllOrders()
-  // async getAllOrders(
-  //   @Query("page") page: number = 1,
-  //   @Query("limit") limit: number = 5,
-  //   @Query("email") email?: string,
-  //   @Query("id") id?: string,
-  //   @Query("date") date?: string,
-  //   @Query("productName") productName?: string,
-  //   @Query("status") status?: OrderStatus,
-  // ) {
-  //   const filters = { email, id, date, productName, status };
-  //   return await this.orderService.findAll({ page, limit }, filters);
-  // }
   async getAllOrders(
-    @Query("page") page: number = 1,
-    @Query("limit") limit: number = 5,
+    @Query("page") page: string = "1",
+    @Query("limit") limit: string = "5",
     @Query("email") email?: string,
     @Query("id") id?: string,
     @Query("date") date?: string,
     @Query("productName") productName?: string,
-    @Query("status") status?: OrderStatus,
+    @Query("status") status?: OrderStatus
   ) {
     const filters = {
       email,
       id,
       date,
       productName: productName ? `%${productName}%` : undefined,
-      status,
+      status
     };
-    return await this.orderService.findAll({ page, limit }, filters);
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+    return await this.orderService.findAll(
+      { page: pageNumber, limit: limitNumber },
+      filters
+    );
   }
 
   @Get("order/:id")
@@ -83,6 +78,7 @@ export class OrderController {
   }
 
   @Get("user/:id")
+  @DocumentationGetOrdersByUser()
   async getOrdersByUser(@Param("id") id: number) {
     return await this.orderService.findOrdersByUser(id);
   }
@@ -94,6 +90,7 @@ export class OrderController {
   }
 
   @Get("/generate-pdf/:id")
+  @DocumentationGeneratePdf()
   async generatePdf(@Param("id") id: number, @Res() res: Response) {
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `inline; filename="order-${id}.pdf"`);

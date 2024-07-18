@@ -185,6 +185,8 @@ export class OrderService {
       quantity: detail.quantity,
       price: `$${detail.product.price.toFixed(2)}`,
     }));
+    orderResponseDto.orderInstructions = order.orderInstructions;
+    orderResponseDto.formBuy = order.formBuy;
     if (order.user) {
       orderResponseDto.email = order.user.email;
     } else {
@@ -290,4 +292,5 @@ export class OrderService {
     const pdf = await this.pdfService.generatePdf(data, res);
     return pdf;
   }
+
 }

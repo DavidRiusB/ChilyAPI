@@ -186,12 +186,10 @@ export class ProductsRepository {
         product.description = updateProduct.description;
 
         product.price = updateProduct.price;
-
-        product.stock = Math.max(product.stock + updateProduct.stock, 0);
-
-        product.img = updateProduct.imageURL;
-
+        product.stock = updateProduct.stock;
+        product.img = updateProduct.img;
         if (updateProduct.category.length > 0) {
+          console.log(updateProduct.category)
           const categories = await this.categoryService.getCategoryById(
             updateProduct.category
           );

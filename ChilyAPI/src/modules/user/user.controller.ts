@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -6,6 +7,9 @@ import {
   Param,
   Put,
   Query,
+  Req,
+  UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDTO } from '../auth/dto/user.dto';
@@ -17,6 +21,10 @@ import {
   DocumentationUpdateUser,
   DocumentationSoftDeleteUser,
 } from 'src/docs';
+import { Role } from 'src/common/enums';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
 @Controller('user')
 @DocumentationApiTagsModule.clasification('Rutas para: Usuarios')
@@ -39,6 +47,7 @@ export class UserController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   @DocumentationUpdateUser()
   async updateUser(@Param('id') id: number, @Body() userData: UserUpdateDto) {
     return await this.userService.update(userData, id);
