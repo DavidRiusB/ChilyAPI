@@ -270,7 +270,7 @@ export class AuthService {
 
   async resetPassword(newPassword: string, request) {
     try {
-      const userId = request.user.userId;
+      const userId = request.user.id;
       console.log(`User ID from token: ${userId}`);
       const credential = await this.authRepository.findByEmailInCredentials(
         request.user.email
