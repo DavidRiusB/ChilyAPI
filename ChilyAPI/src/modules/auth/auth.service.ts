@@ -67,13 +67,16 @@ export class AuthService {
     });
   }
 
-  async validateUser(email: string, password: string): Promise<User | null> {
+  async validateUser(email: string, password: string): Promise<{ user: User; credential: number } | null> {
     const credential = await this.authRepository.signIn({ email, password });
     if (!credential) {
       return null;
     }
     const user = await this.userService.findByCredentialsId(credential);
-    return user;
+    return {
+      user,
+      credential
+    };
   }
   //
   async generateToken(
@@ -265,16 +268,15 @@ export class AuthService {
     return { message: "Link para cambiar contraseña enviado" };
   }
 
-  async resetPassword(token: string, newPassword: string) {
+  async resetPassword(newPassword: string, request) {
     try {
-      const payload = this.jwtService.verify(token, {
-        secret: process.env.JWT_SECRET
-      });
-      const userId = payload.userId;
+      const userId = request.user.userId;
       console.log(`User ID from token: ${userId}`);
-
+      const credential = await this.authRepository.findByEmailInCredentials(
+        request.user.email
+      )
       const updateResult = await this.authRepository.updatePassword(
-        userId,
+        credential.id,
         newPassword
       );
       console.log(`Password update result: ${JSON.stringify(updateResult)}`);
@@ -297,13 +299,13 @@ export class AuthService {
   async changePassword(data: PasswordDto): Promise<{ message: string }> {
     try {
       const user = await this.userService.findUserById(data.userId);
-      await this.validateUser(user.email, data.oldPassword);
+      const { credential } =await this.validateUser(user.email, data.oldPassword);
       if (data.newPassword === data.oldPassword) {
         throw new BadRequestException(
           "La nueva contraseña no puede ser la misma que la anterior"
         );
       }
-      await this.authRepository.updatePassword(data.userId, data.newPassword);
+      await this.authRepository.updatePassword(credential, data.newPassword);
       return {
         message: "Contraseña actualizada correctamente"
       };
