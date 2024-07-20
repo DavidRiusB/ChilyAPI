@@ -23,18 +23,29 @@ import {
   DocumentationUpdateCategory,
 } from "src/docs";
 import { QueryInterceptor } from "src/common/interceptors/query.interceptor";
+import { Throttle } from "@nestjs/throttler";
 
 @Controller("category")
 @DocumentationApiTagsModule.clasification("Rutas para: Categorías")
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
-
+  @Throttle({
+    default: {
+      limit: 5,
+      ttl: 60
+    }
+  })
   @Get()
   @DocumentationGetCategories()
   getCategories() {
     return this.categoryService.getCategories();
   }
-
+  @Throttle({
+    default: {
+      limit: 5,
+      ttl: 60
+    }
+  })
   @Get("name/:name")
   @DocumentationGetCategoryByName()
   @UseInterceptors(QueryInterceptor)
@@ -46,7 +57,12 @@ export class CategoryController {
     );
   }
 
-
+  @Throttle({
+    default: {
+      limit: 5,
+      ttl: 60
+    }
+  })
   @Get(":id")
   @DocumentationGetCategoryById()
   @UseInterceptors(QueryInterceptor)

@@ -20,6 +20,7 @@ import { GoogleMapsModule } from "./modules/google-maps/google-maps.module";
 import { PaymentsModule } from "./modules/payments/payments.module";
 import { ChatModule } from "./modules/chat/chat.module";
 import { PdfService } from "./common/helpers/pdf/pdf.service";
+import { ThrottlerModule } from "@nestjs/throttler";
 
 @Module({
   imports: [
@@ -31,6 +32,10 @@ import { PdfService } from "./common/helpers/pdf/pdf.service";
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get("typeorm"),
     }),
+    ThrottlerModule.forRoot([{
+      ttl: 60,
+      limit: 10
+    }]),
     AuthModule,
     UserModule,
     ProductsModule,

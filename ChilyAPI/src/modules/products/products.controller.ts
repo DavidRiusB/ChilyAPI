@@ -39,6 +39,7 @@ import { JwtAuthGuard } from "../auth/guards/jwt.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { Role } from "src/common/enums";
+import { Throttle } from "@nestjs/throttler";
 
 @Controller("products")
 @DocumentationApiTagsModule.clasification("Rutas para: Productos")
@@ -48,6 +49,12 @@ export class ProductsController {
     private uploadService: UploadService
   ) {}
 
+  @Throttle({
+    default: {
+      limit: 5,
+      ttl: 60
+    }
+  })
   @Get()
   @DocumentationGetProducts()
   @UseInterceptors(QueryProductInterceptor)
@@ -58,7 +65,12 @@ export class ProductsController {
     );
     return products;
   }
-
+  @Throttle({
+    default: {
+      limit: 5,
+      ttl: 60
+    }
+  })
   @Get("filter")
   @DocumentationGetProductsByFilter()
   @UseInterceptors(QueryFilterInterceptor)
