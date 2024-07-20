@@ -46,6 +46,7 @@ export class ChatService {
   async findChatLogById(chatLogId: number): Promise<ChatLog> {
     const chatLog = await this.chatLogRepository.findOne({
       where: { id: chatLogId },
+      relations: ["order"],
     });
     if (!chatLog) {
       throw new NotFoundException(`Chat Log Not Found with id: ${chatLogId}`);

@@ -136,7 +136,7 @@ export class ChatGateway implements OnGatewayInit {
           );
           client.emit("error", "Error fetching messages");
         }
-        return; // Exit early if there's an error
+        /* return; // Exit early if there's an error */
       }
       const usersInRoom = room.size;
       client.emit("usersInRoom", usersInRoom);
@@ -151,16 +151,22 @@ export class ChatGateway implements OnGatewayInit {
     @ConnectedSocket() client: Socket
   ) {
     const { chatLogId, text, userId } = dataMessage;
-    const roomId = chatLogId.toString();
-    const room = this.server.sockets.adapter.rooms.get(roomId);
-    if (room) {
-      const message = await this.chatService.createChat(
-        text,
-        userId,
-        chatLogId
-      );
-      this.server.to(roomId).emit("on-message", message);
-      this.logger.log("on-message:", { message });
+    const chatLog = await this.chatService.findChatLogById(chatLogId);
+    const orderId = chatLog.order.id;
+    if (orderId) {
+      const roomId = orderId.toString();
+      const room = this.server.sockets.adapter.rooms.get(roomId);
+      if (room) {
+        const message = await this.chatService.createChat(
+          text,
+          userId,
+          chatLogId
+        );
+        this.server.to(roomId).emit("on-message", message);
+        this.logger.log("on-message:", { message });
+      }
+    } else {
+      console.log("error geting room, order id:", orderId);
     }
   }
 }

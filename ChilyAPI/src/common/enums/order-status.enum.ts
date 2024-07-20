@@ -3,5 +3,5 @@ export enum OrderStatus {
   InPreparation = "En preparación",
   Shipped = "En camino",
   Delivered = "Entregada",
-  Confirmada = "Confirmada",
+  Confirmada = "Confirmada" 
 }
